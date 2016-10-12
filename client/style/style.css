@@ -1,0 +1,114 @@
+/* CSS declarations go here */
+.row {
+	margin-top: 5px;
+	vertical-align: middle;
+}
+
+.col-centered {
+  text-align: center;
+}
+
+.site-title {
+  color: black;
+  font-size: 20px;
+}
+
+.column-sort {
+  cursor: pointer;
+}
+
+.icon-small {
+	font-size: 14px;
+}
+
+.column-title {
+	font-weight: bold;
+	text-align: center;
+}
+
+.col-right {
+	text-align: right;
+}
+
+.column-bold {
+	font-weight: bold;
+}
+
+.bg-green {
+	background-color: #80CC99;
+}
+
+.green {
+	color: green;
+}
+
+.red {
+	color: red;
+}
+
+.voffset30 {
+	margin-top: 30px;
+}
+
+.voffset50 {
+	margin-top: 50px;
+}
+
+.voffset15 {
+	margin-top: 15px;
+}
+
+body {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  background-color: #EEEEEE;
+}
+
+.main-row {
+	margin: 0;
+  	padding: 0;
+}
+
+.main-col {
+	background-color: white;
+	padding-bottom: 50px;
+}
+
+#purchase {
+	font-weight: bold;
+	font-size: 28px;
+}
+
+.total-name {
+  font-size: 28px;
+}
+
+.total-amount {
+  font-size: 28px;
+  text-align: right;
+}
+
+.checkout-title {
+  font-size: 28px;
+  text-align: left;
+}
+
+.help-title {
+  text-align: right;
+  vertical-align: bottom;
+}
+
+.purchase-confirmed {
+	font-size: 24px;
+}
+
+.download-link {
+	font-size: 24px;
+	text-align: center;
+}
+
+#product-id {
+  display: none;
+}
+

@@ -1,0 +1,11 @@
+{
+  "name": "purecart",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "braintree": "^1.41.0"
+  }
+}

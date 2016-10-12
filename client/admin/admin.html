@@ -1,0 +1,117 @@
+<template name="admin">
+
+{{#if isAdmin}}
+
+<div class='admin-panel'>
+
+<h3>Admin</h3>
+
+<h3>Brand Details</h3>
+
+<div class='row'>
+
+  <div class='col-md-4'>
+    <input id='title-picture' type='text' class='form-control' placeholder="Title picture URL...">
+  </div>
+  <div class='col-md-3'>
+    <button id='set-title' class='btn btn-block btn-primary'>Set Title Picture</button>
+  </div>
+
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>
+    <input id='brand-name' type='text' class='form-control' placeholder="Brand name ...">
+  </div>
+  <div class='col-md-2'>
+    <input id='brand-email' type='text' class='form-control' placeholder="Brand email...">
+  </div>
+  <div class='col-md-3'>
+    <button id='set-brand-data' class='btn btn-block btn-primary'>Set Brand Data</button>
+  </div>
+
+</div>
+
+<h3>Add Product</h3>
+
+<div class='row'>
+
+  <div class='col-md-2'>
+  	<input id='product-name' type='text' class='form-control' placeholder="Name ...">
+  </div>
+  <div class='col-md-2'>
+  	<input id='product-price-usd' type='text' class='form-control' placeholder="Price USD ...">
+  </div>
+  <div class='col-md-2'>
+    <input id='product-price-eur' type='text' class='form-control' placeholder="Price EUR ...">
+  </div>
+  <div class='col-md-2'>
+  	<input id='product-url' type='text' class='form-control' placeholder="URL ...">
+  </div>
+  <div class='col-md-2'>
+  	<button id='add-product' class='btn btn-block btn-primary'>Add Product</button>
+  </div>
+
+</div>
+
+<h3>Products</h3>
+
+{{#each products}}
+
+  {{> product}}
+
+{{/each}}
+
+<h3>Sales</h3>
+
+{{#each sales}}
+
+  {{> sale}}
+
+{{/each}}
+
+<h3>Tax</h3>
+
+<!-- <div class='row'>
+
+  <div class='col-md-3'>
+    <input id='language' type='text' class='form-control' placeholder="Language ...">
+  </div>
+  <div class='col-md-3'>
+    <button id='set-language' class='btn btn-block btn-primary'>Set Language</button>
+  </div>
+
+</div> -->
+
+<div class='row'>
+
+  <div class='col-md-3'>
+    <div class="input-group datetimepicker">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+      <input id='start-date' class="set-due-date form-control" type="text"/>
+    </div>
+  </div>
+
+  <div class='col-md-3'>
+    <div class="input-group datetimepicker">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+      <input id='end-date' class="set-due-date form-control" type="text"/>
+    </div>
+  </div>
+
+  <div class='col-md-3'>
+    <button id='get-vat' class='btn-primary btn btn-block'>Get VAT</button> 
+  </div>
+
+  <div class='col-md-3'>
+    Total collected VAT: <span id='vat'></span>
+  </div>
+
+</div>
+
+</div>
+
+{{/if}}
+
+</template>

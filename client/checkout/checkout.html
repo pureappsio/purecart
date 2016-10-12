@@ -1,0 +1,149 @@
+<template name="checkout">
+
+<div class='row main-row'>
+
+<div class='col-md-2'></div>
+
+<div class='col-md-8 main-col'>
+
+  <div class='row'>
+
+    <div class='col-md-4'>
+      <img class='img-responsive' src='{{mainPicture}}'>
+    </div>
+
+    <div class='col-md-6 help-title'></div>
+
+  </div>
+
+  <div class='row voffset50'>
+
+    <div class='col-md-7 column-bold'>Item Name</div>
+    <div class='col-md-3 column-bold'>Item Price</div>
+    <div class='col-md-2 column-bold col-right'>Actions</div>
+
+  </div>
+
+  <div class='row'>
+
+    <div class='col-md-7'>{{name}} <span id='product-id'>{{_id}}</span></div>
+    <div class='col-md-3'>{{startCurrency}}<span id='subtotal'>{{basePrice}} {{endCurrency}}</span></div>
+    <div class='col-md-2 col-right'><a href=''>Remove</a></div>
+
+  </div>
+
+  <div class='row voffset15'></div>
+
+  {{#if useTaxes}}
+  <div class='row'>
+
+    <div class='col-md-8'></div>
+    <div class='col-md-4 col-right'>VAT: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}</div>
+
+  </div>
+
+  {{/if}}
+
+  <div class='row'>
+
+    <div class='col-md-8'></div>
+    <div class='col-md-4 col-right'>Total: {{startCurrency}}{{total}} {{endCurrency}}</div>
+
+  </div>
+
+  <div class='row voffset30'>
+
+  <div class='col-md-12'><h2>Contact Details</h2></div>
+
+  </div>
+
+  <form role="form">
+
+  <div class='row'>
+
+    <div class='col-md-12'>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input class='form-control' type='text' id='email'>
+      </div>
+      
+    </div>
+
+  </div>
+
+  <div class='row'>
+
+    <div class='col-md-6'>
+      <div class="form-group">
+        <label for="first-name">First Name</label>
+        <input class='form-control' type='text' id='first-name'>
+      </div>
+      
+    </div>
+
+    <div class='col-md-6'>
+      <div class="form-group">
+        <label for="last-name">Last Name</label>
+        <input class='form-control' type='text' id='last-name'>
+      </div>
+      
+    </div>
+
+  </div>
+
+  <div class='row voffset30'>
+
+  <div class='col-md-12'><h2>Payment Information</h2></div>
+
+  </div>
+
+  <div class='row'>
+
+  <div id="dropin" class="col-md-12"></div>
+
+  </div>
+
+  {{#if dataIssue}}
+  <div class='row voffset15'>
+
+    <div class='col-md-3'></div>
+    <div class='col-md-6 bg-danger'>Please verify your data.</div>
+
+  </div>
+  {{/if}}
+
+  <div class='row voffset30'>
+
+    <div class='col-md-3'></div>
+    <div class='col-md-3 total-name'>Total:</div>
+    <div class='col-md-3 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
+
+  </div>
+
+  <div class='row'>
+
+    <div class='col-md-3'></div>
+    <div class='col-md-6'>
+      <button id='purchase' type="submit" class='btn btn-large btn-block btn-warning'>BUY NOW!</button>
+    </div>
+
+  </div>
+
+  </form>
+
+  <div class='row voffset15'>
+
+    <div class='col-md-4'></div>
+    <div class='col-md-4'>
+      <img class='img-responsive' src='https://openhomeautomation.net/wp-content/uploads/2016/05/payment_logos2.png'>
+    </div>
+
+  </div>
+
+</div>
+
+<div class='col-md-2'></div>
+
+</div>
+
+</template>

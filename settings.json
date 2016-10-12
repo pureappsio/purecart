@@ -1,0 +1,19 @@
+{
+  "sendGridAPIKey": "",
+  
+  "pushoverUser": "",
+  "pushoverToken": "",
+  
+  "sandboxPublicKey": "",
+  "sandboxPrivateKey": "",
+  "sandboxMerchantId": "",
+  "sandboxMerchantEUR": "",
+  "sandboxMerchantUSD": "",
+  
+  "livePublicKey": "",
+  "livePrivateKey": "",
+  "liveMerchantId": "",
+  "liveMerchantEUR": "",
+  "liveMerchantUSD": ""
+
+}
