@@ -6,31 +6,34 @@
 
 <div class='col-md-8 main-col'>
 
-  <div class='row'>
+  <div class='row row-checkout-title'>
 
     <div class='col-md-4'>
       <img class='img-responsive' src='{{mainPicture}}'>
     </div>
 
-    <div class='col-md-6 help-title'></div>
+    <div class='col-md-6 help-title'>{{#if langEN}}Need help?{{else}}Besoin d'aide?{{/if}} {{brandEmail}}</div>
 
   </div>
 
-  <div class='row voffset50'>
+  <div class='row voffset50'></div>
 
-    <div class='col-md-7 column-bold'>Item Name</div>
-    <div class='col-md-3 column-bold'>Item Price</div>
-    <div class='col-md-2 column-bold col-right'>Actions</div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{{#if langEN}}Item Name{{else}}Nom de l'Article{{/if}}</th>
+        <th class='col-right'>{{#if langEN}}Item Price{{else}}Prix Unitaire{{/if}}</th>
+<!--         <th class='col-right'>Actions</th>
+ -->      </tr>
+    </thead>
+    <tbody>
 
-  </div>
-
-  <div class='row'>
-
-    <div class='col-md-7'>{{name}} <span id='product-id'>{{_id}}</span></div>
-    <div class='col-md-3'>{{startCurrency}}<span id='subtotal'>{{basePrice}} {{endCurrency}}</span></div>
-    <div class='col-md-2 col-right'><a href=''>Remove</a></div>
-
-  </div>
+    {{#each products}}
+      {{> checkoutItem}}
+    {{/each}}
+      
+    </tbody>
+  </table>
 
   <div class='row voffset15'></div>
 
@@ -38,7 +41,14 @@
   <div class='row'>
 
     <div class='col-md-8'></div>
-    <div class='col-md-4 col-right'>VAT: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}</div>
+    <div class='col-md-4 col-right'>Subtotal: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span> {{endCurrency}}</div>
+
+  </div>
+
+  <div class='row'>
+
+    <div class='col-md-8'></div>
+    <div class='col-md-4 col-right'>{{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}</div>
 
   </div>
 
@@ -53,7 +63,26 @@
 
   <div class='row voffset30'>
 
-  <div class='col-md-12'><h2>Contact Details</h2></div>
+    <div class='col-md-12'>
+    <form class="form-inline">
+      <div class="form-group">
+        <label for="discount-code">
+        {{#if langEN}}Have a discount code?
+        {{else}}Vous avez un code promo?{{/if}}
+        </label>
+        <input class='form-control' type='text' id='discount-code'>
+      </div>
+      <button id='apply-discount' class='btn btn-primary'>{{#if langEN}}Apply{{else}}Appliquer{{/if}}</button>
+      <div class="form-group"><span id='discount-message'></span></div>
+    </form>
+
+    </div>
+
+  </div>
+
+  <div class='row voffset30'>
+
+  <div class='col-md-12'><h2>{{#if langEN}}Contact Details{{else}}Informations Personelles{{/if}}</h2></div>
 
   </div>
 
@@ -64,7 +93,7 @@
     <div class='col-md-12'>
       <div class="form-group">
         <label for="email">Email</label>
-        <input class='form-control' type='text' id='email'>
+        <input class='form-control input-lg' type='text' id='email'>
       </div>
       
     </div>
@@ -75,39 +104,67 @@
 
     <div class='col-md-6'>
       <div class="form-group">
-        <label for="first-name">First Name</label>
-        <input class='form-control' type='text' id='first-name'>
+        <label for="first-name">{{#if langEN}}First Name{{else}}Prénom{{/if}}</label>
+        <input class='form-control input-lg' type='text' id='first-name'>
       </div>
       
     </div>
 
     <div class='col-md-6'>
       <div class="form-group">
-        <label for="last-name">Last Name</label>
-        <input class='form-control' type='text' id='last-name'>
+        <label for="last-name">{{#if langEN}}Last Name{{else}}Nom{{/if}}</label>
+        <input class='form-control input-lg' type='text' id='last-name'>
       </div>
       
     </div>
 
   </div>
+
+  </form>
+
+  {{#if braintreePayment}}
 
   <div class='row voffset30'>
 
-  <div class='col-md-12'><h2>Payment Information</h2></div>
+  <div class='col-md-12'><h2>{{#if langEN}}Payment Information{{else}}Informations de Paiement{{/if}}</h2></div>
 
+  </div>
+
+  {{/if}}
+
+  <form id='braintree-form'>
+
+  <div class='row'>
+    <div class='col-md-12'><div id="dropin"></div></div>
+  </div>
+
+  {{#if braintreeHosted}}
+
+  <div class='row'>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <label for="card-number">{{#if langEN}}Card Number{{else}}Numéro de carte bancaire{{/if}}</label>
+        <div id="card-number" class="form-control"></div>
+      </div>
+    </div>
   </div>
 
   <div class='row'>
-
-  <div id="dropin" class="col-md-12"></div>
-
+    <div class='col-md-12'>
+      <div class="form-group">
+        <label for="expiration-date">{{#if langEN}}Expiration Date{{else}}Date d'expiration{{/if}}</label>
+        <div id="expiration-date" class="form-control"></div>
+      </div>
+    </div>
   </div>
+
+  {{/if}}
 
   {{#if dataIssue}}
   <div class='row voffset15'>
 
     <div class='col-md-3'></div>
-    <div class='col-md-6 bg-danger'>Please verify your data.</div>
+    <div class='col-md-6 bg-danger'>{{#if langEN}}Please verify your data.{{else}}Veuillez vérifier vos informations.{{/if}}</div>
 
   </div>
   {{/if}}
@@ -115,8 +172,8 @@
   <div class='row voffset30'>
 
     <div class='col-md-3'></div>
-    <div class='col-md-3 total-name'>Total:</div>
-    <div class='col-md-3 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
+    <div class='col-md-3 col-xs-6 total-name'>Total:</div>
+    <div class='col-md-3 col-xs-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
 
   </div>
 
@@ -124,18 +181,58 @@
 
     <div class='col-md-3'></div>
     <div class='col-md-6'>
-      <button id='purchase' type="submit" class='btn btn-large btn-block btn-warning'>BUY NOW!</button>
+
+      {{#if braintreePayment}}
+      <button id='purchase' type="submit" class='btn btn-large btn-block btn-warning'>{{#if langEN}}BUY NOW!{{else}}Acheter !{{/if}}</button>
+      {{else}}
+      <button id='purchase-paypal' class='btn btn-large btn-block btn-warning'>{{#if langEN}}PAY WITH PAYPAL{{else}}Payer avec Paypal{{/if}}</button>
+      {{/if}}
     </div>
 
   </div>
 
   </form>
 
+  {{#if paymentStatus}}
+  <div class='row'>
+
+    <div class='col-md-3'></div>
+    <div class='col-md-6'>{{#if langEN}}Please wait ...{{else}}Veuillez patienter ...{{/if}}</div>
+
+  </div>
+  {{/if}}
+
   <div class='row voffset15'>
 
     <div class='col-md-4'></div>
     <div class='col-md-4'>
-      <img class='img-responsive' src='https://openhomeautomation.net/wp-content/uploads/2016/05/payment_logos2.png'>
+      <img class='img-responsive' src='/payment_logos.png'>
+    </div>
+
+  </div>
+
+  <div class='row voffset20'>
+
+    <div class='col-md-6'>
+      <div class='info-title'>
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+       {{#if langEN}}30 Day Guarantee{{else}}Garantie 30 Jours{{/if}}
+       </div>
+       <div class='voffset15'>
+       {{#if langEN}}No question asked 30 day refund guaranteed. If you are unhappy for any reason, get your money back by simply sending us an email.{{else}}
+       Si vous achetez un produit et n'êtes pas satisfait, envoyez nous un email sous 30 jours pour un remboursement intégral.{{/if}}
+       </div>
+    </div>
+    <div class='col-md-6'>
+       <div class='info-title'>
+       <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+       {{#if langEN}}Secure Payment{{else}}Paiement Sécurisé{{/if}}
+       </div>
+       <div class='voffset15'>
+       {{#if langEN}}All orders are processed via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, which is a very secure network. Your payment information is never stored in any way on our servers.{{else}}
+       Toutes les commandes sont traitées via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, qui est un partenaire très sécurisé. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs.
+       {{/if}}
+       </div>
     </div>
 
   </div>

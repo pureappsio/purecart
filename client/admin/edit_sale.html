@@ -1,0 +1,60 @@
+<template name="editSale">
+
+<h3>Editing Sale #{{invoiceId}}</h3>
+
+<div class='row voffset30'>
+
+<div class='col-md-2'>Current status:</div>
+<div class='col-md-2'>
+	<select id='success' class='form-control'>
+    {{#if isPaid}}
+    <option value='true' selected>Paid</option>
+    <option value='false'>Canceled</option>   
+    {{else}}
+    <option value='true'>Paid</option>
+    <option value='false' selected>Canceled</option>   
+    {{/if}}
+	</select>
+</div>
+
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>Subtotal:</div>
+  <div class='col-md-2'><input id='subtotal' type='text' class='form-control' value='{{subtotal}}'></div>
+
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>Tax:</div>
+  <div class='col-md-2'><input id='tax' type='text' class='form-control' value='{{tax}}'></div>
+
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>Total:</div>
+  <div class='col-md-2'><input id='amount' type='text' class='form-control' value='{{amount}}'></div>
+
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>Currency:</div>
+  <div class='col-md-2'>{{currency}}</div>
+
+</div>
+
+<div class='row voffset30'>
+  <div class='col-md-2'>
+  	<button id='edit-sale' class='btn btn-block btn-warning'>Edit Sale</button>
+  </div>
+  <div class='col-md-2'>
+  	<a href='/admin' class='btn btn-block btn-primary'>Come Back</a>
+  </div>
+
+</div>
+
+</template>

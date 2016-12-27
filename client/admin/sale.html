@@ -1,13 +1,15 @@
 <template name="sale">
 
-<div class='row'>
-
-  <div class='col-md-1'>#{{invoiceId}}</div>
-  <div class='col-md-2'>{{startCurrency}}{{amount}} {{endCurrency}} ({{startCurrency}}{{tax}} {{endCurrency}} tax)</div>
-  <div class='col-md-3'>{{email}}</div>
-  <div class='col-md-4'>{{date}}</div>
-  <div class='col-md-2'><button class='btn btn-danger delete-sale'>X</button></div>
-
-</div>
+<tr>
+	<td>#{{invoiceId}}</td>
+	<td>{{status}}</td>
+	<td>{{startCurrency}}{{amount}} {{endCurrency}} ({{startCurrency}}{{tax}} {{endCurrency}} tax)</td>
+	<td>{{email}}</td>
+	<td>{{formatedDate}}</td>
+	<td><a href='/sales/edit/{{_id}}' class='btn btn-block btn-warning'>Edit</a></td>
+	<td><a href='/generate_invoice?sale_id={{_id}}' class='btn btn-block btn-success get-invoice'>Get Invoice</a></td>
+	<td><button class='btn btn-block btn-primary send-invoice'>Send Receipt</button></td>
+	<td><button class='btn btn-danger delete-sale'>X</button></td>
+</tr>
 
 </template>

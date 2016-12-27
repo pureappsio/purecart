@@ -4,13 +4,104 @@
 	vertical-align: middle;
 }
 
+.section-selector {
+	cursor: pointer;
+}
+
+#card-number {
+	height: 45px;
+}
+
+#expiration-date {
+	height: 45px;
+}
+
+.main-col-cart {
+	min-height: 800px;
+    height: auto !important;
+}
+
+.main-col-confirm {
+	min-height: 800px;
+    height: auto !important;
+}
+
+.main-col-fail {
+	min-height: 600px;
+    height: auto !important;
+    height: 600px;
+}
+
+.edit-product {
+	margin: 10px;
+}
+
+.main-row-store {
+
+	margin: 10px;
+
+}
+
+.store-product {
+	margin-bottom: 25px;
+}
+
+.store-product-image {
+	border: 1px solid black;
+}
+
+.store-product-image-container {
+	margin-bottom: 10px;
+}
+
+.store-product-name {
+	text-align: center;
+	font-size: 28px;
+}
+
+.store-product-details {
+	margin: 5px;
+}
+
+.product-detail-title {
+	font-size: 30px;
+	margin: 0;
+	padding: 0;
+	margin-top: -10px;
+}	
+
+.product-detail-description {
+	text-align: justify;
+}	
+
+
+.product-detail-button {
+	margin-top: 20px;
+}
+
+.product-detail-price {
+	font-size: 24px;
+	font-weight: bold;
+}
+
 .col-centered {
   text-align: center;
+}
+
+.bt-drop-in-wrapper {
+  position: relative;
+  z-index: 1; 
 }
 
 .site-title {
   color: black;
   font-size: 20px;
+}
+
+.info-title {
+  margin-top: 30px;
+  color: black;
+  font-size: 24px;
 }
 
 .column-sort {
@@ -54,6 +145,10 @@
 	margin-top: 50px;
 }
 
+.voffset200 {
+	margin-top: 200px;
+}
+
 .voffset15 {
 	margin-top: 15px;
 }
@@ -62,10 +157,16 @@ body {
   font-size: 18px;
   margin: 0;
   padding: 0;
-  background-color: #EEEEEE;
+  overflow-x: hidden;
 }
 
 .main-row {
+	margin: 0;
+  	padding: 0;
+  	background-color: #EEEEEE;
+}
+
+.container-fluid {
 	margin: 0;
   	padding: 0;
 }
@@ -76,6 +177,11 @@ body {
 }
 
 #purchase {
+	font-weight: bold;
+	font-size: 28px;
+}
+
+#purchase-paypal {
 	font-weight: bold;
 	font-size: 28px;
 }
@@ -94,9 +200,28 @@ body {
   text-align: left;
 }
 
-.help-title {
-  text-align: right;
-  vertical-align: bottom;
+@media (min-width: 1024px ) {
+
+	.row-checkout-title { 
+	  position: relative;
+	}
+
+	.help-title {
+	  text-align: right;
+	  vertical-align: bottom;
+	  position: absolute;
+	  bottom: 20px;
+	  right: 0;
+	}
+
+}
+
+@media (max-width: 1024px ) {
+
+	.help-title {
+	  display: none;
+	}
+
 }
 
 .purchase-confirmed {
@@ -110,5 +235,14 @@ body {
 
 #product-id {
   display: none;
+}
+
+.admin-panel {
+	padding: 10px;
+	background-color: white;
+}
+
+.store-product-additional-container {
+	margin-top: 30px;
 }
 

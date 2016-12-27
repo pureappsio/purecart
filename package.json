@@ -5,7 +5,13 @@
     "start": "meteor run"
   },
   "dependencies": {
-    "bluebird": "^3.4.6",
-    "braintree": "^1.41.0"
+    "babel-runtime": "*",
+    "bcrypt": "*",
+    "bluebird": "*",
+    "braintree": "*",
+    "knox": "*",
+    "paypal-rest-sdk": "*",
+    "request": "*",
+    "sendgrid": "*"
   }
 }

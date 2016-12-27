@@ -1,12 +1,14 @@
 <template name="product">
 
-<div class='row'>
-
-  <div class='col-md-2'>{{_id}}</div>
-  <div class='col-md-4'>{{name}}</div>
-  <div class='col-md-1'>{{price.USD}}</div>
-  <div class='col-md-1'><button class='btn btn-danger delete-product'>X</button></div>
-
-</div>
+<tr>
+	<td>{{_id}}</td>
+	<td><a href='/products/details/{{_id}}'>{{name}} {{#if isBundle}}(Bundle){{/if}}</a></td>
+	<td>${{price.USD}}</td>
+	<td>{{sessions}}</td>
+	<td>{{sales}}</td>
+	<td>{{conversions}}%</td>
+	<td><a href='/products/edit/{{_id}}' class='btn btn-warning'>Edit</a></td>
+	<td><button class='btn btn-danger delete-product'>X</button></td>
+</tr>
 
 </template>

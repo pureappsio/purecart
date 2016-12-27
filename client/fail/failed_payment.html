@@ -1,6 +1,6 @@
 <template name="fail">
 
-<div class='row main-row'>
+<div class='row main-row main-row-fail'>
 
 <div class='col-md-2'></div>
 
@@ -18,7 +18,7 @@
 
   <div class='row voffset50'>
 
-    <div class='col-md-12 purchase-confirmed'>There was something wrong with your payment. Please contact us directly at: <a href='mailto:{{brandEmail}}'>{{brandEmail}}</a></div>
+    <div class='col-md-12 purchase-confirmed'>{{#if langEN}}There was something wrong with your payment. Please contact us directly at:{{else}}Il y a eu un problème pour finaliser votre paiement. Merci de nous contacter à:{{/if}} <a href='mailto:{{brandEmail}}'>{{brandEmail}}</a></div>
 
   </div>
   

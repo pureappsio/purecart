@@ -4,14 +4,27 @@
 
 <div class='admin-panel'>
 
-<h3>Admin</h3>
+<h2>Admin Panel</h2>
+
+<nav aria-label="...">
+  <ul class="pager">
+    <li><a class='section-selector' id="brand">Brand Details</a></li>
+    <li><a class='section-selector' id="payment">Payment Processor</a></li>
+    <li><a class='section-selector' id="products">Products</a></li>
+    <li><a class='section-selector' id="discounts">Discounts</a></li>
+    <li><a class='section-selector' id="sales">Sales</a></li>
+    <li><a class='section-selector' id="integrations">Integrations</a></li>
+  </ul>
+</nav>
+
+{{#if showSection 'brand'}}
 
 <h3>Brand Details</h3>
 
 <div class='row'>
 
   <div class='col-md-4'>
-    <input id='title-picture' type='text' class='form-control' placeholder="Title picture URL...">
+    <input id='title-picture' type='text' class='form-control' placeholder="Title picture URL..." value='{{getMeta "title"}}'>
   </div>
   <div class='col-md-3'>
     <button id='set-title' class='btn btn-block btn-primary'>Set Title Picture</button>
@@ -22,10 +35,10 @@
 <div class='row'>
 
   <div class='col-md-2'>
-    <input id='brand-name' type='text' class='form-control' placeholder="Brand name ...">
+    <input id='brand-name' type='text' class='form-control' placeholder="Brand name ..." value='{{getMeta "brandName"}}'>
   </div>
   <div class='col-md-2'>
-    <input id='brand-email' type='text' class='form-control' placeholder="Brand email...">
+    <input id='brand-email' type='text' class='form-control' placeholder="Brand email..." value='{{getMeta "brandEmail"}}'>
   </div>
   <div class='col-md-3'>
     <button id='set-brand-data' class='btn btn-block btn-primary'>Set Brand Data</button>
@@ -33,7 +46,52 @@
 
 </div>
 
+<div class='row'>
+
+  <div class='col-md-4'>
+    <input id='language' type='text' class='form-control' placeholder="Language ..." value='{{getMeta "language"}}'>
+  </div>
+  <div class='col-md-3'>
+    <button id='set-language' class='btn btn-block btn-primary'>Set Language</button>
+  </div>
+
+</div>
+
+{{/if}}
+
+{{#if showSection 'payment'}}
+
+<h3>Payment Processor</h3>
+
+<div class='row'>
+
+  <div class='col-md-2'>Payment processor:</div>
+  <div class='col-md-2'>
+    <select id='payment-type' class='form-control'>
+      <option value='paypal'>Paypal</option>
+      <option value='braintree'>Braintree Drop-In UI</option>
+      <option value='braintreehosted'>Braintree Hosted Fields</option>
+    </select>
+  </div>
+  <div class='col-md-3'>
+    <button id='set-payment' class='btn btn-block btn-primary'>Set Payment Processor</button>
+  </div>
+
+</div>
+
+{{/if}}
+
+{{#if showSection 'products'}}
+
 <h3>Add Product</h3>
+
+<!-- <div class='row'>
+
+  <div class='col-md-2'>
+    <button id='generate-short' class='btn btn-block btn-primary'>Generate Short Names</button>
+  </div>
+  
+</div> -->
 
 <div class='row'>
 
@@ -47,7 +105,14 @@
     <input id='product-price-eur' type='text' class='form-control' placeholder="Price EUR ...">
   </div>
   <div class='col-md-2'>
-  	<input id='product-url' type='text' class='form-control' placeholder="URL ...">
+    <select id='product-type' class='form-control'>
+      <option value='download'>Download</option>
+      <option value='api'>API</option>
+      <option value='service'>Service</option>
+    </select>
+  </div>
+  <div class='col-md-2' id='product-option'>
+  	
   </div>
   <div class='col-md-2'>
   	<button id='add-product' class='btn btn-block btn-primary'>Add Product</button>
@@ -55,34 +120,143 @@
 
 </div>
 
+<h3>Create Bundle</h3>
+
+<div class='row'>
+
+<div class='col-md-2'>
+    <input id='bundle-name' type='text' class='form-control' placeholder="Name ...">
+  </div>
+  <div class='col-md-2'>
+    <input id='bundle-price-usd' type='text' class='form-control' placeholder="Price USD ...">
+  </div>
+  <div class='col-md-2'>
+    <input id='bundle-price-eur' type='text' class='form-control' placeholder="Price EUR ...">
+  </div>
+  <div class='col-md-2'>
+    <select id='bundle-products' multiple></select>
+  </div>
+  <div class='col-md-2'></div>
+  <div class='col-md-2'>
+    <button id='add-bundle' class='btn btn-block btn-primary'>Create Bundle</button>
+  </div>
+
+</div>
+
 <h3>Products</h3>
 
-{{#each products}}
+<table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Sessions</th>
+        <th>Sales</th>
+        <th>Conversions</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
 
-  {{> product}}
+    {{#each products}}
 
-{{/each}}
+      {{> product}}
+
+    {{/each}}
+      
+    </tbody>
+  </table>
+
+{{/if}}
+
+{{#if showSection 'discounts'}}
+
+<h3>Create Discount</h3>
+
+<div class='row'>
+
+  <div class='col-md-3'>
+    <input id='discount-name' type='text' class='form-control' placeholder="Discount name ...">
+  </div>
+
+  <div class='col-md-3'>
+    <input id='discount-code' type='text' class='form-control' placeholder="Discount code ...">
+  </div>
+
+  <div class='col-md-3'>
+    <input id='discount-amount' type='text' class='form-control' placeholder="Amount ...">
+  </div>
+
+  <div class='col-md-1'>
+    <select id='discount-type' class='form-control'>
+      <option value='percent'>%</option>
+      <option value='amount'>$</option>
+    </select>
+  </div>
+
+  <div class='col-md-2'>
+    <button id='create-discount' class='btn-primary btn btn-block'>Create Discount</button> 
+  </div>
+
+</div>
+
+<h3>Discounts</h3>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Type</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    {{#each discounts}}
+
+      {{> discount}}
+
+      {{/each}}
+      
+    </tbody>
+  </table>
+
+{{/if}}
+
+{{#if showSection 'sales'}}
 
 <h3>Sales</h3>
 
-{{#each sales}}
+<table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Amount</th>
+        <th>Email</th>
+        <th>Date</th>
+        <th>Edit</th>
+        <th>Invoice</th>
+        <th>Receipt</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
 
-  {{> sale}}
+    {{#each sales}}
 
-{{/each}}
+      {{> sale}}
+
+      {{/each}}
+      
+    </tbody>
+  </table>
 
 <h3>Tax</h3>
-
-<!-- <div class='row'>
-
-  <div class='col-md-3'>
-    <input id='language' type='text' class='form-control' placeholder="Language ...">
-  </div>
-  <div class='col-md-3'>
-    <button id='set-language' class='btn btn-block btn-primary'>Set Language</button>
-  </div>
-
-</div> -->
 
 <div class='row'>
 
@@ -109,6 +283,75 @@
   </div>
 
 </div>
+
+{{/if}}
+
+{{#if showSection 'integrations'}}
+
+<h3>API Key</h3>
+
+<div class='row'>
+
+  <div class='col-md-3'>
+    <button id='generate-key' class='btn btn-block btn-primary'>Generate API Key</button>
+  </div>
+
+  <div class='col-md-3'>
+    <span id='api-key'>{{key}}</span>
+  </div>
+
+</div>
+
+<h3>Email List</h3>
+
+<div class='row'>
+
+  <div class='col-md-3'>
+    <select class='form-control' id='email-lists'></select>
+  </div>
+
+  <div class='col-md-3'>
+    <button id='set-list' class='btn btn-block btn-primary'>Connect to List</button>
+  </div>
+
+</div>
+
+<h3>Add Integration</h3>
+
+<div class='row'>
+
+  <div class='col-md-1'>Type: </div>
+
+  <div class='col-md-2'>
+    <select class='form-control' id='integration-type'>
+      <option value='purecourses'>PureCourses</option>
+      <option value='puremail'>PureMail</option>
+      <option value='puremetrics'>PureMetrics</option>
+      <option value='purepages'>PurePages</option>
+    </select>
+  </div>
+
+  <div class='col-md-1'>URL: </div>
+
+  <div class='col-md-3'><input class='form-control' id='integration-url'></div>
+
+  <div class='col-md-1'>Key: </div>
+
+  <div class='col-md-2'><input class='form-control' id='integration-key'></div>
+
+  <div class='col-md-2'>
+    <button id='add-integration' class='btn btn-block btn-primary'>Link</button>
+  </div>
+
+</div>
+
+<h3>Integrations</h3>
+
+{{#each integrations}}
+  {{> integration}}
+{{/each}}
+
+{{/if}}
 
 </div>
 

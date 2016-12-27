@@ -4,7 +4,7 @@
 
 <div class='col-md-2'></div>
 
-<div class='col-md-8 main-col'>
+<div class='col-md-8 main-col main-col-confirm'>
 
   <div class='row'>
 
@@ -16,17 +16,60 @@
 
   </div>
 
+  {{#if isSuccess}}
+
+  {{#if isDownload}}
+
   <div class='row voffset50'>
 
-    <div class='col-md-12 purchase-confirmed'>Thanks for your purchase! Please find below the link to download your product:</div>
+    <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! Please find below the link to download your purchase:{{else}}Merci pour votre achat! Vous trouverez votre lien de télechargement ci-dessous:{{/if}}</div>
 
   </div>
 
   <div class='row voffset50'>
 
-    <div class='col-md-12 download-link'><a href='{{productUrl}}'>{{productName}}</a></div>
+    {{#if isSingleDownload}}
+      {{#each downloads}}
+        {{> download}}
+      {{/each}}
+    {{else}}
+      {{#each bundledProducts}}
+        {{> bundledProduct}}
+      {{/each}}
+    {{/if}}
+  </div>
+
+  {{/if}}
+
+  {{#if isApi}}
+
+  <div class='row voffset50'>
+
+    <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! You will soon receive an email with the instructions to access your purchase on our learning space.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email pour accéder à votre achat sur notre espace d'apprentissage.{{/if}}</div>
 
   </div>
+
+  {{/if}}
+
+  {{#if isService}}
+
+  <div class='row voffset50'>
+
+    <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! Someone from our team will very soon get in touch with you to provide the service that you purchased.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email d'un membre de notre équipe.{{/if}}</div>
+
+  </div>
+
+  {{/if}}
+
+  {{else}}
+
+  <div class='row voffset50'>
+
+    <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Unauthorized{{else}}Accès non autorisé{{/if}}</div>
+
+  </div>
+
+  {{/if}} 
   
 </div>
 

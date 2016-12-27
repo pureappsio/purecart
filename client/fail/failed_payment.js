@@ -11,10 +11,18 @@ Template.fail.helpers({
 
 Template.fail.rendered = function() {
 
+	// Brand email
 	Meteor.call('getBrandEmail', function(err, data) {
 
 		Session.set('brandEmail', data);
 
 	});
+
+	// Get image
+	  Meteor.call('getTitle', function(err, url) {
+	  	Session.set('mainPicture', url);
+	  });
+
+    
 
 }

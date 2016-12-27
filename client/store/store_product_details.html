@@ -1,0 +1,61 @@
+<template name="storeProductDetails">
+
+<div class='row store-product-details'>
+
+	<div class='col-md-1'></div>
+
+	<div class='col-md-10'>
+
+	<div class='row'>
+
+		<div class='col-md-3'>
+		  <img class='img-responsive' src='{{mainPicture}}'>
+		</div>
+
+	</div>
+
+	<div class='row voffset30'>
+		
+		<div class='col-md-8'>
+		<div class='store-product-image-container'>
+
+			{{#if isVideo}}
+			<video class='store-product-image img-responsive' controls>
+				<source src="{{mainImageLink}}" type="video/mp4">
+			</video>
+			{{else}}
+			<img class='store-product-image img-responsive' src='{{mainImageLink}}'>
+			{{/if}}
+
+			{{#if areAdditionalImages}}
+
+			<div class='row store-product-additional-container'>
+				{{#each addImages}}
+					{{> addImageDisplay}}
+				{{/each}}
+			</div>	
+
+			{{/if}}
+
+		</div>
+	</div>
+
+	<div class='col-md-4'>
+		<div class='product-detail-title'>{{name}}</div>
+
+		<div class='product-detail-description'>{{{description}}}</div>
+
+		<div class='product-detail-price'>${{{price.USD}}}</div>
+
+		<div class='product-detail-button'>
+		  <button id='add-cart' class='btn btn-warning btn-lg btn-block'>ADD TO CART</button>
+		</div>
+	</div>
+
+	</div>
+		
+	</div>
+
+</div>
+
+</template>

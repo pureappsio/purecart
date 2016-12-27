@@ -1,0 +1,70 @@
+<template name="productData">
+
+<h3>Details for product: {{name}}</h3>
+
+<div class='row voffset30'>
+
+  <div class='col-md-2'>Name: </div>
+  <div class='col-md-2'>{{name}}</div>
+
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>Short name: </div>
+  <div class='col-md-2'>{{shortName}}</div>
+
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>Price USD: </div>
+  <div class='col-md-2'>{{price.USD}}</div>
+  
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>Price EUR: </div>
+  <div class='col-md-2'>{{price.EUR}}</div>
+  
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>Type: </div>
+  <div class='col-md-2'>{{type}}</div>
+  
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>URL: </div>
+  <div class='col-md-2'>{{url}}</div>
+  
+</div>
+
+<div class='row'>
+
+  <div class='col-md-2'>Integration ID: </div>
+  <div class='col-md-2'>{{integrationId}}</div>
+  
+</div>
+
+{{#if image}}
+<div class='row'>
+
+  <div class='col-md-4'><img class='img-responsive' src='{{imageLink}}'></div>
+  
+</div>
+{{/if}}
+
+<div class='row'>
+
+  <div class='col-md-2'>
+  	<a href='/admin' class='btn btn-block btn-primary'>Come Back</a>
+  </div>
+  
+</div>
+
+</template>

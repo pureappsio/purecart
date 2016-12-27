@@ -1,0 +1,73 @@
+<template name="cart">
+
+<div class='row main-row'>
+
+<div class='col-md-2'></div>
+
+<div class='col-md-8 main-col main-col-cart'>
+
+  <div class='row row-checkout-title'>
+
+    <div class='col-md-4'>
+      <img class='img-responsive' src='{{mainPicture}}'>
+    </div>
+
+<!--     <div class='col-md-6 help-title'>{{#if langEN}}Need help?{{else}}Besoin d'aide?{{/if}} {{brandEmail}}</div> -->
+
+  </div>
+
+  <div class='row voffset50'></div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{{#if langEN}}Item Name{{else}}Nom de l'Article{{/if}}</th>
+        <th>{{#if langEN}}Item Price{{else}}Prix Unitaire{{/if}}</th>
+        <th class='col-right'>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each products}}
+        {{> cartItem}}
+      {{/each}}
+    </tbody>
+  </table>
+
+  <div class='row voffset15'></div>
+
+  {{#if useTaxes}}
+  <div class='row'>
+
+    <div class='col-md-8'></div>
+    <div class='col-md-4 col-right'>{{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}</div>
+
+  </div>
+
+  {{/if}}
+
+  <div class='row'>
+
+    <div class='col-md-8'></div>
+    <div class='col-md-4 col-right'>Total: {{startCurrency}}{{total}} {{endCurrency}}</div>
+
+  </div>
+
+  <div class='row voffset30'>
+
+    <div class='col-md-3'></div>
+    <div class='col-md-3'>
+      <a href='/store' class='btn btn-lg btn-block btn-default'>Continue Shopping</a>
+    </div>
+    <div class='col-md-3'>
+      <button id='checkout' class='btn btn-lg btn-block btn-warning'>Checkout</button>
+    </div>
+
+  </div>
+
+</div>
+
+<div class='col-md-2'></div>
+
+</div>
+
+</template>
