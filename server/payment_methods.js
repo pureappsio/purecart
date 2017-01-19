@@ -333,7 +333,7 @@ Meteor.methods({
             // Put sale as failed
             saleData.success = false;
             saleData.date = new Date();
-            saleData.invoiceId = Sales.find({}).fetch().length + 1;
+            saleData.invoiceId = Sales.find({}).fetch().length + 1;            
 
             // Insert sale
             saleId = Sales.insert(saleData)
@@ -355,12 +355,25 @@ Meteor.methods({
         // Send notification
         Meteor.call('sendNotification', sale);
 
+        // Send tripwire
+        Meteor.call('sendTripwire', sale);
+
         // Enroll customer
         Meteor.call('enrollCustomer', sale);
 
         // Add to list
         Meteor.call('addToList', sale);
 
+    },
+
+    afterFailActions: function(sale) {
+
+        // Failed notification
+        Meteor.call('sendFailedNotification', sale);
+
+        // Recovery email
+        Meteor.call('sendRecoverEmail', sale);
     }
+    
 
 });

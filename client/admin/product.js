@@ -2,6 +2,17 @@ Template.product.events({
 
   'click .delete-product': function() {
   	Meteor.call('removeProduct', this._id);
+  },
+  'change .price': function() {
+
+    var data = {
+      price: {
+        'EUR': parseFloat($('#product-eur-' + this._id).val()),
+        'USD': parseFloat($('#product-usd-' + this._id).val())
+      }
+    }
+
+    Meteor.call('quickEditProduct', this._id, data);
   }
 
 });

@@ -78,9 +78,12 @@ Template.checkout.rendered = function() {
             console.log(err);
             Session.set('useTaxes', false);
             Session.set('currency', 'USD');
+            Session.set('countryCode', 'US');
+
         } else {
 
             var country_code = data.country_code;
+            Session.set('countryCode', country_code);
 
             Meteor.call('isEuropeanCustomer', country_code, function(err, data) {
 
@@ -321,6 +324,7 @@ Template.checkout.events({
             products.push(cart[i]._id);
         }
         saleData.products = products;
+        saleData.country = Session.get('countryCode');
 
         // Discount
         if (Session.get('usingDiscount')) {
@@ -404,6 +408,7 @@ function initializeBraintree(clientToken) {
                 products.push(cart[i]._id);
             }
             saleData.products = products;
+            saleData.country = Session.get('countryCode');
 
             if (Session.get('usingDiscount')) {
                 saleData.discount = Session.get('usingDiscount').amount / 100;
@@ -501,6 +506,7 @@ function initializeBraintreeHosted(clientToken) {
             }
             saleData.amount = parseFloat($('#total-price').text()).toFixed(2);
             saleData.currency = Session.get('currency');
+            saleData.country = Session.get('countryCode');
 
             // Register products
             var cart = Session.get('cart');

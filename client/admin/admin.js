@@ -1,4 +1,4 @@
-Template.admin.rendered = function() {
+Template.admin.onRendered(function() {
 
     // Default view
     if (!Session.get('view')) {
@@ -43,10 +43,28 @@ Template.admin.rendered = function() {
 
     });
 
-}
+});
 
 Template.admin.events({
 
+    'click #export-sales': function() {
+
+        // Get data
+        // var startDate = new Date($('#export-start-date').val());
+        // var endDate = new Date($('#export-end-date').val());
+
+        var option = $('#export-option :selected').val();
+        var currency = $('#export-currency :selected').val();
+
+        // Change URL
+        if (currency == 'sales') {
+            Router.go("/export_sales?option=" + option);
+        }
+        else {
+            Router.go("/export_sales?option=" + option + '&currency=' + currency);
+        }
+        
+    },
     'click #product-type, change #product-type': function() {
 
         // Get selection

@@ -2,9 +2,20 @@ Template.editProduct.onRendered(function() {
 
     // Init
     $('#summernote').summernote({ height: 350 });
+    $('#tripwire-text').summernote({ height: 200 });
 
-    if (this.data.description) {
-        $('#summernote').summernote('code', this.data.description);
+    if (this.data) {
+        if (this.data.description) {
+            $('#summernote').summernote('code', this.data.description);
+        }
+
+        if (this.data.tripwireText) {
+            $('#tripwire-text').summernote('code', this.data.tripwireText);
+        }
+
+        if (this.data.tripwireType) {
+            $('#use-tripwire').val(this.data.tripwireType);
+        }
     }
 
     // Set session to false
@@ -12,47 +23,62 @@ Template.editProduct.onRendered(function() {
     Session.set('mainMedia', false);
 
     // Get selection
-    var selection = this.data.type;
-    $('#product-option').empty();
+    if (this.data) {
+        var selection = this.data.type;
+        $('#product-option').empty();
 
-    // Get current product
-    var currentProduct = this.data;
+        // Get current product
+        var currentProduct = this.data;
 
-    // Delivery option
-    if (selection == 'api') {
+        // Delivery option
+        if (selection == 'api') {
 
-        Meteor.call('getIntegrations', function(err, data) {
+            Meteor.call('getIntegrations', function(err, data) {
 
-            // Select
-            $('#product-option').append("<select id='product-integration' class='form-control'></select>")
+                // Select
+                $('#product-option').append("<select id='product-integration' class='form-control'></select>")
 
-            // Integrations
-            for (i = 0; i < data.length; i++) {
-                $('#product-integration').append($('<option>', {
-                    value: data[i]._id,
-                    text: data[i].url
-                }));
+                // Integrations
+                for (i = 0; i < data.length; i++) {
+                    $('#product-integration').append($('<option>', {
+                        value: data[i]._id,
+                        text: data[i].url
+                    }));
+                }
+
+            });
+
+        }
+        if (selection == 'download') {
+
+            // Put URL option
+            $('#product-option').append("<input id='product-url' type='text' class='form-control' placeholder='URL ...''>")
+
+            // Fill if URL already exist
+            if (currentProduct.url) {
+                $('#product-url').val(currentProduct.url);
             }
 
-        });
-
-    }
-    if (selection == 'download') {
-
-        // Put URL option
-        $('#product-option').append("<input id='product-url' type='text' class='form-control' placeholder='URL ...''>")
-
-        // Fill if URL already exist
-        if (currentProduct.url) {
-            $('#product-url').val(currentProduct.url);
         }
-
     }
 
 });
 
 Template.editProduct.helpers({
 
+    // useTripwire: function() {
+
+    //     if (Session.get('useTripwire')) {
+
+    //         return true;
+
+    //     } else if (this.tripWire) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+
+    // },
     singleDownload: function() {
 
         if (this.bundledProducts) {
@@ -73,13 +99,27 @@ Template.editProduct.helpers({
         return Images.findOne(imageId).link();
     },
     elements: function() {
-        return Elements.find({productId: this._id})
+        return Elements.find({ productId: this._id })
     }
 
 });
 
 Template.editProduct.events({
 
+    'change #use-tripwire, click #use-tripwire': function() {
+
+        // Get value
+        var choice = $('#use-tripwire :selected').val();
+        console.log(choice);
+
+        // Set session
+        if (choice == 'email') {
+            $('#tripwire-text').show();
+        } else {
+            $('#tripwire-text').hide();
+        }
+
+    },
 
     'click #add-media': function() {
 
@@ -163,6 +203,17 @@ Template.editProduct.events({
 
         // Description
         product.description = $('#summernote').summernote('code');
+
+        // Tripwire
+        if ($('#use-tripwire :selected').val() == 'no') {
+            product.useTripwire = false;
+        }
+        else {
+            product.useTripwire = true;
+            product.tripwireType = $('#use-tripwire :selected').val();
+            product.tripwireText = $('#tripwire-text').summernote('code');
+            product.tripwireSubject = $('#tripwire-subject').val();
+        }
 
         // Add
         Meteor.call('editProduct', product)

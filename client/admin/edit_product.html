@@ -1,106 +1,99 @@
 <template name="editProduct">
-
-<div class='edit-product'>
-
-<h2>Editing Product {{name}}</h2>
-
-<h3>General Information</h3>
-
-<div class='row voffset30'>
-
-  <div class='col-md-2'>
-    <label for="product-name">Name</label>
-  	<input id='product-name' type='text' class='form-control' value="{{name}}">
-  </div>
-   <div class='col-md-2'>
-    <label for="short-name">Short Name</label>
-    <input id='short-name' type='text' class='form-control' value="{{shortName}}">
-  </div>
-  <div class='col-md-2'>
-    <label for="product-price-usd">Price USD</label>
-  	<input id='product-price-usd' type='text' class='form-control' value="{{price.USD}}">
-  </div>
-  <div class='col-md-2'>
-    <label for="product-price-eur">Price EUR</label>
-    <input id='product-price-eur' type='text' class='form-control' value="{{price.EUR}}">
-  </div>
-</div>
-
-<h3>Delivery</h3>
-
-{{#if singleDownload}}
-  <div class='row voffset30'>
-  <div class='col-md-2'>
-    <select id='product-type' class='form-control'>
-      <option value='download'>Download</option>
-      <option value='api'>API</option>
-    </select>
-  </div>
-  <div class='col-md-2' id='product-option'></div>
-  <div class='col-md-2'>
-
-    <select id='hide-store' class='form-control'>
-      <option value='show'>Show</option>
-      <option value='hide'>Hide</option>
-    </select>
-    
-  </div>
-</div>
-{{/if}}
-
-<h3>Description & Store Picture</h3>
-
-<div class='row voffset30'>
-
-  <div class='col-md-6'>
-    <div id='summernote'></div>
-  </div>
-
-  <div class='col-md-6'>
-    <div>{{> uploadForm imageId='thumb'}}</div>
-    {{#if image}}<div><img class='img-responsive' src='{{imageLink imageId}}'></div>{{/if}}
-  </div>
-
-</div>
-
-<h3>Add Main Media (optional)</h3>
-
-<div class='row voffset30'>
-
-  <div class='col-md-6'>
-    <div>{{> uploadForm imageId='mainMedia'}}</div>
-    {{#if mainMedia}}<div><img class='img-responsive' src='{{imageLink mainMedia}}'></div>{{/if}}
-  </div>
-
-</div>
-
-<h3>Add Additional Media (optional)</h3>
-
-<div class='row voffset30'>
-
-  <div class='col-md-3'>
-    <div>{{> uploadForm imageId='additionalMedia'}}</div>
-  </div>
-  <div class='col-md-3'>
-    <button id='add-media' class='btn btn-block btn-primary'>Add</button>
-  </div>
-
-</div>
-
-{{#each elements}} 
-  {{> addPicture}}
-{{/each}}
-
-<div class='row voffset30'>
-  <div class='col-md-2'>
-  	<button id='edit-product' class='btn btn-block btn-warning'>Edit Product</button>
-  </div>
-  <div class='col-md-2'>
-  	<a href='/admin' class='btn btn-block btn-primary'>Come Back</a>
-  </div>
-
-</div>
-
-</div>
-
+    <div class='edit-product'>
+        <h2>Editing Product {{name}}</h2>
+        <h3>General Information</h3>
+        <div class='row voffset30'>
+            <div class='col-md-2'>
+                <label for="product-name">Name</label>
+                <input id='product-name' type='text' class='form-control' value="{{name}}">
+            </div>
+            <div class='col-md-2'>
+                <label for="short-name">Short Name</label>
+                <input id='short-name' type='text' class='form-control' value="{{shortName}}">
+            </div>
+            <div class='col-md-2'>
+                <label for="product-price-usd">Price USD</label>
+                <input id='product-price-usd' type='text' class='form-control' value="{{price.USD}}">
+            </div>
+            <div class='col-md-2'>
+                <label for="product-price-eur">Price EUR</label>
+                <input id='product-price-eur' type='text' class='form-control' value="{{price.EUR}}">
+            </div>
+        </div>
+        <h3>Delivery</h3> {{#if singleDownload}}
+        <div class='row voffset30'>
+            <div class='col-md-2'>
+                <select id='product-type' class='form-control'>
+                    <option value='download'>Download</option>
+                    <option value='api'>API</option>
+                </select>
+            </div>
+            <div class='col-md-2' id='product-option'></div>
+            <div class='col-md-2'>
+                <select id='hide-store' class='form-control'>
+                    <option value='show'>Show</option>
+                    <option value='hide'>Hide</option>
+                </select>
+            </div>
+        </div>
+        {{/if}}
+        <h3>Description & Store Picture</h3>
+        <div class='row voffset30'>
+            <div class='col-md-6'>
+                <div id='summernote'></div>
+            </div>
+            <div class='col-md-6'>
+                <div>{{> uploadForm imageId='thumb'}}</div>
+                {{#if image}}
+                <div><img class='img-responsive' src='{{imageLink imageId}}'></div>{{/if}}
+            </div>
+        </div>
+        <h3>Add Main Media (optional)</h3>
+        <div class='row voffset30'>
+            <div class='col-md-6'>
+                <div>{{> uploadForm imageId='mainMedia'}}</div>
+                {{#if mainMedia}}
+                <div><img class='img-responsive' src='{{imageLink mainMedia}}'></div>{{/if}}
+            </div>
+        </div>
+        <h3>Add Additional Media (optional)</h3>
+        <div class='row voffset30'>
+            <div class='col-md-3'>
+                <div>{{> uploadForm imageId='additionalMedia'}}</div>
+            </div>
+            <div class='col-md-3'>
+                <button id='add-media' class='btn btn-block btn-primary'>Add</button>
+            </div>
+        </div>
+        {{#each elements}} {{> addPicture}} {{/each}}
+        <h3>TripWire Offer</h3>
+        <div class='row voffset30'>
+            <div class='col-md-3'>
+                <select class="form-control" id='use-tripwire'>
+                    <option value="no">No Tripwire</option>
+                    <option value="email">Email Tripwire</option>
+                    <option value="instant">Instant Tripwire</option>
+                </select>
+            </div>
+            <div class='col-md-6'>
+                <input id='tripwire-subject' class='form-control' value="{{tripwireSubject}}">
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-3'>
+            </div>
+            <div class='col-md-6'>
+                <div id='tripwire-text' class='summernote'></div>
+            </div>
+        </div>
+        <div class='row voffset30'>
+            <div class='col-md-2'></div>
+            <div class='col-md-4'>
+                <button id='edit-product' class='btn btn-block btn-warning'>Edit Product</button>
+            </div>
+            <div class='col-md-4'>
+                <a href='/admin' class='btn btn-block btn-primary'>Come Back</a>
+            </div>
+        </div>
+    </div>
 </template>

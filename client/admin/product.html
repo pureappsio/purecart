@@ -1,14 +1,19 @@
 <template name="product">
-
-<tr>
-	<td>{{_id}}</td>
-	<td><a href='/products/details/{{_id}}'>{{name}} {{#if isBundle}}(Bundle){{/if}}</a></td>
-	<td>${{price.USD}}</td>
-	<td>{{sessions}}</td>
-	<td>{{sales}}</td>
-	<td>{{conversions}}%</td>
-	<td><a href='/products/edit/{{_id}}' class='btn btn-warning'>Edit</a></td>
-	<td><button class='btn btn-danger delete-product'>X</button></td>
-</tr>
-
+    <tr>
+        <td>{{_id}}</td>
+        <td><a href='/products/edit/{{_id}}'>{{name}} {{#if isBundle}}(Bundle){{/if}}</a></td>
+        <td>
+            <input id='product-usd-{{_id}}' class='price form-control' value={{price.USD}}>
+        </td>
+        <td>
+            <input id='product-eur-{{_id}}' class='price form-control' value={{price.EUR}}>
+        </td>
+        <td>{{sessions}}</td>
+        <td>{{sales}}</td>
+        <td>{{conversions}}%</td>
+        <td>
+<!--             <button class='btn btn-warning edit-product'>Edit</button>
+ -->            <button class='btn btn-danger delete-product'>X</button>
+        </td>
+    </tr>
 </template>

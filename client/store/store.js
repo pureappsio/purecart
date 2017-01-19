@@ -13,7 +13,22 @@ Template.store.helpers({
 		return Session.get('mainPicture');
 	},
 	products: function() {
-		return Products.find({show: true});
+
+		var products = Products.find({show: true}, {sort: { _id : -1 }}).fetch();
+
+		var storeProductsRow = [];
+		groupIndex = 0;
+
+		for (i = 0; i < products.length; i + 3) {
+
+			storeProductsRow[groupIndex] = products.splice(i, i+3);
+			groupIndex++;
+
+		}
+
+		console.log(storeProductsRow);
+
+		return storeProductsRow;
 	}
 
 });

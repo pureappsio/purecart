@@ -4,6 +4,86 @@ const sendgrid = require('sendgrid')(Meteor.settings.sendGridAPIKey);
 
 Meteor.methods({
 
+    // exportSales: function() {
+
+    //     var sales = Sales.find({}).fetch();
+
+    //     console.log(sales);
+
+    //     // Prepare document
+    //     var doc = new PDFDocument({ size: 'A4', margin: 50 });
+    //     doc.fontSize(24);
+    //     doc.text('Sales', 10, 30);
+
+    //     doc.fontSize(18);
+
+    //     for (i = 0; i < sales.length; i++) {
+    //         doc.text(sales[i].amount, 10, 190 + 30 * i);
+    //     }
+
+    //     return doc;
+
+    // },
+    quickEditProduct(productId, data) {
+
+        console.log(data);
+
+        // Update
+        Products.update(productId, { $set: { price: data.price } });
+
+    },
+    sendTripwire: function(sale) {
+
+        // Go through all products
+        var products = sale.products;
+
+        for (i in products) {
+
+            // Get product info
+            var product = Products.findOne(products[i]);
+            console.log(product);
+
+            // Check for tripwire
+            if (product.tripwireType) {
+                if (product.tripwireType == 'email') {
+
+                    // Send tripwire to client
+                    var brandName = Meteor.call('getBrandName');
+                    var brandEmail = Meteor.call('getBrandEmail');
+
+                    // Build mail
+                    var helper = sendgridModule.mail;
+                    from_email = new helper.Email(brandEmail);
+                    to_email = new helper.Email(sale.email);
+                    subject = product.tripwireSubject;
+                    content = new helper.Content("text/html", product.tripwireText);
+                    mail = new helper.Mail(from_email, subject, to_email, content);
+                    mail.from_email.name = brandName;
+
+                    // Send 1 min later
+                    var sendDate = new Date();
+                    sendDate = new Date(sendDate.getTime() + 1 * 60 * 1000);
+                    console.log(sendDate);
+                    mail.setSendAt(moment(sendDate).unix());
+
+                    // Send
+                    var requestBody = mail.toJSON()
+                    var request = sendgrid.emptyRequest()
+                    request.method = 'POST'
+                    request.path = '/v3/mail/send'
+                    request.body = requestBody
+                    sendgrid.API(request, function(err, response) {
+                        if (response.statusCode != 202) {
+                            console.log('Tripwire sent');
+                        }
+                    });
+
+                }
+            }
+
+        }
+
+    },
     getSubscriberInfo: function(email) {
 
         // Check if email list is connected
@@ -69,7 +149,7 @@ Meteor.methods({
 
                 // Update
                 console.log('Sale origin: ' + origin);
-                Sales.update(sale._id, {$set: {origin: origin}});
+                Sales.update(sale._id, { $set: { origin: origin } });
 
             }
         }
@@ -119,11 +199,38 @@ Meteor.methods({
         Elements.insert(element);
 
     },
-    getCustomers: function() {
+    getCustomer: function(email) {
+
+        customer = {};
+
+        // All customers
+        var customers = Meteor.call('getCustomers', {});
+
+        // Find customer
+        for (i in customers) {
+            if (customers[i].email == email) {
+                customer = customers[i];
+            }
+        }
+
+        return customer;
+
+    },
+    getCustomers: function(query) {
 
         // Get all sales
-        var sales = Sales.find({ success: true }).fetch();
+        if (query.product) {
+            var sales = Sales.find({ 
+                success: true , 
+                products: { $in: [query.product]}
+            }).fetch();
+        }
+        else {
+            var sales = Sales.find({ success: true }).fetch();
+        }
 
+        console.log(sales.length);
+        
         var customers = [];
 
         for (i = 0; i < sales.length; i++) {
@@ -143,11 +250,14 @@ Meteor.methods({
                 var customer = customers[customerIndex];
                 customer.ltv += parseFloat(sales[i].amount);
 
-                for (p = 0; p < sales[i].products.length; p++) {
-                    if ((customer.products).indexOf(sales[i].products[p]) == -1) {
-                        customer.products.push(sales[i].products[p]);
+                if (customer.products) {
+                    for (p = 0; p < sales[i].products.length; p++) {
+                        if ((customer.products).indexOf(sales[i].products[p]) == -1) {
+                            customer.products.push(sales[i].products[p]);
+                        }
                     }
                 }
+
                 customers[customerIndex] = customer;
 
             } else {
@@ -176,6 +286,47 @@ Meteor.methods({
         Sessions.insert(session);
 
     },
+    sendFailedNotification: function(sale) {
+
+        console.log(Integrations.find({}).fetch());
+
+        // Look for metrics integration
+        if (Integrations.findOne({ type: 'puremetrics' })) {
+
+            // Get integration
+            var integration = Integrations.findOne({ type: 'puremetrics' });
+
+            // Refresh sale
+            sale = Sales.findOne(sale._id);
+
+            // Build message
+            var brandName = Meteor.call('getBrandName');
+            if (sale.currency == 'EUR') {
+                var message = 'Failed transaction on ' + brandName + ' for ' + sale.amount + ' €';
+            }
+            if (sale.currency == 'USD') {
+                var message = 'Failed transaction on ' + brandName + ' for $' + sale.amount;
+            }
+
+            // Send notification
+            parameters = {
+                type: 'failed',
+                message: message
+            };
+
+            // Add origin
+            if (sale.origin) {
+                parameters.origin = sale.origin;
+            }
+
+            console.log('Sending notification: ');
+            console.log(parameters);
+
+            HTTP.post('https://' + integration.url + '/api/notifications?key=' + integration.key, { params: parameters });
+
+        }
+
+    },
     sendNotification: function(sale) {
 
         console.log(Integrations.find({}).fetch());
@@ -198,14 +349,6 @@ Meteor.methods({
                 var message = 'New sale on ' + brandName + ' for $' + sale.amount;
             }
 
-            //   parameters = {
-            //   token: Meteor.settings.pushoverToken,
-            //   user: Meteor.settings.pushoverUser,
-            //   sound: 'cashregister',
-            //   message: message
-            // };
-            // HTTP.post('https://api.pushover.net/1/messages.json', {params: parameters});
-
             // Send notification
             parameters = {
                 type: 'sale',
@@ -216,7 +359,7 @@ Meteor.methods({
             if (sale.origin) {
                 parameters.origin = sale.origin;
             }
-            
+
             console.log('Sending notification: ');
             console.log(parameters);
 
@@ -429,7 +572,7 @@ Meteor.methods({
     },
     validateApiKey: function(key) {
 
-        var adminUser = Meteor.users.findOne({ apiKey: { $exists: true } });
+        var adminUser = Meteor.users.findOne({ role: 'admin', apiKey: { $exists: true } });
 
         if (adminUser.apiKey == key) {
             return true;
@@ -660,6 +803,7 @@ Meteor.methods({
             };
 
         }
+
 
         // Brand
         var brandName = Meteor.call('getBrandName');
