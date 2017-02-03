@@ -5,7 +5,11 @@ Template.admin.onRendered(function() {
         Session.set('view', 'brand');
     }
 
-    this.$('.datetimepicker').datetimepicker();
+    $('#datetimepicker').datetimepicker();
+
+    // // Init picker for payment
+    // $('#bundle-products').selectpicker();
+    // $('#bundle-products').selectpicker('refresh');
 
     Tracker.autorun(function() {
 
@@ -43,10 +47,22 @@ Template.admin.onRendered(function() {
 
     });
 
+
+
 });
 
 Template.admin.events({
 
+    'click #save-checkout-theme': function() {
+
+        var meta = {
+            type: 'checkoutTheme',
+            value: $('#checkout-theme :selected').val()
+        };
+
+        Meteor.call('insertMeta', meta);
+
+    },
     'click #export-sales': function() {
 
         // Get data
@@ -59,11 +75,10 @@ Template.admin.events({
         // Change URL
         if (currency == 'sales') {
             Router.go("/export_sales?option=" + option);
-        }
-        else {
+        } else {
             Router.go("/export_sales?option=" + option + '&currency=' + currency);
         }
-        
+
     },
     'click #product-type, change #product-type': function() {
 
@@ -73,18 +88,24 @@ Template.admin.events({
 
         if (selection == 'api') {
 
-            Meteor.call('getIntegrations', function(err, data) {
+            Meteor.call('getCourses', function(err, data) {
 
                 // Select
-                $('#product-option').append("<select id='product-integration' class='form-control'></select>")
+                $('#product-option').append("<select id='product-courses' class='form-control'></select>")
+
+                // Init picker
+                $('#product-courses').selectpicker();
 
                 // Integrations
                 for (i = 0; i < data.length; i++) {
-                    $('#product-integration').append($('<option>', {
+                    $('#product-courses').append($('<option>', {
                         value: data[i]._id,
-                        text: data[i].url
+                        text: data[i].name
                     }));
                 }
+
+                // Refresh picker
+                $('#product-courses').selectpicker('refresh');
 
             });
 
@@ -179,7 +200,7 @@ Template.admin.events({
         product.type = type;
 
         if (type == 'api') {
-            product.integrationId = $('#product-integration :selected').val();
+            product.courses = $('#product-courses').val();
         }
         if (type == 'download') {
             product.url = $('#product-url').val();
@@ -236,6 +257,11 @@ Template.admin.events({
             code: $('#discount-code').val(),
             amount: $('#discount-amount').val(),
             type: $('#discount-type :selected').val()
+        }
+
+        // Expiry date?
+        if ($('#discount-expiry-date').val() != "") {
+            discount.expiryDate = new Date($('#discount-expiry-date').val());
         }
 
         // Add

@@ -28,7 +28,7 @@ Template.product.helpers({
     }
   },
   sessions: function() {
-  	return Sessions.find({productId: this._id}).fetch().length;
+  	return Session.get('sessions-' + this._id);
   },
   sales: function() {
   	return Sales.find({

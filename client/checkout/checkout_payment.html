@@ -1,0 +1,223 @@
+<template name="checkoutPayment">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{#if langEN}}Item Name{{else}}Nom de l'Article{{/if}}</th>
+                <th class='col-right'>{{#if langEN}}Item Price{{else}}Prix Unitaire{{/if}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each products}} {{> checkoutItem}} {{/each}}
+        </tbody>
+    </table>
+    <div class='row voffset15'></div>
+    {{#if useTaxes}}
+    <div class='row'>
+        <div class='col-md-7'></div>
+        <div class='col-md-5 col-right'>{{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span> {{endCurrency}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-7'></div>
+        <div class='col-md-5 col-right'>{{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}</div>
+    </div>
+    {{/if}}
+    <div class='row'>
+        <div class='col-md-7'></div>
+        <div class='col-md-5 col-right'>Total: {{startCurrency}}{{total}} {{endCurrency}}</div>
+    </div>
+    <div class='row voffset30'>
+        {{#if isSimpleTheme}}
+        <div class='col-md-12'>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="discount-code">
+                        {{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}
+                    </label>
+                    <input class='form-control' type='text' id='discount-code'>
+                </div>
+                <button id='apply-discount' class='btn btn-primary'>{{#if langEN}}Apply{{else}}Appliquer{{/if}}</button>
+                <div class="form-group"><span id='discount-message'></span></div>
+            </form>
+        </div>
+        {{else}}
+        <div class='col-md-8'>
+            <input placeholder='{{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}' class='form-control' type='text' id='discount-code'>
+        </div>
+        <div class='col-md-4'>
+            <button id='apply-discount' class='btn btn-block btn-primary'>{{#if langEN}}Apply{{else}}Appliquer{{/if}}</button>
+        </div>
+        {{/if}}
+    </div>
+    <div class='row voffset30'>
+        <div class='col-md-12'>
+            <h2>{{#if langEN}}Contact Details{{else}}Informations Personelles{{/if}}</h2></div>
+    </div>
+    <form role="form">
+        <div class='row'>
+            <div class='col-md-12'>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input class='form-control input-lg' type='text' id='email'>
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label for="first-name">{{#if langEN}}First Name{{else}}Prénom{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='first-name'>
+                </div>
+            </div>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label for="last-name">{{#if langEN}}Last Name{{else}}Nom{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='last-name'>
+                </div>
+            </div>
+        </div>
+    </form>
+    {{#if paypalBraintree}}
+    <label class="radio-inline">
+        <input type="radio" class='radios-inline' name="inlineRadioOptions" id="paypal-option" value="option1" checked="checked"> <img class='img-radio' src='/paypal.png'>
+    </label>
+    <label class="radio-inline">
+        <input type="radio" class='radios-inline' name="inlineRadioOptions" id="card-option" value="option2"> <img class='img-radio' src='/cards.png'>
+    </label>
+    {{/if}} {{#if braintreePayment}}
+    <div class='row'>
+        <div class='col-md-12'>
+            <h2>{{#if langEN}}Payment Information{{else}}Informations de Paiement{{/if}}</h2></div>
+    </div>
+    {{/if}}
+    <form id='braintree-form'>
+        <div class='row'>
+            <div class='col-md-12'>
+                <div id="dropin"></div>
+            </div>
+        </div>
+        <div id='braintree-hosted'>
+            <div class='row'>
+                <div class='col-md-12'>
+                    <div class="form-group">
+                        <label for="card-number">{{#if langEN}}Card Number{{else}}Numéro de carte bancaire{{/if}}</label>
+                        <div id="card-number" class="form-control"></div>
+                    </div>
+                </div>
+            </div>
+            <div class='row'>
+                <div class='col-md-12'>
+                    <div class="form-group">
+                        <label for="expiration-date">{{#if langEN}}Expiration Date{{else}}Date d'expiration{{/if}}</label>
+                        <div id="expiration-date" class="form-control"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{#if dataIssue}}
+        <div class='row voffset15'>
+            <div class='col-md-3'></div>
+            <div class='col-md-6 bg-danger'>{{#if langEN}}Please verify your data.{{else}}Veuillez vérifier vos informations.{{/if}}</div>
+        </div>
+        {{/if}}
+        <div class='row voffset30'>
+            {{#if isSimpleTheme}}
+            <div class='col-md-3'></div>
+            <div class='col-md-3 col-xs-6 total-name'>Total:</div>
+            <div class='col-md-3 col-xs-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
+            {{else}}
+            <div class='col-md-1'></div>
+            <div class='col-md-5 col-xs-6 total-name'>Total:</div>
+            <div class='col-md-5 col-xs-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
+            {{/if}}
+        </div>
+        <div class='row'>
+            {{#if isSimpleTheme}}
+            <div class='col-md-3'></div>
+            <div class='col-md-6'>
+                {{#if braintreePayment}}
+                <button id='purchase' type="submit" class='btn btn-large btn-block btn-warning'>{{#if langEN}}BUY NOW!{{else}}Acheter !{{/if}}</button>
+                {{else}}
+                <button id='purchase-paypal' class='btn btn-large btn-block btn-warning'>{{#if langEN}}PAY WITH PAYPAL{{else}}Payer avec Paypal{{/if}}</button>
+                {{/if}}
+            </div>
+            {{else}}
+            <div class='col-md-1'></div>
+            <div class='col-md-10'>
+                {{#if braintreePayment}}
+                <button id='purchase' type="submit" class='btn btn-large btn-block btn-warning'>{{#if langEN}}BUY NOW!{{else}}Acheter !{{/if}}</button>
+                {{else}}
+                <button id='purchase-paypal' class='btn btn-large btn-block btn-warning'>{{#if langEN}}PAY WITH PAYPAL{{else}}Payer avec Paypal{{/if}}</button>
+                {{/if}}
+            </div>
+            {{/if}}
+        </div>
+    </form>
+    {{#if paymentStatus}}
+    <div class='row'>
+        <div class='col-md-3'></div>
+        <div class='col-md-6'>{{#if langEN}}Please wait ...{{else}}Veuillez patienter ...{{/if}}</div>
+    </div>
+    {{/if}}
+    <div class='row voffset15'>
+        {{#if isSimpleTheme}}
+        <div class='col-md-4'></div>
+        <div class='col-md-4'>
+            {{#if paypalBraintree}}
+            <img class='img-responsive' src='/payment_logos_small.png'> {{else}}
+            <img class='img-responsive' src='/payment_logos.png'> {{/if}}
+        </div>
+        {{else}}
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            {{#if paypalBraintree}}
+            <img class='img-responsive' src='/payment_logos_small.png'> {{else}}
+            <img class='img-responsive' src='/payment_logos.png'> {{/if}}
+        </div>
+        {{/if}}
+    </div>
+    {{#if isSimpleTheme}}
+    <div class='row voffset20'>
+        <div class='col-md-6'>
+            <div class='info-title'>
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{#if langEN}}30 Day Guarantee{{else}}Garantie 30 Jours{{/if}}
+            </div>
+            <div class='voffset15'>
+                {{#if langEN}}No question asked 30 day refund guaranteed. If you are unhappy for any reason, get your money back by simply sending us an email.{{else}} Si vous achetez un produit et n'êtes pas satisfait, envoyez nous un email sous 30 jours pour un remboursement intégral.{{/if}}
+            </div>
+        </div>
+        <div class='col-md-6'>
+            <div class='info-title'>
+                <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> {{#if langEN}}Secure Payment{{else}}Paiement Sécurisé{{/if}}
+            </div>
+            <div class='voffset15'>
+                {{#if langEN}}
+
+                {{#if paypalBraintree}}
+
+                 All orders are processed via Paypal or Braintree, which are very secure networks. Your payment information is never stored in any way on our servers.
+
+                {{else}}
+
+                  All orders are processed via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, which is a very secure network. Your payment information is never stored in any way on our servers.
+
+                {{/if}}
+
+                {{else}}
+
+                {{#if paypalBraintree}}
+
+                Toutes les commandes sont traitées via Paypal ou Braintree, qui est des partenaires très sécurisés. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs.
+
+                {{else}}
+
+                Toutes les commandes sont traitées via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, qui est un partenaire très sécurisé. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs.
+
+                {{/if}}
+
+                {{/if}}
+
+            </div>
+        </div>
+    </div>
+    {{/if}}
+</template>

@@ -1,0 +1,26 @@
+<template name="checkoutProductDetails">
+    <div class='row'>
+        <div class='col-md-12 sales-description-title'>{{description}}</div>
+    </div>
+    {{#each element in elements}}
+    <div class='row sales-description-element'>
+        <div class='col-md-1'>
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </div>
+        <div class='col-md-11'>
+            {{element.value}}
+        </div>
+    </div>
+    {{/each}}
+    <div class='row voffset20'>
+        <div class='col-md-6'>
+            <div class='info-title text-center'>
+                <span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{#if langEN}}30 Day Guarantee{{else}}Garantie 30 Jours{{/if}}
+            </div>
+        </div>
+        <div class='col-md-6'>
+            <div class='info-title text-center'>
+                <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> {{#if langEN}}Secure Payment{{else}}Paiement Sécurisé{{/if}}
+            </div>
+        </div>
+    </div>
+</template>

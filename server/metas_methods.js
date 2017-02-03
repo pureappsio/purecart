@@ -19,9 +19,6 @@ Meteor.methods({
 
         }
 
-        // Flush
-        Meteor.call('flushCache');
-
     }
 
 });

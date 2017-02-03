@@ -176,7 +176,15 @@ Meteor.methods({
         var items = [];
         for (i = 0; i < saleData.products.length; i++) {
 
+            // Get product
             product = Products.findOne(saleData.products[i]);
+
+            // Variant ?
+            if (saleData.variants[i] != null) {
+                variant = Variants.findOne(saleData.variants[i]);
+                product.price = variant.price;
+                product.name += ' (' + variant.name + ')';
+            }
 
             // Price
             if (saleData.discount) {

@@ -9,6 +9,7 @@
                 <li><a class='section-selector' id="products">Products</a></li>
                 <li><a class='section-selector' id="discounts">Discounts</a></li>
                 <li><a class='section-selector' id="sales">Sales</a></li>
+                <li><a class='section-selector' id="theme">Theme</a></li>
                 <li><a class='section-selector' id="integrations">Integrations</a></li>
             </ul>
         </nav>
@@ -50,6 +51,7 @@
                     <option value='paypal'>Paypal</option>
                     <option value='braintree'>Braintree Drop-In UI</option>
                     <option value='braintreehosted'>Braintree Hosted Fields</option>
+                    <option value='paypalbraintree'>Paypal & Braintree</option>
                 </select>
             </div>
             <div class='col-md-3'>
@@ -80,6 +82,7 @@
                     <option value='download'>Download</option>
                     <option value='api'>API</option>
                     <option value='service'>Service</option>
+                    <option value='validation'>Validation</option>
                 </select>
             </div>
             <div class='col-md-2' id='product-option'>
@@ -131,10 +134,10 @@
             <div class='col-md-3'>
                 <input id='discount-name' type='text' class='form-control' placeholder="Discount name ...">
             </div>
-            <div class='col-md-3'>
+            <div class='col-md-2'>
                 <input id='discount-code' type='text' class='form-control' placeholder="Discount code ...">
             </div>
-            <div class='col-md-3'>
+            <div class='col-md-2'>
                 <input id='discount-amount' type='text' class='form-control' placeholder="Amount ...">
             </div>
             <div class='col-md-1'>
@@ -142,6 +145,12 @@
                     <option value='percent'>%</option>
                     <option value='amount'>$</option>
                 </select>
+            </div>
+            <div class='col-md-2'>
+               <div class="input-group" id='datetimepicker'>
+                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                <input id='discount-expiry-date' class="set-due-date form-control" type="text" />
+            </div>
             </div>
             <div class='col-md-2'>
                 <button id='create-discount' class='btn-primary btn btn-block'>Create Discount</button>
@@ -155,6 +164,7 @@
                     <th>Name</th>
                     <th>Amount</th>
                     <th>Type</th>
+                    <th>Expiry</th>
                     <th>Delete</th>
                 </tr>
             </thead>
@@ -184,7 +194,7 @@
         </table>
         <h3>Tax</h3>
         <div class='row'>
-            <div class='col-md-3'>
+            <!-- <div class='col-md-3'>
                 <div class="input-group datetimepicker">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                     <input id='start-date' class="set-due-date form-control" type="text" />
@@ -195,7 +205,7 @@
                     <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                     <input id='end-date' class="set-due-date form-control" type="text" />
                 </div>
-            </div>
+            </div> -->
             <div class='col-md-3'>
                 <button id='get-vat' class='btn-primary btn btn-block'>Get VAT</button>
             </div>
@@ -234,6 +244,23 @@
             <div class='col-md-3'>
                 <button id='export-sales' class='btn-primary btn btn-block'>Export Sales</button>
             </div>
+        </div>
+        {{/if}} {{#if showSection 'theme'}}
+        <h3>Theme</h3>
+        <div class='row'>
+            <div class='col-md-2'>
+                Checkout Style
+            </div>
+            <div class='col-md-3'>
+                <select id='checkout-theme' class='form-control'>
+                    <option value='simple'>Simple</option>
+                    <option value='extended'>Extended</option>
+                </select>
+            </div>
+            <div class='col-md-3'>
+                <button id='save-checkout-theme' class='btn btn-block btn-primary'>Save Checkout Style</button>
+            </div>
+            <div class='col-md-3'>Theme: {{getMeta "checkoutTheme"}}</div>
         </div>
         {{/if}} {{#if showSection 'integrations'}}
         <h3>API Key</h3>

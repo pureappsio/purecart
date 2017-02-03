@@ -3,35 +3,18 @@ import sendgridModule from 'sendgrid';
 const sendgrid = require('sendgrid')(Meteor.settings.sendGridAPIKey);
 
 Meteor.methods({
+    
+    validateProduct: function(saleData) {
 
-    // exportSales: function() {
+        saleData.success = 'validation';
+        saleData.date = new Date();
+        saleData.invoiceId = Sales.find({}).fetch().length + 1;
 
-    //     var sales = Sales.find({}).fetch();
-
-    //     console.log(sales);
-
-    //     // Prepare document
-    //     var doc = new PDFDocument({ size: 'A4', margin: 50 });
-    //     doc.fontSize(24);
-    //     doc.text('Sales', 10, 30);
-
-    //     doc.fontSize(18);
-
-    //     for (i = 0; i < sales.length; i++) {
-    //         doc.text(sales[i].amount, 10, 190 + 30 * i);
-    //     }
-
-    //     return doc;
-
-    // },
-    quickEditProduct(productId, data) {
-
-        console.log(data);
-
-        // Update
-        Products.update(productId, { $set: { price: data.price } });
+        console.log(saleData);
+        Sales.insert(saleData);
 
     },
+    
     sendTripwire: function(sale) {
 
         // Go through all products
@@ -194,11 +177,7 @@ Meteor.methods({
 
     },
 
-    insertElement: function(element) {
-
-        Elements.insert(element);
-
-    },
+    
     getCustomer: function(email) {
 
         customer = {};
@@ -220,17 +199,16 @@ Meteor.methods({
 
         // Get all sales
         if (query.product) {
-            var sales = Sales.find({ 
-                success: true , 
-                products: { $in: [query.product]}
+            var sales = Sales.find({
+                success: true,
+                products: { $in: [query.product] }
             }).fetch();
-        }
-        else {
+        } else {
             var sales = Sales.find({ success: true }).fetch();
         }
 
         console.log(sales.length);
-        
+
         var customers = [];
 
         for (i = 0; i < sales.length; i++) {
@@ -370,51 +348,7 @@ Meteor.methods({
         }
 
     },
-    generateShortName: function(product) {
-
-        if (!(product.shortName)) {
-
-            // Get short name
-            var shortName = (product.name).toLowerCase();
-            shortName = shortName.replace(" ", "-");
-
-            // Update
-            Products.update(product._id, { $set: { shortName: shortName } });
-
-        }
-
-    },
-    generateShortNames: function() {
-
-        var products = Products.find({}).fetch();
-
-        for (i = 0; i < products.length; i++) {
-
-            Meteor.call('generateShortName', products[i]);
-
-        }
-
-    },
-    setPayment: function(paymentType) {
-
-        // Set
-        // Meteor.users.update({role: 'admin'}, { $set: { payment: paymentType } });
-        Meteor.call('insertMeta', { type: 'payment', value: paymentType });
-
-    },
-    getPayment: function() {
-
-        if (Metas.findOne({ type: 'payment' })) {
-            var payment = Metas.findOne({ type: 'payment' }).value;
-        } else {
-
-            // Default to paypal
-            var payment = 'paypal';
-        }
-
-        return payment;
-
-    },
+    
     sendRecoverEmail: function(sale) {
 
         // Check if email list is connected
@@ -490,148 +424,50 @@ Meteor.methods({
         }
 
     },
-    setList: function(list) {
-
-        // Update
-        Integrations.update({ type: 'puremail' }, { $set: { list: list } });
-
-    },
-    getEmailLists: function() {
-
-        // Get integration
-        if (Integrations.findOne({ type: 'puremail' })) {
-
-            var integration = Integrations.findOne({ type: 'puremail' });
-
-            // Get lists
-            var url = "http://" + integration.url + "/api/lists?key=" + integration.key;
-            var answer = HTTP.get(url);
-            return answer.data.lists;
-
-        } else {
-            return [];
-        }
-
-    },
-    editSale: function(sale) {
-
-        // Update
-        Sales.update(sale._id, {
-            $set: {
-                success: sale.success,
-                subtotal: sale.subtotal,
-                amount: sale.amount,
-                tax: sale.tax
-            }
-        });
-
-    },
-    getIntegrations: function() {
-
-        return Integrations.find({}).fetch();
-
-    },
-    addIntegration: function(data) {
-
-        // Insert
-        Integrations.insert(data);
-
-    },
-    removeIntegration: function(data) {
-
-        // Insert
-        Integrations.remove(data);
-
-    },
+    
     validateDiscount: function(discountCode) {
 
         if (Discounts.findOne({ code: discountCode })) {
 
             var discount = Discounts.findOne({ code: discountCode });
-            discount.valid = true;
-            return discount;
+
+            if (discount.expiryDate) {
+
+                // Check if expired 
+                var currentDate = new Date();
+                var expiryDate = new Date(discount.expiryDate);
+                if (currentDate.getTime() < expiryDate.getTime()) {
+                    discount.valid = true;
+                    return discount;
+                } else {
+                    return { valid: false };
+                }
+
+            } else {
+                discount.valid = true;
+                return discount;
+            }
 
         } else {
             return { valid: false };
         }
 
     },
-    removeDiscount: function(discountId) {
-
-        // Add
-        Discounts.remove(discountId);
-
-    },
-    createDiscount: function(discount) {
-
-        // Add
-        discountId = Discounts.insert(discount);
-
-        return discountId;
-
-    },
-    validateApiKey: function(key) {
-
-        var adminUser = Meteor.users.findOne({ role: 'admin', apiKey: { $exists: true } });
-
-        if (adminUser.apiKey == key) {
-            return true;
-        } else {
-            return false;
-        }
-
-    },
-    generateApiKey: function() {
-
-        // Check if key exist
-        if (!Meteor.user().apiKey) {
-
-            // Generate key
-            var key = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-            for (var i = 0; i < 16; i++) {
-                key += possible.charAt(Math.floor(Math.random() * possible.length));
-            }
-            console.log(key);
-
-            // Update user
-            Meteor.users.update(Meteor.user()._id, { $set: { apiKey: key } });
-        }
-
-    },
-
-    removeSale: function(saleId) {
-
-        Sales.remove(saleId);
-
-    },
-    removeProduct: function(productId) {
-
-        Products.remove(productId);
-
-    },
-    editProduct: function(product) {
-
-        console.log(product);
-
-        Products.update(product._id, product);
-
-    },
+    
     enrollCustomer: function(sale) {
 
         // Get product
         var product = Products.findOne(sale.products[0]);
 
         // If API type, create account & send email
-        if (product.integrationId) {
+        if (product.courses) {
 
             console.log('Enrolling customer');
 
             // Make request to create account
-            var integration = Integrations.findOne(product.integrationId);
+            var integration = Integrations.findOne({type: 'purecourses'});
             var url = "https://" + integration.url + "/api/users?key=" + integration.key;
-            var answer = HTTP.post(url, { data: { email: sale.email, product: product._id } });
+            var answer = HTTP.post(url, { data: { email: sale.email, courses: product.courses } });
             var userData = answer.data;
 
             if (userData.password) {
@@ -682,7 +518,7 @@ Meteor.methods({
             request.body = requestBody
             sendgrid.API(request, function(err, response) {
                 if (response.statusCode != 202) {
-                    console.log('Receipt sent');
+                    console.log('Enrollement email sent');
                 }
             });
 
@@ -706,11 +542,40 @@ Meteor.methods({
         // Get products
         var products = [];
         for (i = 0; i < sale.products.length; i++) {
-            products.push(Products.findOne(sale.products[i]));
+
+            var product = Products.findOne(sale.products[i]);
+            
+            if (sale.variants[i] != 'null') {
+                variant = Variants.findOne(sale.variants[i]);
+                product.name += ' (' + variant.name + ' )';
+                if (variant.url && product.url) {
+                    product.url = variant.url;
+                }
+                
+            }
+
+            products.push(product);
         }
 
-        console.log(sale);
-        console.log(products);
+        // console.log(sale);
+        // console.log(products);
+
+        // Email data
+        emailData = {
+            date: moment(new Date()).format("MMMM Do YYYY"),
+            payment_id: sale.invoiceId,
+            fullname: sale.firstName + " " + sale.lastName,
+            user_email: sale.email,
+            subtotal: subtotal,
+            tax: tax,
+            price: price
+        };
+
+        if (sale.method == 'paypal') {
+            emailData.method = 'Paypal';
+        } else {
+            emailData.method = 'Card';
+        }
 
         // Downloads
         if (products[0].url || products[0].type == 'download') {
@@ -725,17 +590,6 @@ Meteor.methods({
             SSR.compileTemplate('receiptEmail',
                 Assets.getText('receipt_email.html') + productsReceipt + Assets.getText('receipt_email_end.html')
             );
-
-            // Build data
-            emailData = {
-                payment_id: sale.invoiceId,
-                fullname: sale.firstName + " " + sale.lastName,
-                user_email: sale.email,
-                subtotal: subtotal,
-                tax: tax,
-                price: price
-            };
-
 
         }
 
@@ -753,35 +607,16 @@ Meteor.methods({
                 Assets.getText('receipt_email.html') + productsReceipt + Assets.getText('receipt_email_end_bundle.html')
             );
 
-            // Build data
-            emailData = {
-                payment_id: sale.invoiceId,
-                fullname: sale.firstName + " " + sale.lastName,
-                user_email: sale.email,
-                subtotal: subtotal,
-                tax: tax,
-                price: price
-            };
-
-
         }
 
         // API purchases
-        if (products[0].integrationId) {
+        if (products[0].type == 'api') {
 
             // Template
             SSR.compileTemplate('receiptEmail', Assets.getText('receipt_email_api.html'));
 
             // Build data
-            emailData = {
-                payment_id: sale.invoiceId,
-                fullname: sale.firstName + " " + sale.lastName,
-                user_email: sale.email,
-                product: products[0].name,
-                subtotal: subtotal,
-                tax: tax,
-                price: price
-            };
+            emailData.product = products[0].name
 
         }
 
@@ -792,29 +627,27 @@ Meteor.methods({
             SSR.compileTemplate('receiptEmail', Assets.getText('receipt_email_service.html'));
 
             // Build data
-            emailData = {
-                payment_id: sale.invoiceId,
-                fullname: sale.firstName + " " + sale.lastName,
-                user_email: sale.email,
-                product: products[0].name,
-                subtotal: subtotal,
-                tax: tax,
-                price: price
-            };
+            emailData.product = products[0].name
 
         }
-
 
         // Brand
         var brandName = Meteor.call('getBrandName');
         var brandEmail = Meteor.call('getBrandEmail');
 
+        emailData.brandName = brandName;
+        emailData.brandEmail = brandEmail;
+
+        // Create body
+        var emailText = SSR.render("receiptEmail", emailData);
+        emailText = '<div style="font-size: 16px;">' + emailText + '</div>';
+
         // Build mail
         var helper = sendgridModule.mail;
         from_email = new helper.Email(brandEmail);
         to_email = new helper.Email(sale.email);
-        subject = "Sales Receipt";
-        content = new helper.Content("text/html", SSR.render("receiptEmail", emailData));
+        subject = brandName + ": Sales Receipt #" + sale.invoiceId;
+        content = new helper.Content("text/html", emailText);
         mail = new helper.Mail(from_email, subject, to_email, content);
         mail.from_email.name = brandName;
 
@@ -831,62 +664,7 @@ Meteor.methods({
         });
 
     },
-    setLanguage: function(language) {
-
-        // Meteor.users.update(Meteor.user()._id, { $set: { language: language } });
-        Meteor.call('insertMeta', { type: 'language', value: language });
-
-    },
-    checkLanguage: function() {
-
-        if (Metas.findOne({ type: 'language' })) {
-            var language = Metas.findOne({ type: 'language' }).value;
-        } else {
-            var language = 'en';
-        }
-
-        return language;
-
-    },
-    setBrandData: function(name, email) {
-
-        Meteor.call('insertMeta', { type: 'brandName', value: name });
-
-        Meteor.call('insertMeta', { type: 'brandEmail', value: email });
-
-    },
-    getBrandName: function() {
-        return Metas.findOne({ type: 'brandName' }).value;
-    },
-    getBrandEmail: function() {
-        return Metas.findOne({ type: 'brandEmail' }).value;
-    },
-    setTitle: function(title) {
-
-        Meteor.call('insertMeta', { type: 'title', value: title });
-
-    },
-    getTitle: function() {
-
-        if (Metas.findOne({ type: 'title' })) {
-            var title = Metas.findOne({ type: 'title' }).value;
-        } else {
-            var title = 'Learn';
-        }
-
-        return title;
-
-    },
-    addProduct(product) {
-
-        // Add
-        var productId = Products.insert(product);
-
-        // Generate short name
-        var product = Products.findOne(productId);
-        Meteor.call('generateShortName', product);
-
-    },
+    
     isEuropeanCustomer: function(countryCode) {
 
         if (rates[countryCode]) {

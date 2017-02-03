@@ -26,6 +26,8 @@
                 <select id='product-type' class='form-control'>
                     <option value='download'>Download</option>
                     <option value='api'>API</option>
+                    <option value='service'>Service</option>
+                    <option value='validation'>Validation</option>
                 </select>
             </div>
             <div class='col-md-2' id='product-option'></div>
@@ -65,7 +67,22 @@
                 <button id='add-media' class='btn btn-block btn-primary'>Add</button>
             </div>
         </div>
-        {{#each elements}} {{> addPicture}} {{/each}}
+        {{#each mediaElements}} {{> addPicture}} {{/each}}
+        <h3>Sales Features</h3>
+        <div class='row voffset30'>
+            <div class='col-md-6'>
+                <input id='sales-description-title' class='form-control' value="{{salesDescriptionTitle}}">
+            </div>
+        </div>
+        <div class='row voffset30'>
+            <div class='col-md-6'>
+                <input id='sales-element-name' class='form-control'>
+            </div>
+            <div class='col-md-3'>
+                <button id='add-element' class='btn btn-block btn-warning'>Add Element</button>
+            </div>
+        </div>
+        {{#each salesElements}} {{> salesElement}} {{/each}}
         <h3>TripWire Offer</h3>
         <div class='row voffset30'>
             <div class='col-md-3'>
@@ -86,6 +103,34 @@
                 <div id='tripwire-text' class='summernote'></div>
             </div>
         </div>
+        <h3>Variants</h3>
+        <div class='row voffset30'>
+            <div class='col-md-3'>
+                <input id='variant-name' class='form-control' placeholder="Name ...">
+            </div>
+            <div class='col-md-3'>
+                <input id='variant-price-usd' class='form-control' placeholder="Price USD ...">
+            </div>
+            <div class='col-md-3'>
+                <input id='variant-price-eur' class='form-control' placeholder="Price EUR ...">
+            </div>
+            
+        </div>
+        <div class='row'>
+            <div class='col-md-3'>
+                <select id='variant-type' class='form-control'>
+                    <option value='download'>Download</option>
+                    <option value='api'>API</option>
+                    <option value='service'>Service</option>
+                    <option value='validation'>Validation</option>
+                </select>
+            </div>
+            <div class='col-md-3' id='variant-option'></div>
+            <div class='col-md-3'>
+                <button id='add-variant' class='btn btn-block btn-warning'>Add Variant</button>
+            </div>
+        </div>
+        {{#each variants}}{{> variant}}{{/each}}
         <div class='row voffset30'>
             <div class='col-md-2'></div>
             <div class='col-md-4'>

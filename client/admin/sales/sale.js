@@ -20,6 +20,9 @@ Template.sale.helpers({
     if (this.success == true) {
       return 'Paid';
     }
+    if (this.success == 'validation') {
+      return 'Validated';
+    }
     if (this.success == false) {
       return 'Canceled';
     }

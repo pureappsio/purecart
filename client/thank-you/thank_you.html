@@ -1,0 +1,17 @@
+<template name="thankYou">
+    <div class='row main-row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8 main-col main-col-confirm'>
+            <div class='row'>
+                <div class='col-md-4'>
+                    <img class='img-responsive' src='{{mainPicture}}'>
+                </div>
+                <div class='col-md-6 help-title'></div>
+            </div>
+            <div class='row voffset50'>
+                <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your interest in this product! Unfortunately, the product is not ready quite yet but we'll let you know when it is :) You have of course not be charged any money.{{else}}Merci pour votre intérêt pour ce produit! Malheuresement ce produit n'est pas encore disponible, mais vous recevrez automatiquement un message quand il sera disponible. Vous n'avez bien sur pas été débité pour cet achat.{{/if}}</div>
+            </div>
+        </div>
+        <div class='col-md-2'></div>
+    </div>
+</template>

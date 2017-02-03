@@ -10,8 +10,16 @@ Meteor.publish("userProducts", function () {
 	return Products.find({});
 });
 
+Meteor.publish("userVariants", function () {
+	return Variants.find({});
+});
+
 Meteor.publish("userDiscounts", function () {
 	return Discounts.find({});
+});
+
+Meteor.publish("userValidations", function () {
+	return Validations.find({});
 });
 
 Meteor.publish("userMetas", function () {

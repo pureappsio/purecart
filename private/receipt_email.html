@@ -8,9 +8,15 @@
 
 <body itemscope itemtype="http://schema.org/EmailMessage">
 
-  <p>Sales Receipt #{{payment_id}}</p>
+  <p><strong>Sales Receipt #{{payment_id}}</strong><br>
+  Date: {{date}}</p>
 
-  <p>{{fullname}}<br>
+  <p>{{brandName}}<br>
+  {{brandEmail}}</p>
+
+  <p>To: {{fullname}}<br>
   {{user_email}}</p>
+
+  <p>Payment Method: {{method}}</p>
 
   <p>Your purchase:</p>

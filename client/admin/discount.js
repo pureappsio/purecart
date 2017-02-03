@@ -5,3 +5,17 @@ Template.discount.events({
   }
 
 });
+
+Template.discount.helpers({
+
+  formatDate: function() {
+  	if (this.expiryDate) {
+  		return moment(this.expiryDate).format('MMMM Do YYYY, hh a');
+  	}
+  	else {
+  		return 'Valid';
+  	}
+  
+  }
+
+});

@@ -1,0 +1,12 @@
+<template name="variantDetails">
+    <h3>Variant: {{name}}</h3>
+    <div class='row'>
+        <div class='col-md-3'>
+        	<input id='sales-element-name' class='form-control' placeholder="Name ...">
+        </div>
+        <div class='col-md-3'>
+        	 <button id='add-sales-element' class='btn btn-block btn-warning'>Add Sales Element</button>
+        </div>
+    </div>
+    {{#each salesElements}} {{> salesElement}} {{/each}}
+</template>
