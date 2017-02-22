@@ -17,7 +17,7 @@
         <h3>Brand Details</h3>
         <div class='row'>
             <div class='col-md-4'>
-                <input id='title-picture' type='text' class='form-control' placeholder="Title picture URL..." value='{{getMeta "title"}}'>
+                {{> uploadForm imageId='titlePicture'}}
             </div>
             <div class='col-md-3'>
                 <button id='set-title' class='btn btn-block btn-primary'>Set Title Picture</button>
@@ -147,10 +147,10 @@
                 </select>
             </div>
             <div class='col-md-2'>
-               <div class="input-group" id='datetimepicker'>
-                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                <input id='discount-expiry-date' class="set-due-date form-control" type="text" />
-            </div>
+                <div class="input-group" id='datetimepicker'>
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                    <input id='discount-expiry-date' class="set-due-date form-control" type="text" />
+                </div>
             </div>
             <div class='col-md-2'>
                 <button id='create-discount' class='btn-primary btn btn-block'>Create Discount</button>
@@ -219,6 +219,7 @@
                 <select id='export-option' class='form-control'>
                     <option value='last-month'>Last Month</option>
                     <option value="three-months">Three Months</option>
+                    <option value='all'>All Time</option>
                 </select>
             </div>
             <!-- <div class='col-md-3'>

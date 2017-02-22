@@ -376,6 +376,8 @@ Meteor.methods({
 
     afterFailActions: function(sale) {
 
+        console.log('After failed sale actions ...');
+
         // Failed notification
         Meteor.call('sendFailedNotification', sale);
 

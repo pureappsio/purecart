@@ -78,10 +78,10 @@
     </form>
     {{#if paypalBraintree}}
     <label class="radio-inline">
-        <input type="radio" class='radios-inline' name="inlineRadioOptions" id="paypal-option" value="option1" checked="checked"> <img class='img-radio' src='/paypal.png'>
+        <input type="radio" class='radios-inline' name="inlineRadioOptions" id="paypal-option" value="option1" checked="checked"> <img height='32' class='img-radio' src='/paypal_ret.png'>
     </label>
     <label class="radio-inline">
-        <input type="radio" class='radios-inline' name="inlineRadioOptions" id="card-option" value="option2"> <img class='img-radio' src='/cards.png'>
+        <input type="radio" class='radios-inline' name="inlineRadioOptions" id="card-option" value="option2"> <img height='32' class='img-radio' src='/cards_ret.png'>
     </label>
     {{/if}} {{#if braintreePayment}}
     <div class='row'>
@@ -99,16 +99,22 @@
             <div class='row'>
                 <div class='col-md-12'>
                     <div class="form-group">
-                        <label for="card-number">{{#if langEN}}Card Number{{else}}Numéro de carte bancaire{{/if}}</label>
+                        <label class='control-label' for="card-number">{{#if langEN}}Card Number{{else}}Numéro de carte bancaire{{/if}}</label>
                         <div id="card-number" class="form-control"></div>
                     </div>
                 </div>
             </div>
             <div class='row'>
-                <div class='col-md-12'>
+                <div class='col-md-8'>
                     <div class="form-group">
-                        <label for="expiration-date">{{#if langEN}}Expiration Date{{else}}Date d'expiration{{/if}}</label>
+                        <label class='control-label' for="expiration-date">{{#if langEN}}Expiration Date{{else}}Date d'expiration{{/if}}</label>
                         <div id="expiration-date" class="form-control"></div>
+                    </div>
+                </div>
+                <div class='col-md-4'>
+                    <div class="form-group">
+                        <label class='control-label' for="expiration-date">{{#if langEN}}CVV{{else}}Code CVV{{/if}}</label>
+                        <div id="cvv" class="form-control"></div>
                     </div>
                 </div>
             </div>

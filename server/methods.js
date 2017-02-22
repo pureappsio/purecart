@@ -3,7 +3,7 @@ import sendgridModule from 'sendgrid';
 const sendgrid = require('sendgrid')(Meteor.settings.sendGridAPIKey);
 
 Meteor.methods({
-    
+
     validateProduct: function(saleData) {
 
         saleData.success = 'validation';
@@ -14,7 +14,7 @@ Meteor.methods({
         Sales.insert(saleData);
 
     },
-    
+
     sendTripwire: function(sale) {
 
         // Go through all products
@@ -177,7 +177,7 @@ Meteor.methods({
 
     },
 
-    
+
     getCustomer: function(email) {
 
         customer = {};
@@ -261,12 +261,13 @@ Meteor.methods({
     },
     insertSession: function(session) {
 
+        console.log(session);
         Sessions.insert(session);
 
     },
     sendFailedNotification: function(sale) {
 
-        console.log(Integrations.find({}).fetch());
+        // console.log(Integrations.find({}).fetch());
 
         // Look for metrics integration
         if (Integrations.findOne({ type: 'puremetrics' })) {
@@ -348,11 +349,11 @@ Meteor.methods({
         }
 
     },
-    
+
     sendRecoverEmail: function(sale) {
 
         // Check if email list is connected
-        if (sale && Integrations.findOne({ type: 'puremail', list: { $exists: true } })) {
+        if (sale) {
 
             console.log('Sending recovery email');
 
@@ -385,18 +386,32 @@ Meteor.methods({
             }
             text = SSR.render("recoverEmail", emailData);
 
-            // Integration
-            var integration = Integrations.findOne({ type: 'puremail', list: { $exists: true } });
+            var brandName = Meteor.call('getBrandName');
+            var brandEmail = Meteor.call('getBrandEmail');
 
-            // Send email
-            var url = "https://" + integration.url + "/api/mail?key=" + integration.key;
-            var answer = HTTP.post(url, {
-                data: {
-                    email: sale.email,
-                    listId: integration.list,
-                    date: date,
-                    subject: subject,
-                    text: text
+            // Build mail
+            var helper = sendgridModule.mail;
+            from_email = new helper.Email(brandEmail);
+            to_email = new helper.Email(sale.email);
+            subject = subject;
+            content = new helper.Content("text/html", text);
+            mail = new helper.Mail(from_email, subject, to_email, content);
+            mail.from_email.name = brandName;
+
+            // Send 1 hour later
+            var sendDate = new Date();
+            sendDate = new Date(sendDate.getTime() + 1 * 60 * 1000);
+            mail.setSendAt(moment(sendDate).unix());
+
+            // Send
+            var requestBody = mail.toJSON()
+            var request = sendgrid.emptyRequest()
+            request.method = 'POST'
+            request.path = '/v3/mail/send'
+            request.body = requestBody
+            sendgrid.API(request, function(err, response) {
+                if (response.statusCode != 202) {
+                    console.log('Recover email sent');
                 }
             });
 
@@ -424,7 +439,7 @@ Meteor.methods({
         }
 
     },
-    
+
     validateDiscount: function(discountCode) {
 
         if (Discounts.findOne({ code: discountCode })) {
@@ -453,74 +468,105 @@ Meteor.methods({
         }
 
     },
-    
     enrollCustomer: function(sale) {
 
-        // Get product
-        var product = Products.findOne(sale.products[0]);
+        // Get data
+        var brandName = Meteor.call('getBrandName');
+        var brandEmail = Meteor.call('getBrandEmail');
 
-        // If API type, create account & send email
-        if (product.courses) {
+        // Go through all products
+        for (p in sale.products) {
 
-            console.log('Enrolling customer');
+            // Get product
+            var product = Products.findOne(sale.products[p]);
 
-            // Make request to create account
-            var integration = Integrations.findOne({type: 'purecourses'});
-            var url = "https://" + integration.url + "/api/users?key=" + integration.key;
-            var answer = HTTP.post(url, { data: { email: sale.email, courses: product.courses } });
-            var userData = answer.data;
+            // If API type, create account & send email
+            if (product.courses) {
 
-            if (userData.password) {
+                console.log('Enrolling customer');
 
-                // Template
-                SSR.compileTemplate('accessEmail', Assets.getText('access_email_new.html'));
+                // Check for variants
+                if (sale.variants[p] != null) {
 
-                // Get data
-                emailData = {
-                    email: sale.email,
-                    url: integration.url,
-                    password: userData.password,
-                    product: product.name
-                };
+                    // Get variant
+                    var variant = Variants.findOne(sale.variants[p]);
+                    productName = product.name + ' (' + variant.name + ' )';
 
-            } else {
+                    var enrollData = { email: sale.email, courses: variant.courses };
+                    if (variant.modules) {
+                        enrollData.modules = variant.modules;
+                    }
+                    if (variant.bonuses) {
+                        enrollData.bonuses = variant.bonuses;
+                    }
 
-                // Template
-                SSR.compileTemplate('accessEmail', Assets.getText('access_email_update.html'));
+                    // Make request to create account
+                    var integration = Integrations.findOne({ type: 'purecourses' });
+                    var url = "https://" + integration.url + "/api/users?key=" + integration.key;
+                    var answer = HTTP.post(url, { data: enrollData });
+                    var userData = answer.data;
 
-                // Get data
-                emailData = {
-                    email: sale.email,
-                    url: integration.url,
-                    product: product.name
-                };
+                } else {
+
+                    productName = product.name;
+
+                    // Make request to create account
+                    var integration = Integrations.findOne({ type: 'purecourses' });
+                    var url = "https://" + integration.url + "/api/users?key=" + integration.key;
+                    var answer = HTTP.post(url, { data: { email: sale.email, courses: product.courses } });
+                    var userData = answer.data;
+
+                }
+
+                if (userData.password) {
+
+                    // Template
+                    SSR.compileTemplate('accessEmail', Assets.getText('access_email_new.html'));
+
+                    // Get data
+                    emailData = {
+                        email: sale.email,
+                        url: integration.url,
+                        password: userData.password,
+                        product: productName
+                    };
+
+                } else {
+
+                    // Template
+                    SSR.compileTemplate('accessEmail', Assets.getText('access_email_update.html'));
+
+                    // Get data
+                    emailData = {
+                        email: sale.email,
+                        url: integration.url,
+                        product: productName
+                    };
+
+                }
+
+                // Build mail
+                var helper = sendgridModule.mail;
+                from_email = new helper.Email(brandEmail);
+                to_email = new helper.Email(sale.email);
+                subject = "How to Access Your Purchase";
+                content = new helper.Content("text/html", SSR.render("accessEmail", emailData));
+                mail = new helper.Mail(from_email, subject, to_email, content);
+                mail.from_email.name = brandName;
+
+                // Send
+                var requestBody = mail.toJSON()
+                var request = sendgrid.emptyRequest()
+                request.method = 'POST'
+                request.path = '/v3/mail/send'
+                request.body = requestBody
+                sendgrid.API(request, function(err, response) {
+                    if (response.statusCode != 202) {
+                        console.log('Enrollement email sent');
+                    }
+                });
 
             }
-
-            // Send email
-            var brandName = Meteor.call('getBrandName');
-            var brandEmail = Meteor.call('getBrandEmail');
-
-            // Build mail
-            var helper = sendgridModule.mail;
-            from_email = new helper.Email(brandEmail);
-            to_email = new helper.Email(sale.email);
-            subject = "How to Access Your Purchase";
-            content = new helper.Content("text/html", SSR.render("accessEmail", emailData));
-            mail = new helper.Mail(from_email, subject, to_email, content);
-            mail.from_email.name = brandName;
-
-            // Send
-            var requestBody = mail.toJSON()
-            var request = sendgrid.emptyRequest()
-            request.method = 'POST'
-            request.path = '/v3/mail/send'
-            request.body = requestBody
-            sendgrid.API(request, function(err, response) {
-                if (response.statusCode != 202) {
-                    console.log('Enrollement email sent');
-                }
-            });
 
         }
 
@@ -544,14 +590,14 @@ Meteor.methods({
         for (i = 0; i < sale.products.length; i++) {
 
             var product = Products.findOne(sale.products[i]);
-            
-            if (sale.variants[i] != 'null') {
+
+            if (sale.variants[i] != null) {
                 variant = Variants.findOne(sale.variants[i]);
                 product.name += ' (' + variant.name + ' )';
                 if (variant.url && product.url) {
                     product.url = variant.url;
                 }
-                
+
             }
 
             products.push(product);
@@ -664,7 +710,7 @@ Meteor.methods({
         });
 
     },
-    
+
     isEuropeanCustomer: function(countryCode) {
 
         if (rates[countryCode]) {

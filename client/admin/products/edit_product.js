@@ -176,6 +176,14 @@ Template.editProduct.events({
 
         if (type == 'api') {
             variant.courses = $('#variant-courses :selected').val();
+            if ($('#variant-modules').val() != null) {
+                variant.modules = $('#variant-modules').val();
+
+            }
+            if ($('#variant-bonuses').val() != null) {
+                variant.bonuses = $('#variant-bonuses').val();
+
+            }
         }
         if (type == 'download') {
             variant.url = $('#variant-url').val();
@@ -312,6 +320,50 @@ Template.editProduct.events({
             }
 
         }
+
+    },
+    'click #variant-courses, change #variant-courses': function() {
+
+        var selectedCourse = $('#variant-courses :selected').val();
+        console.log(selectedCourse);
+
+        Meteor.call('getModules', selectedCourse, function(err, data) {
+
+            // Init picker
+            $('#variant-modules').empty();
+            $('#variant-modules').selectpicker();
+
+            // Integrations
+            for (i = 0; i < data.length; i++) {
+                $('#variant-modules').append($('<option>', {
+                    value: data[i]._id,
+                    text: data[i].name
+                }));
+            }
+
+            // Refresh picker
+            $('#variant-modules').selectpicker('refresh');
+
+        });
+
+        Meteor.call('getBonuses', selectedCourse, function(err, data) {
+
+            // Init picker
+            $('#variant-bonuses').empty();
+            $('#variant-bonuses').selectpicker();
+
+            // Integrations
+            for (i = 0; i < data.length; i++) {
+                $('#variant-bonuses').append($('<option>', {
+                    value: data[i]._id,
+                    text: data[i].name
+                }));
+            }
+
+            // Refresh picker
+            $('#variant-bonuses').selectpicker('refresh');
+
+        });
 
     },
     'click #variant-type, change #variant-type': function() {

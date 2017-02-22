@@ -25,6 +25,11 @@ Meteor.methods({
         Elements.insert(element);
 
     },
+    deleteElement: function(elementId) {
+
+        Elements.remove(elementId);
+
+    },
     generateShortName: function(product) {
 
         if (!(product.shortName)) {
@@ -105,6 +110,47 @@ Meteor.methods({
             var answer = HTTP.get(url);
             // console.log(answer.data.courses);
             return answer.data.courses;
+
+        } else {
+            return [];
+        }
+
+    },
+    getModules: function(courseId) {
+
+        console.log('Grabbing modules');
+
+        // Get integration
+        if (Integrations.findOne({ type: 'purecourses' })) {
+
+            var integration = Integrations.findOne({ type: 'purecourses' });
+
+            // Get lists
+            var url = "http://" + integration.url + "/api/modules?key=" + integration.key;
+            url += '&course=' + courseId;
+            var answer = HTTP.get(url);
+            //console.log(answer.data.modules);
+            return answer.data.modules;
+
+        } else {
+            return [];
+        }
+
+    },
+    getBonuses: function(courseId) {
+
+        // Get integration
+        if (Integrations.findOne({ type: 'purecourses' })) {
+
+            var integration = Integrations.findOne({ type: 'purecourses' });
+
+            // Get lists
+            var url = "http://" + integration.url + "/api/bonuses?key=" + integration.key;
+            url += '&course=' + courseId;
+            console.log(url);
+            var answer = HTTP.get(url);
+            // console.log(answer.data.courses);
+            return answer.data.bonuses;
 
         } else {
             return [];
@@ -236,18 +282,17 @@ Meteor.methods({
     },
     setTitle: function(title) {
 
-        Meteor.call('insertMeta', { type: 'title', value: title });
+        Meteor.call('insertMeta', { type: 'titlePicture', value: title });
 
     },
     getTitle: function() {
 
-        if (Metas.findOne({ type: 'title' })) {
-            var title = Metas.findOne({ type: 'title' }).value;
-        } else {
-            var title = 'Learn';
+        if (Metas.findOne({ type: 'titlePicture' })) {
+            var pictureId = Metas.findOne({ type: 'titlePicture' }).value;
+            return Images.findOne(pictureId).link();
+        } else if (Metas.findOne({ type: 'title' })) {
+            return Metas.findOne({ type: 'title' }).value;
         }
-
-        return title;
 
     },
     addProduct(product) {

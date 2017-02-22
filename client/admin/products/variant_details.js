@@ -12,6 +12,7 @@ Template.variantDetails.events({
 
         var element = {
 
+            order: parseInt($('#sales-element-order').val()),
             type: 'salesElement',
             value: $('#sales-element-name').val(),
             variantId: this._id

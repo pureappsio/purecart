@@ -24,7 +24,8 @@ Template.uploadForm.events({
             var upload = Images.insert({
                 file: e.currentTarget.files[0],
                 streams: 'dynamic',
-                chunkSize: 'dynamic'
+                chunkSize: 'dynamic',
+                transport: 'http'
             }, false);
 
             upload.on('start', function() {

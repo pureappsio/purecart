@@ -8,21 +8,6 @@ Template.checkoutPayment.rendered = function() {
     // Reset status of payment
     Session.set('paymentStatus', false);
 
-    // Count visits
-    var products = Session.get('cart');
-
-    for (i = 0; i < products.length; i++) {
-
-        session = {
-            date: new Date(),
-            productId: products[i]._id,
-            type: 'checkout'
-        };
-
-        Meteor.call('insertSession', session);
-
-    }
-
     // Check language
     Meteor.call('checkLanguage', function(err, data) {
 
@@ -84,10 +69,43 @@ Template.checkoutPayment.rendered = function() {
             Session.set('currency', 'USD');
             Session.set('countryCode', 'US');
 
+            // Count visits
+            var products = Session.get('cart');
+
+            for (i = 0; i < products.length; i++) {
+
+                session = {
+                    date: new Date(),
+                    productId: products[i]._id,
+                    type: 'checkout',
+                    country: 'US'
+                };
+
+                Meteor.call('insertSession', session);
+
+            }
+
+
         } else {
 
             var country_code = data.country_code;
             Session.set('countryCode', country_code);
+
+            // Count visits
+            var products = Session.get('cart');
+
+            for (i = 0; i < products.length; i++) {
+
+                session = {
+                    date: new Date(),
+                    productId: products[i]._id,
+                    type: 'checkout',
+                    country: country_code
+                };
+
+                Meteor.call('insertSession', session);
+
+            }
 
             Meteor.call('isEuropeanCustomer', country_code, function(err, data) {
 
@@ -383,57 +401,176 @@ function initializeBraintree(clientToken) {
 function initializeBraintreeHosted(clientToken) {
     if (isBraintreeInitialized) return;
 
-    braintree.setup(clientToken, 'custom', {
-        id: 'braintree-form',
-        hostedFields: {
-            number: {
-                selector: "#card-number",
-                placeholder: "4111 1111 1111 1111"
-            },
-            expirationDate: {
-                selector: "#expiration-date",
-                placeholder: "08/19"
-            },
-            styles: {
-                // Style all elements
-                'input': {
-                    'font-size': '18px'
-                }
-            }
-        },
-        onPaymentMethodReceived: function(response) {
+    var form = document.querySelector('#braintree-form');
 
-            // Payment status
-            Session.set('paymentFormStatus', true);
-
-            // Create sale data
-            saleData = createSalesData('braintree');
-            saleData.nonce = response.nonce;
-
-            if (saleData.email != "" && saleData.lastName != "" && saleData.firstName != "") {
-
-                Session.set('dataIssue', false);
-
-                if (Session.get('cart')[0].type == 'validation') {
-                    Meteor.call('validateProduct', saleData, function(err, data) {
-                        window.location = '/thank-you';
-                    });
-                } else {
-                    Meteor.call('purchaseProduct', saleData, function(err, sale) {
-                        Session.set('paymentFormStatus', null);
-                        if (sale.success == true) {
-                            Router.go("/purchase_confirmation?sale_id=" + sale._id);
-                        }
-                        if (sale.success == false) {
-                            Router.go("/failed_payment?sale_id=" + sale._id);
-                        }
-
-                    });
-                }
-
-            }
+    braintree.client.create({
+        authorization: clientToken
+    }, function(err, clientInstance) {
+        if (err) {
+            console.error(err);
+            return;
         }
+        createHostedFields(clientInstance);
     });
+
+    function createHostedFields(clientInstance) {
+        braintree.hostedFields.create({
+            client: clientInstance,
+            styles: {
+                'input': {
+                    'font-size': '16px',
+                    'color': '#3a3a3a'
+                },
+                ':focus': {
+                    'color': 'black'
+                }
+            },
+            fields: {
+                number: {
+                    selector: '#card-number',
+                    placeholder: '4111 1111 1111 1111'
+                },
+                cvv: {
+                    selector: '#cvv',
+                    placeholder: '123'
+                },
+                expirationDate: {
+                    selector: '#expiration-date',
+                    placeholder: 'MM/YYYY'
+                }
+            }
+        }, function(err, hostedFieldsInstance) {
+
+            hostedFieldsInstance.on('validityChange', function(event) {
+                var field = event.fields[event.emittedBy];
+
+                if (field.isValid) {
+                    if (event.emittedBy === 'expirationMonth' || event.emittedBy === 'expirationYear') {
+                        if (!event.fields.expirationMonth.isValid || !event.fields.expirationYear.isValid) {
+                            return;
+                        }
+                    } else if (event.emittedBy === 'number') {
+                        $('#card-number').next('span').text('');
+                    }
+
+                    // Apply styling for a valid field
+                    $(field.container).parents('.form-group').addClass('has-success');
+                    $(field.container).parents('.form-group').addClass('has-feedback');
+                } else if (field.isPotentiallyValid) {
+                    // Remove styling  from potentially valid fields
+                    $(field.container).parents('.form-group').removeClass('has-warning');
+                    $(field.container).parents('.form-group').removeClass('has-success');
+                    if (event.emittedBy === 'number') {
+                        $('#card-number').next('span').text('');
+                    }
+                } else {
+                    // Add styling to invalid fields
+                    $(field.container).parents('.form-group').addClass('has-warning');
+                    // Add helper text for an invalid card number
+                    if (event.emittedBy === 'number') {
+                        $('#card-number').next('span').text('Looks like this card number has an error.');
+                    }
+                }
+            });
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                // console.log('Submited');
+
+                hostedFieldsInstance.tokenize(function(tokenizeErr, payload) {
+
+                    if (tokenizeErr) {
+                        console.error(tokenizeErr);
+                        return;
+                    }
+
+                    // If this was a real integration, this is where you would
+                    // send the nonce to your server.
+                    // console.log('Got a nonce: ' + payload.nonce);
+
+                    // Payment status
+                    Session.set('paymentFormStatus', true);
+
+                    // Create sale data
+                    saleData = createSalesData('braintree');
+                    saleData.nonce = payload.nonce;
+
+                    // console.log(saleData);
+
+                    if (saleData.email != "" && saleData.lastName != "" && saleData.firstName != "") {
+
+                        Session.set('dataIssue', false);
+                        $('#purchase').addClass('disabled');
+
+                        if (Session.get('cart')[0].type == 'validation') {
+                            Meteor.call('validateProduct', saleData, function(err, data) {
+                                window.location = '/thank-you';
+                            });
+                        } else {
+                            Meteor.call('purchaseProduct', saleData, function(err, sale) {
+                                Session.set('paymentFormStatus', null);
+                                if (sale.success == true) {
+                                    Router.go("/purchase_confirmation?sale_id=" + sale._id);
+                                }
+                                if (sale.success == false) {
+                                    Router.go("/failed_payment?sale_id=" + sale._id);
+                                }
+
+                            });
+                        }
+
+                    }
+
+
+                });
+
+                // hostedFieldsInstance.teardown(function() {
+                //     createHostedFields(clientInstance);
+                //     form.removeEventListener('submit', teardown, false);
+                // });
+            }, false);
+
+        });
+
+    }
+
+    // braintree.setup(clientToken, 'custom', {
+    //     id: 'braintree-form',
+    //     hostedFields: {
+    //         number: {
+    //             selector: "#card-number",
+    //             placeholder: "4111 1111 1111 1111"
+    //         },
+    //         expirationDate: {
+    //             selector: "#expiration-date",
+    //             placeholder: "08/19"
+    //         },
+    //         cvv: {
+    //             selector: "#cvv",
+    //             placeholder: "111"
+    //         },
+    //         styles: {
+    //             // Style all elements
+    //             'input': {
+    //                 'font-size': '18px'
+    //             }
+    //         }
+    //     },
+    //     onPaymentMethodReceived: function(response) {
+
+    //         // Payment status
+    //         Session.set('paymentFormStatus', true);
+
+    //         // Create sale data
+    //         saleData = createSalesData('braintree');
+    //         saleData.nonce = response.nonce;
+
+    //         console.log(saleData);
+
+
+    //     }
+    // });
 
     isBraintreeInitialized = true;
 }
@@ -486,11 +623,10 @@ function createSalesData(paymentProcessor) {
 
         if (cart[i].variantId) {
             variants.push(cart[i].variantId);
-        }
-        else {
+        } else {
             variants.push(null);
         }
-        
+
     }
     saleData.products = products;
     saleData.variants = variants;

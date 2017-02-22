@@ -232,7 +232,7 @@ Template.admin.events({
     'click #set-title': function() {
 
         // Add
-        Meteor.call('setTitle', $('#title-picture').val());
+        Meteor.call('setTitle', Session.get('titlePicture'));
 
     },
     'click #set-language': function() {
