@@ -15,6 +15,58 @@ Meteor.methods({
 
     },
 
+    sendFeedback: function(sale) {
+
+        // Go through all products
+        var products = sale.products;
+
+        for (i in products) {
+
+            // Get product info
+            var product = Products.findOne(products[i]);
+            console.log('Sending feedback for product ' + product.name);
+
+            // Check for tripwire
+            if (product.useFeedback) {
+                if (product.useFeedback == 'yes') {
+
+                    // Send tripwire to client
+                    var brandName = Meteor.call('getBrandName');
+                    var brandEmail = Meteor.call('getBrandEmail');
+
+                    // Build mail
+                    var helper = sendgridModule.mail;
+                    from_email = new helper.Email(brandEmail);
+                    to_email = new helper.Email(sale.email);
+                    subject = product.feedbackSubject;
+                    content = new helper.Content("text/html", product.feedbackText);
+                    mail = new helper.Mail(from_email, subject, to_email, content);
+                    mail.from_email.name = brandName;
+
+                    // Send 7 days later
+                    var sendDate = new Date();
+                    sendDate = new Date(sendDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+                    mail.setSendAt(moment(sendDate).unix());
+
+                    // Send
+                    var requestBody = mail.toJSON()
+                    var request = sendgrid.emptyRequest()
+                    request.method = 'POST'
+                    request.path = '/v3/mail/send'
+                    request.body = requestBody
+                    sendgrid.API(request, function(err, response) {
+                        if (response.statusCode != 202) {
+                            console.log('Feedback sent');
+                        }
+                    });
+
+                }
+            }
+
+        }
+
+    },
+
     sendTripwire: function(sale) {
 
         // Go through all products

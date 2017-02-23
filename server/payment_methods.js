@@ -366,6 +366,9 @@ Meteor.methods({
         // Send tripwire
         Meteor.call('sendTripwire', sale);
 
+        // Send feedback
+        Meteor.call('sendFeedback', sale);
+
         // Enroll customer
         Meteor.call('enrollCustomer', sale);
 

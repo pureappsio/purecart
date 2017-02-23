@@ -7,10 +7,6 @@ Template.admin.onRendered(function() {
 
     $('#datetimepicker').datetimepicker();
 
-    // // Init picker for payment
-    // $('#bundle-products').selectpicker();
-    // $('#bundle-products').selectpicker('refresh');
-
     Tracker.autorun(function() {
 
         // Init picker
@@ -247,6 +243,12 @@ Template.admin.events({
         Meteor.call('insertMeta', { type: 'brandName', value: $('#brand-name').val() });
         Meteor.call('insertMeta', { type: 'brandEmail', value: $('#brand-email').val() });
         // Meteor.call('setBrandData', $('#brand-name').val(), $('#brand-email').val());
+
+    },
+    'click #set-pixel': function() {
+
+        // Add
+        Meteor.call('insertMeta', { type: 'pixel', value: $('#facebook-pixel').val() });
 
     },
     'click #create-discount': function() {

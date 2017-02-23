@@ -1,8 +1,9 @@
 Template.editProduct.onRendered(function() {
 
     // Init
-    $('#summernote').summernote({ height: 350 });
-    $('#tripwire-text').summernote({ height: 200 });
+    $('#summernote').summernote({ height: 150 });
+    $('#tripwire-text').summernote({ height: 150 });
+    $('#feedback-text').summernote({ height: 150 });
 
     if (this.data) {
         if (this.data.description) {
@@ -15,6 +16,14 @@ Template.editProduct.onRendered(function() {
 
         if (this.data.tripwireType) {
             $('#use-tripwire').val(this.data.tripwireType);
+        }
+
+        if (this.data.feedbackText) {
+            $('#feedback-text').summernote('code', this.data.feedbackText);
+        }
+
+        if (this.data.useFeedback) {
+            $('#use-feedback').val(this.data.useFeedback);
         }
     }
 
@@ -269,6 +278,15 @@ Template.editProduct.events({
             product.tripwireType = $('#use-tripwire :selected').val();
             product.tripwireText = $('#tripwire-text').summernote('code');
             product.tripwireSubject = $('#tripwire-subject').val();
+        }
+
+        // Feedback
+        if ($('#use-feedback :selected').val() == 'no') {
+            product.useFeedback = $('#use-feedback :selected').val();
+        } else {
+            product.useFeedback = $('#use-feedback :selected').val();
+            product.feedbackText = $('#feedback-text').summernote('code');
+            product.feedbackSubject = $('#feedback-subject').val();
         }
 
         // Add
