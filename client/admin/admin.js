@@ -49,6 +49,38 @@ Template.admin.onRendered(function() {
 
 Template.admin.events({
 
+    'keyup #store-street': function() {
+
+        Meteor.call('insertMeta', {
+            type: 'storeStreet',
+            value: $('#store-street').val()
+        });
+
+    },
+    'keyup #store-zip': function() {
+
+        Meteor.call('insertMeta', {
+            type: 'storeZip',
+            value: $('#store-zip').val()
+        });
+
+    },
+    'keyup #store-country': function() {
+
+        Meteor.call('insertMeta', {
+            type: 'storeCountry',
+            value: $('#store-country').val()
+        });
+
+    },
+    'keyup #store-city': function() {
+
+        Meteor.call('insertMeta', {
+            type: 'storeCity',
+            value: $('#store-city').val()
+        });
+
+    },
     'click #save-checkout-theme': function() {
 
         var meta = {
@@ -58,6 +90,24 @@ Template.admin.events({
 
         Meteor.call('insertMeta', meta);
 
+    },
+    'click #save-home-page': function() {
+
+         var meta = {
+            type: 'homePage',
+            value: $('#home-page :selected').val()
+        };
+
+        Meteor.call('insertMeta', meta);
+
+    },
+    'click #save-articles-line': function() {
+         var meta = {
+            type: 'articlesLine',
+            value: parseInt($('#articles-line :selected').val())
+        };
+
+        Meteor.call('insertMeta', meta);
     },
     'click #export-sales': function() {
 

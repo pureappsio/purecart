@@ -1,13 +1,30 @@
 Template.storeProductDetails.helpers({
+
     mainImageLink: function() {
-        if (this.mainMedia) {
+
+        if (Session.get('selectedPicture')) {
+            return Images.findOne(Session.get('selectedPicture')).link();
+        }
+        else if (Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' })) {
+            var pictureId = Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' }).imageId;
+            return Images.findOne(pictureId).link();
+        } else if (this.mainMedia) {
             return Images.findOne(this.mainMedia).link();
         } else if (this.imageId) {
             return Images.findOne(this.imageId).link();
         }
     },
     imageLink: function(imageId) {
-      return Images.findOne(imageId).link();
+        return Images.findOne(imageId).link();
+    },
+    soldOut: function() {
+
+        if (this.type == 'physical') {
+            if (this.qty == 0) {
+                return true;
+            }
+        }
+
     },
     isVideo: function() {
         if (this.mainMedia) {
@@ -25,15 +42,14 @@ Template.storeProductDetails.helpers({
         return Session.get('mainPicture');
     },
     areAdditionalImages: function() {
-      if (Elements.findOne({productId: this._id})) {
-        return true;
-      }
-      else {
-        return false;
-      }
+        if (Elements.findOne({ productId: this._id })) {
+            return true;
+        } else {
+            return false;
+        }
     },
     addImages: function() {
-        return Elements.find({productId: this._id});
+        return Elements.find({ productId: this._id });
     }
 });
 

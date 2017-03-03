@@ -12,6 +12,17 @@ Template.sale.events({
 
 Template.sale.helpers({
 
+    mobileSale: function() {
+
+        if (this.browser) {
+
+            if (this.browser == 'mobile') {
+                return true;
+            }
+
+        }
+
+    },
     locationStyle: function() {
 
         if (this.country) {

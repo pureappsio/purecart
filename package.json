@@ -8,10 +8,16 @@
     "babel-runtime": "*",
     "bcrypt": "*",
     "bluebird": "*",
+    "bootstrap": "^4.0.0-alpha.6",
     "braintree": "*",
+    "braintree-web": "^3.9.0",
+    "jquery-ui": "^1.12.1",
     "knox": "*",
+    "meteor-node-stubs": "^0.2.5",
     "paypal-rest-sdk": "*",
     "request": "*",
-    "sendgrid": "*"
+    "sendgrid": "*",
+    "tether": "^1.4.0",
+    "tinymce": "^4.5.4"
   }
 }

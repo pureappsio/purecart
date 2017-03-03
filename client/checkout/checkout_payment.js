@@ -1,5 +1,6 @@
 Session.set('paymentFormStatus', null);
 var isBraintreeInitialized = false;
+var braintree = require('braintree-web');
 
 Template.checkoutPayment.rendered = function() {
 
@@ -74,6 +75,8 @@ Template.checkoutPayment.rendered = function() {
 
             for (i = 0; i < products.length; i++) {
 
+
+
                 session = {
                     date: new Date(),
                     productId: products[i]._id,
@@ -95,6 +98,11 @@ Template.checkoutPayment.rendered = function() {
             var products = Session.get('cart');
 
             for (i = 0; i < products.length; i++) {
+
+                // Check for physical products
+                if (products[i].type == 'physical') {
+                    Session.set('physicalProduct', true);
+                }
 
                 session = {
                     date: new Date(),
@@ -134,6 +142,13 @@ Template.checkoutPayment.rendered = function() {
 
 Template.checkoutPayment.helpers({
 
+    isPhysicalProduct: function() {
+
+        if (Session.get('physicalProduct')) {
+            return true;
+        }
+
+    },
     isSimpleTheme: function() {
 
         if (Metas.findOne({ type: 'checkoutTheme' })) {
@@ -474,9 +489,8 @@ function initializeBraintreeHosted(clientToken) {
             });
 
             form.addEventListener('submit', function(event) {
-                event.preventDefault();
 
-                // console.log('Submited');
+                event.preventDefault();
 
                 hostedFieldsInstance.tokenize(function(tokenizeErr, payload) {
 
@@ -525,52 +539,11 @@ function initializeBraintreeHosted(clientToken) {
 
                 });
 
-                // hostedFieldsInstance.teardown(function() {
-                //     createHostedFields(clientInstance);
-                //     form.removeEventListener('submit', teardown, false);
-                // });
             }, false);
 
         });
 
     }
-
-    // braintree.setup(clientToken, 'custom', {
-    //     id: 'braintree-form',
-    //     hostedFields: {
-    //         number: {
-    //             selector: "#card-number",
-    //             placeholder: "4111 1111 1111 1111"
-    //         },
-    //         expirationDate: {
-    //             selector: "#expiration-date",
-    //             placeholder: "08/19"
-    //         },
-    //         cvv: {
-    //             selector: "#cvv",
-    //             placeholder: "111"
-    //         },
-    //         styles: {
-    //             // Style all elements
-    //             'input': {
-    //                 'font-size': '18px'
-    //             }
-    //         }
-    //     },
-    //     onPaymentMethodReceived: function(response) {
-
-    //         // Payment status
-    //         Session.set('paymentFormStatus', true);
-
-    //         // Create sale data
-    //         saleData = createSalesData('braintree');
-    //         saleData.nonce = response.nonce;
-
-    //         console.log(saleData);
-
-
-    //     }
-    // });
 
     isBraintreeInitialized = true;
 }
@@ -584,19 +557,18 @@ function createSalesData(paymentProcessor) {
         email: $('#email').val()
     }
 
+    // Physical product?
+    if (Session.get('physicalProduct')) {
+        saleData.shipStreet = $('#ship-address').val(),
+        saleData.shipZip = $('#ship-zip').val(),
+        saleData.shipCity = $('#ship-city').val(),
+        saleData.shipCountry = $('#ship-country').val(),
+        saleData.shipPhone = $('#phone').val()
+    }
+
     saleData.method = paymentProcessor;
 
-    if (saleData.email == "") {
-
-        Session.set('dataIssue', true);
-
-    }
-    if (saleData.lastName == "") {
-
-        Session.set('dataIssue', true);
-
-    }
-    if (saleData.firstName == "") {
+    if (saleData.email == "" || saleData.lastName == "" || saleData.firstName == "") {
 
         Session.set('dataIssue', true);
 
@@ -630,6 +602,13 @@ function createSalesData(paymentProcessor) {
     }
     saleData.products = products;
     saleData.variants = variants;
+
+    // Mobile or Desktop
+    if (/Mobi/.test(navigator.userAgent)) {
+        saleData.browser = 'mobile';
+    } else {
+        saleData.browser = 'desktop';
+    }
 
     if (Session.get('usingDiscount')) {
         saleData.discount = Session.get('usingDiscount').amount / 100;

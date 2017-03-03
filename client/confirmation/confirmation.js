@@ -9,6 +9,14 @@ Template.confirmation.rendered = function() {
 
 Template.confirmation.helpers({
 
+    isPhysical: function() {
+        var product = Products.findOne(this.products[0]);
+        if (product.type == 'physical') {
+            return true;
+        } else {
+            return false;
+        }
+    },
     bundledProducts: function() {
         var product = Products.findOne(this.products[0]);
         var answer = [];
@@ -75,9 +83,9 @@ Template.confirmation.helpers({
 
     },
     mainPicture: function() {
-        return Session.get('mainPicture');
-    }
-    // productName: function() {
+            return Session.get('mainPicture');
+        }
+        // productName: function() {
 
     //     var product = Products.findOne(this.products[0]);
     //     var productName = product.name;

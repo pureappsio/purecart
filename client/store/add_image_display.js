@@ -5,3 +5,11 @@ Template.addImageDisplay.helpers({
     } 
 
 });
+
+Template.addImageDisplay.events({
+
+    'click .store-product-image': function() {
+        Session.set('selectedPicture', this.imageId);
+    } 
+
+});

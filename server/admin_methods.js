@@ -1,5 +1,20 @@
 Meteor.methods({
 
+    modifyStock: function(productId, increment) {
+
+        console.log(productId);
+
+        // Check if it exists
+        if (!Products.findOne({ _id: productId, qty: { $exists: true } })) {
+
+            Products.update(productId, { $set: { 'qty': 0 } });
+
+        }
+
+        // Update
+        Products.update(productId, { $inc: { 'qty': increment } });
+
+    },
     insertVariant: function(variant) {
 
         console.log(variant);
@@ -21,6 +36,12 @@ Meteor.methods({
 
     },
     insertElement: function(element) {
+
+        // Order
+        var elements = Elements.find({ type: element.type, productId: element.productId }).fetch();
+        element.order = elements.length + 1;
+
+        console.log(element);
 
         Elements.insert(element);
 
@@ -246,8 +267,18 @@ Meteor.methods({
     editProduct: function(product) {
 
         console.log(product);
-
         Products.update(product._id, product);
+
+        // If physical, create/update on shipwire
+        var product = Products.findOne(product._id);
+
+        // if (product.shipwireId) {
+
+        //     Meteor.call('updateShipwireProduct', product);
+        // } else {
+        //     var shipwireId = Meteor.call('createShipwireProduct', product);
+        //     Products.update(product._id, { $set: { shipwireId: shipwireId } });
+        // }
 
     },
     setLanguage: function(language) {

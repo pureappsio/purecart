@@ -29,14 +29,12 @@
         {{#if isSimpleTheme}}
         <div class='col-md-12'>
             <form class="form-inline">
-                <div class="form-group">
-                    <label for="discount-code">
-                        {{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}
-                    </label>
-                    <input class='form-control' type='text' id='discount-code'>
-                </div>
+                <label class=' mb-2 mr-sm-2 mb-sm-0' for="discount-code">
+                    {{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}
+                </label>
+                <input class='form-control  mb-2 mr-sm-2 mb-sm-0' type='text' id='discount-code'>
                 <button id='apply-discount' class='btn btn-primary'>{{#if langEN}}Apply{{else}}Appliquer{{/if}}</button>
-                <div class="form-group"><span id='discount-message'></span></div>
+                <span id='discount-message'></span>
             </form>
         </div>
         {{else}}
@@ -75,6 +73,44 @@
                 </div>
             </div>
         </div>
+        {{#if isPhysicalProduct}}
+        <div class='row'>
+            <div class='col-md-12'>
+                <div class="form-group">
+                    <label for="street-address">{{#if langEN}}Street Address{{else}}Adresse{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-address'>
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label for="zip">{{#if langEN}}ZIP Code{{else}}Code Postal{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-zip'>
+                </div>
+            </div>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label for="city">{{#if langEN}}City{{else}}Ville{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-city'>
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label for="country">{{#if langEN}}Country{{else}}Pays{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-country'>
+                </div>
+            </div>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label for="phone">{{#if langEN}}Phone Number{{else}}Numéro de Téléphone{{/if}}</label>
+                    <input class='form-control input-lg' type='tel' id='phone'>
+                </div>
+            </div>
+        </div>
+        {{/if}}
     </form>
     {{#if paypalBraintree}}
     <label class="radio-inline">
@@ -128,12 +164,12 @@
         <div class='row voffset30'>
             {{#if isSimpleTheme}}
             <div class='col-md-3'></div>
-            <div class='col-md-3 col-xs-6 total-name'>Total:</div>
-            <div class='col-md-3 col-xs-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
+            <div class='col-md-3 col-6 total-name'>Total:</div>
+            <div class='col-md-3 col-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
             {{else}}
             <div class='col-md-1'></div>
-            <div class='col-md-5 col-xs-6 total-name'>Total:</div>
-            <div class='col-md-5 col-xs-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
+            <div class='col-md-5 col-6 total-name'>Total:</div>
+            <div class='col-md-5 col-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
             {{/if}}
         </div>
         <div class='row'>
@@ -169,15 +205,15 @@
         <div class='col-md-4'></div>
         <div class='col-md-4'>
             {{#if paypalBraintree}}
-            <img class='img-responsive' src='/payment_logos_small.png'> {{else}}
-            <img class='img-responsive' src='/payment_logos.png'> {{/if}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else}}
+            <img class='img-fluid' src='/payment_logos.png'> {{/if}}
         </div>
         {{else}}
         <div class='col-md-2'></div>
         <div class='col-md-8'>
             {{#if paypalBraintree}}
-            <img class='img-responsive' src='/payment_logos_small.png'> {{else}}
-            <img class='img-responsive' src='/payment_logos.png'> {{/if}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else}}
+            <img class='img-fluid' src='/payment_logos.png'> {{/if}}
         </div>
         {{/if}}
     </div>
@@ -196,32 +232,7 @@
                 <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> {{#if langEN}}Secure Payment{{else}}Paiement Sécurisé{{/if}}
             </div>
             <div class='voffset15'>
-                {{#if langEN}}
-
-                {{#if paypalBraintree}}
-
-                 All orders are processed via Paypal or Braintree, which are very secure networks. Your payment information is never stored in any way on our servers.
-
-                {{else}}
-
-                  All orders are processed via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, which is a very secure network. Your payment information is never stored in any way on our servers.
-
-                {{/if}}
-
-                {{else}}
-
-                {{#if paypalBraintree}}
-
-                Toutes les commandes sont traitées via Paypal ou Braintree, qui est des partenaires très sécurisés. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs.
-
-                {{else}}
-
-                Toutes les commandes sont traitées via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, qui est un partenaire très sécurisé. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs.
-
-                {{/if}}
-
-                {{/if}}
-
+                {{#if langEN}} {{#if paypalBraintree}} All orders are processed via Paypal or Braintree, which are very secure networks. Your payment information is never stored in any way on our servers. {{else}} All orders are processed via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, which is a very secure network. Your payment information is never stored in any way on our servers. {{/if}} {{else}} {{#if paypalBraintree}} Toutes les commandes sont traitées via Paypal ou Braintree, qui est des partenaires très sécurisés. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs. {{else}} Toutes les commandes sont traitées via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, qui est un partenaire très sécurisé. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs. {{/if}} {{/if}}
             </div>
         </div>
     </div>

@@ -1,18 +1,38 @@
 <template name="store">
-    <!-- <div class='row main-row-store'>
-<div class='col-md-12'> -->
-    <div class='row main-row-store'>
-        <div class='col-md-4'></div>
-        <div class='col-md-4'>
-            <img class='img-responsive' src='{{mainPicture}}'>
+    <div class='row main-row'>
+        <div class='col-md-12 main-col-store'>
+            <div class='row main-row-store'>
+                <div class='col-md-3'><img class='img-fluid' src='{{mainPicture}}'></div>
+                <div class='col-md-8 cart-col'>
+                    <a href='/cart'><i class="fa fa-shopping-cart cart-icon" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            {{#if useStoreFront}}
+            <div class='row heading-row'>
+                <div class='col-md-2'></div>
+                <div class='col-md-8 front-store-col'>
+                    <div class='store-front-title'>{{getMeta "storeFrontHeadline"}}</div>
+                    <div class='store-front-text'>{{{getMeta "storeFrontText"}}}</div>
+                </div>
+            </div>
+            {{/if}}
+            <div class='row voffset15'>
+                <div class='col-md-4'></div>
+                <div class='col-md-4 store-title'>
+                    FEATURED PRODUCTS
+                </div>
+            </div>
+            {{#each storeProductRow in products}}
+            <div class='row main-row-store'>
+                {{#each storeProductRow}} {{> storeProduct}} {{/each}}
+            </div>
+            {{/each}}
+            <div class='row voffset15'>
+                <div class='col-md-4'></div>
+                <div class='col-md-4 footer-title'>
+                    © 2017, {{storeName}} Powered by PureCart
+                </div>
+            </div>
         </div>
     </div>
-    <div class='voffset30'></div>
-    {{#each storeProductRow in products}}
-    <div class='row main-row-store'>
-        {{#each storeProductRow}} {{> storeProduct}} {{/each}}
-    </div>
-    {{/each}}
-    <!-- </div>
-</div> -->
 </template>

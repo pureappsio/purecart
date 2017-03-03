@@ -1,0 +1,17 @@
+<template name="inventory">
+    <h3>Inventory</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each products}} {{> productInventory}} {{/each}}
+        </tbody>
+    </table>
+
+    <button type="button" id='shipwire-test' class="btn btn-secondary">Test Shipwire</button>
+</template>

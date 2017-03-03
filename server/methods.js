@@ -675,6 +675,23 @@ Meteor.methods({
             emailData.method = 'Card';
         }
 
+        // Physical products
+        if (products[0].type == 'physical') {
+
+            // Build products part
+            var productsReceipt = "";
+            for (j = 0; j < products.length; j++) {
+                productsReceipt += "<p>" + products[j].name + "</p>"
+            }
+
+            // Compile template
+            SSR.compileTemplate('receiptEmail',
+                Assets.getText('receipt_email.html') + productsReceipt + Assets.getText('receipt_email_end_physical.html')
+            );
+
+
+        }
+
         // Downloads
         if (products[0].url || products[0].type == 'download') {
 

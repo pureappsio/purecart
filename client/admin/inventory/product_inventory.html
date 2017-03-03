@@ -1,0 +1,13 @@
+<template name="productInventory">
+    <tr>
+        <td>{{_id}}</td>
+        <td>{{name}}</td>
+        <td>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-secondary minus-stock">-</button>
+                <button type="button" class="btn btn-secondary">{{stock}}</button>
+                <button type="button" class="btn btn-secondary plus-stock">+</button>
+            </div>
+        </td>
+    </tr>
+</template>

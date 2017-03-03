@@ -1,20 +1,24 @@
 <template name="admin">
     {{#if isAdmin}}
     <div class='admin-panel'>
-        <h2>Admin Panel</h2>
-        <nav aria-label="...">
-            <ul class="pager">
-                <li><a class='section-selector' id="brand">Brand Details</a></li>
-                <li><a class='section-selector' id="payment">Payment Processor</a></li>
-                <li><a class='section-selector' id="products">Products</a></li>
-                <li><a class='section-selector' id="discounts">Discounts</a></li>
-                <li><a class='section-selector' id="sales">Sales</a></li>
-                <li><a class='section-selector' id="theme">Theme</a></li>
-                <li><a class='section-selector' id="integrations">Integrations</a></li>
+        <h2>Admin Panel</h2> <span><a target="_blank" href='/store'>Visit Store</a></span>
+        <nav aria-label="admin">
+            <ul class="pagination">
+                <li class="page-item"><a class='section-selector page-link' href='#' id="brand">Brand Details</a></li>
+                <li class="page-item"><a class='section-selector page-link' href='#' id="payment">Payment Processor</a></li>
+                <li class="page-item"><a class='section-selector page-link' href='#' id="products">Products</a></li>
+                <li class="page-item"><a class='section-selector page-link' href='#' id="inventory">Inventory</a></li>
+                <li class="page-item"><a class='section-selector page-link' href='#' id="discounts">Discounts</a></li>
+                <li class="page-item"><a class='section-selector page-link' href='#' id="sales">Sales</a></li>
+                <li class="page-item"><a class='section-selector page-link' href='#' id="theme">Theme</a></li>
+                <li class="page-item"><a class='section-selector page-link' href='#' id="integrations">Integrations</a></li>
             </ul>
         </nav>
-        {{#if showSection 'brand'}}
-        <h3>Brand Details</h3>
+        {{#if showSection 'inventory'}} {{> inventory}} {{/if}} {{#if showSection 'brand'}}
+        <div class='row'>
+            <h3>Brand Details</h3>
+        </div>
+        
         <div class='row'>
             <div class='col-md-4'>
                 {{> uploadForm imageId='titlePicture'}}
@@ -50,6 +54,24 @@
                 <button id='set-pixel' class='btn btn-block btn-primary'>Set Pixel</button>
             </div>
         </div>
+        <div class='row'>
+        <h3>Store Data</h3>
+        </div>
+        <div class='row'>
+            <div class='col-md-3'>
+                <input id='store-street' type='text' class='form-control' placeholder="Store street ..." value='{{getMeta "storeStreet"}}'>
+            </div>
+            <div class='col-md-3'>
+                <input id='store-zip' type='text' class='form-control' placeholder="Store ZIP ..." value='{{getMeta "storeZip"}}'>
+            </div>
+            <div class='col-md-3'>
+                <input id='store-city' type='text' class='form-control' placeholder="Store city ..." value='{{getMeta "storeCity"}}'>
+            </div>
+            <div class='col-md-3'>
+                <input id='store-country' type='text' class='form-control' placeholder="Store country ..." value='{{getMeta "storeCountry"}}'>
+            </div>
+        </div>
+        {{> storeFrontPage}}
         {{/if}} {{#if showSection 'payment'}}
         <h3>Payment Processor</h3>
         <div class='row'>
@@ -91,6 +113,7 @@
                     <option value='api'>API</option>
                     <option value='service'>Service</option>
                     <option value='validation'>Validation</option>
+                    <option value='physical'>Physical product</option>
                 </select>
             </div>
             <div class='col-md-2' id='product-option'>
@@ -270,6 +293,36 @@
                 <button id='save-checkout-theme' class='btn btn-block btn-primary'>Save Checkout Style</button>
             </div>
             <div class='col-md-3'>Theme: {{getMeta "checkoutTheme"}}</div>
+        </div>
+        <div class='row'>
+            <div class='col-md-2'>
+                Store Articles per Line
+            </div>
+            <div class='col-md-3'>
+                <select id='articles-line' class='form-control'>
+                    <option value='3'>Three Articles per Line</option>
+                    <option value='4'>Four Articles per Line</option>
+                </select>
+            </div>
+            <div class='col-md-3'>
+                <button id='save-articles-line' class='btn btn-block btn-primary'>Save</button>
+            </div>
+            <div class='col-md-3'>Article per line: {{getMeta "articlesLine"}}</div>
+        </div>
+        <div class='row'>
+            <div class='col-md-2'>
+                Home Page
+            </div>
+            <div class='col-md-3'>
+                <select id='home-page' class='form-control'>
+                    <option value='store'>Store</option>
+                    <option value='checkout'>Checkout</option>
+                </select>
+            </div>
+            <div class='col-md-3'>
+                <button id='save-home-page' class='btn btn-block btn-primary'>Save Home Page</button>
+            </div>
+            <div class='col-md-3'>Home Page: {{getMeta "homePage"}}</div>
         </div>
         {{/if}} {{#if showSection 'integrations'}}
         <h3>API Key</h3>

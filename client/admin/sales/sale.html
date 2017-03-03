@@ -4,7 +4,12 @@
 	<td>#{{invoiceId}}</td>
 	<td>{{status}}</td>
 	<td>{{startCurrency}}{{amount}} {{endCurrency}} ({{startCurrency}}{{tax}} {{endCurrency}} tax)</td>
-	<td>{{email}} <span class="flag-icon {{locationStyle}}"></span></td>
+	<td>
+
+	{{email}} <span class="flag-icon {{locationStyle}}"></span>
+	{{#if mobileSale}}<i class="sale-icon fa fa-mobile" aria-hidden="true"></i>{{/if}}
+
+	</td>
 	<td>{{formatedDate}}</td>
 	<td><a href='/sales/edit/{{_id}}' class='btn btn-block btn-warning'>Edit</a></td>
 	<td><a href='/generate_invoice?sale_id={{_id}}' class='btn btn-block btn-success get-invoice'>Get Invoice</a></td>

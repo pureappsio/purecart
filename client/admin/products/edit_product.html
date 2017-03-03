@@ -1,8 +1,10 @@
 <template name="editProduct">
     <div class='edit-product'>
-        <h2>Editing Product {{name}}</h2>
-        <h3>General Information</h3>
         <div class='row voffset30'>
+            <h2>Editing Product {{name}}</h2></div>
+        <div class='row voffset30'>
+            <h3>General Information</h3></div>
+        <div class='row'>
             <div class='col-md-2'>
                 <label for="product-name">Name</label>
                 <input id='product-name' type='text' class='form-control' value="{{name}}">
@@ -20,14 +22,17 @@
                 <input id='product-price-eur' type='text' class='form-control' value="{{price.EUR}}">
             </div>
         </div>
-        <h3>Delivery</h3> {{#if singleDownload}}
         <div class='row voffset30'>
+            <h3>Delivery</h3></div>
+        {{#if singleDownload}}
+        <div class='row'>
             <div class='col-md-2'>
                 <select id='product-type' class='form-control'>
                     <option value='download'>Download</option>
                     <option value='api'>API</option>
                     <option value='service'>Service</option>
                     <option value='validation'>Validation</option>
+                    <option value='physical'>Physical product</option>
                 </select>
             </div>
             <div class='col-md-2' id='product-option'></div>
@@ -38,43 +43,71 @@
                 </select>
             </div>
         </div>
+        {{/if}} {{#if isPhysicalProduct}}
+        <div class='row voffset30'>
+            <h3>Physical Description</h3>
+        </div>
+        <div class='row'>
+            <!--  <div class='col-md-2'>
+                <select id='physical-product-category' class='form-control'>
+                    <option value='download'>Download</option>
+                    <option value='api'>API</option>
+                    <option value='service'>Service</option>
+                    <option value='validation'>Validation</option>
+                    <option value='physical'>Physical product</option>
+                </select>
+            </div> -->
+            <div class='col-md-2'>
+                <input type='text' value='{{cost}}' class='form-control' id='product-cost' placeholder="Cost ...">
+            </div>
+            <div class='col-md-2'>
+                <input type='text' value='{{sku}}' class='form-control' id='product-sku' placeholder="SKU ...">
+            </div>
+            <div class='col-md-1'>
+                <input type='text' value='{{dimensions.length}}' class='form-control' id='product-length' placeholder="Length">
+            </div>
+            <div class='col-md-1'>
+                <input type='text' value='{{dimensions.width}}' class='form-control' id='product-width' placeholder="Width">
+            </div>
+            <div class='col-md-1'>
+                <input type='text' value='{{dimensions.height}}' class='form-control' id='product-height' placeholder="Height">
+            </div>
+            <div class='col-md-1'>
+                <input type='text' value='{{dimensions.weight}}' class='form-control' id='product-weight' placeholder="Weight">
+            </div>
+        </div>
         {{/if}}
-        <h3>Description & Store Picture</h3>
-        <div class='row voffset30'>
+        <div class='row voffset15'>
+            <h3>Description</h3>
+        </div>
+        <div class='row'>
             <div class='col-md-8'>
-                <div id='summernote'></div>
-            </div>
-            <div class='col-md-4'>
-                <div>{{> uploadForm imageId='thumb'}}</div>
-                {{#if image}}
-                <div><img class='img-responsive' src='{{imageLink imageId}}'></div>{{/if}}
+                <textarea id='summernote'></textarea>
             </div>
         </div>
-        <h3>Add Main Media (optional)</h3>
         <div class='row voffset30'>
-            <div class='col-md-6'>
-                <div>{{> uploadForm imageId='mainMedia'}}</div>
-                {{#if mainMedia}}
-                <div><img class='img-responsive' src='{{imageLink mainMedia}}'></div>{{/if}}
-            </div>
+            <h3>Product Pictures/Videos</h3>
         </div>
-        <h3>Add Additional Media (optional)</h3>
-        <div class='row voffset30'>
+        <div class='row'>
             <div class='col-md-3'>
-                <div>{{> uploadForm imageId='additionalMedia'}}</div>
+                <div>{{> uploadForm imageId='productMedia'}}</div>
             </div>
             <div class='col-md-3'>
                 <button id='add-media' class='btn btn-block btn-primary'>Add</button>
             </div>
         </div>
-        {{#each mediaElements}} {{> addPicture}} {{/each}}
-        <h3>Sales Features</h3>
-        <div class='row voffset30'>
+        <div class='row'>
+            {{#each mediaElements}} {{> addPicture}} {{/each}}
+        </div>
+        <div class='row voffset15'>
+            <h3>Sales Features</h3>
+        </div>
+        <div class='row'>
             <div class='col-md-6'>
                 <input id='sales-description-title' class='form-control' value="{{salesDescriptionTitle}}">
             </div>
         </div>
-        <div class='row voffset30'>
+        <div class='row'>
             <div class='col-md-6'>
                 <input id='sales-element-name' class='form-control'>
             </div>
@@ -83,8 +116,10 @@
             </div>
         </div>
         {{#each salesElements}} {{> salesElement}} {{/each}}
-        <h3>TripWire Offer</h3>
         <div class='row voffset30'>
+            <h3>TripWire Offer</h3>
+        </div>
+        <div class='row'>
             <div class='col-md-3'>
                 <select class="form-control" id='use-tripwire'>
                     <option value="no">No Tripwire</option>
@@ -103,8 +138,10 @@
                 <div id='tripwire-text' class='summernote'></div>
             </div>
         </div>
-        <h3>Feedback Email</h3>
         <div class='row voffset30'>
+            <h3>Feedback Email</h3>
+        </div>
+        <div class='row'>
             <div class='col-md-3'>
                 <select class="form-control" id='use-feedback'>
                     <option value="no">No Feedback Email</option>
@@ -122,8 +159,10 @@
                 <div id='feedback-text' class='summernote'></div>
             </div>
         </div>
-        <h3>Variants</h3>
         <div class='row voffset30'>
+            <h3>Variants</h3>
+        </div>
+        <div class='row'>
             <div class='col-md-3'>
                 <input id='variant-name' class='form-control' placeholder="Name ...">
             </div>
@@ -158,7 +197,7 @@
         <div class='row voffset30'>
             <div class='col-md-2'></div>
             <div class='col-md-4'>
-                <button id='edit-product' class='btn btn-block btn-warning'>Edit Product</button>
+                <button type="button" id='edit-product' class='btn btn-block btn-warning'>Edit Product</button>
             </div>
             <div class='col-md-4'>
                 <a href='/admin' class='btn btn-block btn-primary'>Come Back</a>

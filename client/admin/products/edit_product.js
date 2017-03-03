@@ -1,17 +1,22 @@
 Template.editProduct.onRendered(function() {
 
     // Init
-    $('#summernote').summernote({ height: 150 });
-    $('#tripwire-text').summernote({ height: 150 });
-    $('#feedback-text').summernote({ height: 150 });
+    CKEDITOR.replace('summernote');
+    CKEDITOR.replace('tripwire-text');
+    CKEDITOR.replace('feedback-text');
+
+    $('.note-popover').css({ display: 'none' });
+
+    // Set session to false
+    Session.set('productMedia', false);
 
     if (this.data) {
         if (this.data.description) {
-            $('#summernote').summernote('code', this.data.description);
+            $('#summernote').val(this.data.description);
         }
 
         if (this.data.tripwireText) {
-            $('#tripwire-text').summernote('code', this.data.tripwireText);
+            $('#tripwire-text').val(this.data.tripwireText);
         }
 
         if (this.data.tripwireType) {
@@ -19,20 +24,13 @@ Template.editProduct.onRendered(function() {
         }
 
         if (this.data.feedbackText) {
-            $('#feedback-text').summernote('code', this.data.feedbackText);
+            $('#feedback-text').val(this.data.feedbackText);
         }
 
         if (this.data.useFeedback) {
             $('#use-feedback').val(this.data.useFeedback);
         }
-    }
 
-    // Set session to false
-    Session.set('thumb', false);
-    Session.set('mainMedia', false);
-
-    // Get selection
-    if (this.data) {
         var selection = this.data.type;
 
         $('#product-type').val(this.data.type);
@@ -87,6 +85,15 @@ Template.editProduct.onRendered(function() {
 
 Template.editProduct.helpers({
 
+    isPhysicalProduct: function() {
+
+        if (this.type == 'physical') {
+
+            return true;
+
+        }
+
+    },
     variants: function() {
         return Variants.find({ productId: this._id });
     },
@@ -99,18 +106,18 @@ Template.editProduct.helpers({
         }
 
     },
-    image: function() {
-        if (this.imageId) {
-            return true;
-        } else {
-            return false;
-        }
-    },
-    imageLink: function(imageId) {
-        return Images.findOne(imageId).link();
-    },
+    // image: function() {
+    //     if (this.imageId) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // },
+    // imageLink: function(imageId) {
+    //     return Images.findOne(imageId).link();
+    // },
     mediaElements: function() {
-        return Elements.find({ type: 'additionalPicture', productId: this._id })
+        return Elements.find({ type: 'productPictures', productId: this._id })
     },
     salesElements: function() {
         return Elements.find({ type: 'salesElement', productId: this._id })
@@ -151,12 +158,12 @@ Template.editProduct.events({
 
     'click #add-media': function() {
 
-        if (Session.get('additionalMedia')) {
+        if (Session.get('productMedia')) {
 
             // Create media
             var media = {
-                type: 'additionalPicture',
-                imageId: Session.get('additionalMedia'),
+                type: 'productPictures',
+                imageId: Session.get('productMedia'),
                 productId: this._id
             }
 
@@ -237,24 +244,40 @@ Template.editProduct.events({
                 product.url = $('#product-url').val();
             }
 
+            if (type == 'physical') {
+                product.dimensions = {
+                    length: parseInt($('#product-length').val()),
+                    width: parseInt($('#product-width').val()),
+                    height: parseInt($('#product-height').val()),
+                    weight: parseInt($('#product-weight').val())
+                }
+                product.sku = $('#product-sku').val();
+                product.cost = parseFloat($('#product-cost').val());
+            }
+
         }
 
         // Picture of product
-        if (this.imageId) {
-            product.imageId = this.imageId;
+        // if (this.imageId) {
+        //     product.imageId = this.imageId;
+        // }
+
+        // Linked to shipwire?
+        if (this.shipwireId) {
+            product.shipwireId = this.shipwireId;
         }
 
-        if (this.mainMedia) {
-            product.mainMedia = this.mainMedia;
-        }
+        // if (this.mainMedia) {
+        //     product.mainMedia = this.mainMedia;
+        // }
 
-        if (Session.get('thumb')) {
-            product.imageId = Session.get('thumb');
-        }
+        // if (Session.get('thumb')) {
+        //     product.imageId = Session.get('thumb');
+        // }
 
-        if (Session.get('mainMedia')) {
-            product.mainMedia = Session.get('mainMedia');
-        }
+        // if (Session.get('mainMedia')) {
+        //     product.mainMedia = Session.get('mainMedia');
+        // }
 
         // Show or hide from store
         if ($('#hide-store :selected').val() == 'show') {
@@ -265,7 +288,7 @@ Template.editProduct.events({
         }
 
         // Description
-        product.description = $('#summernote').summernote('code');
+        product.description = CKEDITOR.instances['summernote'].getData();
 
         // Sales description
         product.salesDescriptionTitle = $('#sales-description-title').val();
@@ -276,7 +299,7 @@ Template.editProduct.events({
         } else {
             product.useTripwire = true;
             product.tripwireType = $('#use-tripwire :selected').val();
-            product.tripwireText = $('#tripwire-text').summernote('code');
+            product.tripwireText = CKEDITOR.instances['tripwire-text'].getData();
             product.tripwireSubject = $('#tripwire-subject').val();
         }
 
@@ -285,7 +308,7 @@ Template.editProduct.events({
             product.useFeedback = $('#use-feedback :selected').val();
         } else {
             product.useFeedback = $('#use-feedback :selected').val();
-            product.feedbackText = $('#feedback-text').summernote('code');
+            product.feedbackText = CKEDITOR.instances['feedback-text'].getData();
             product.feedbackSubject = $('#feedback-subject').val();
         }
 

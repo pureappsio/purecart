@@ -1,3 +1,7 @@
+// // import Tether from 'tether';
+// import bootstrap from 'bootstrap';
+// import summernote from 'summernote';
+
 // Tracker
 Tracker.autorun(function() {
     Meteor.subscribe('userSales');

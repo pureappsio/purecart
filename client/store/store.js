@@ -1,34 +1,62 @@
 Template.store.rendered = function() {
 
-  // Get image
-  Meteor.call('getTitle', function(err, url) {
-  	Session.set('mainPicture', url);
-  });
+    // Get image
+    Meteor.call('getTitle', function(err, url) {
+        Session.set('mainPicture', url);
+    });
+
+    if (Metas.findOne({ type: 'useStoreFront' })) {
+        if (Metas.findOne({ type: 'useStoreFront' }).value == 'yes') {
+
+            // Add background image
+            var pictureId = Metas.findOne({ type: 'storeFrontPicture' }).value;
+            $('.heading-row').css('background-image', 'url(' + Images.findOne(pictureId).link() + ')');
+        }
+    }
 
 };
 
 Template.store.helpers({
 
-	mainPicture: function() {
-		return Session.get('mainPicture');
-	},
-	products: function() {
+    useStoreFront: function() {
 
-		var products = Products.find({show: true}, {sort: { _id : -1 }}).fetch();
+        if (Metas.findOne({ type: 'useStoreFront' })) {
+            if (Metas.findOne({ type: 'useStoreFront' }).value == 'yes') {
+                return true;
+            }
+        }
 
-		var storeProductsRow = [];
-		groupIndex = 0;
+    },
 
-		for (i = 0; i < products.length; i + 3) {
+    storeName: function() {
+        return Metas.findOne({ type: 'brandName' }).value;
+    },
+    mainPicture: function() {
+        return Session.get('mainPicture');
+    },
+    products: function() {
 
-			storeProductsRow[groupIndex] = products.splice(i, i+3);
-			groupIndex++;
+        var products = Products.find({ show: true }, { sort: { _id: -1 } }).fetch();
 
-		}
+        var storeProductsRow = [];
+        groupIndex = 0;
 
-		console.log(storeProductsRow);
+        if (Metas.findOne({ type: 'articlesLine' })) {
+            productsLine = Metas.findOne({ type: 'articlesLine' }).value;
+        } else {
+            productsLine = 3;
+        }
 
-		return storeProductsRow;
-	}
+        for (i = 0; i < products.length; i + productsLine) {
+
+            storeProductsRow[groupIndex] = products.splice(i, i + productsLine);
+            groupIndex++;
+
+        }
+
+        console.log(storeProductsRow);
+
+        return storeProductsRow;
+    }
 
 });

@@ -1,80 +1,38 @@
 <template name="confirmation">
-
-<div class='row main-row'>
-
-<div class='col-md-2'></div>
-
-<div class='col-md-8 main-col main-col-confirm'>
-
-  <div class='row'>
-
-    <div class='col-md-4'>
-      <img class='img-responsive' src='{{mainPicture}}'>
+    <div class='row main-row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8 main-col main-col-confirm'>
+            <div class='row'>
+                <div class='col-md-4'>
+                    <img class='img-fluid' src='{{mainPicture}}'>
+                </div>
+                <div class='col-md-6 help-title'></div>
+            </div>
+            {{#if isSuccess}} {{#if isDownload}}
+            <div class='row voffset50'>
+                <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! Please find below the link to download your purchase:{{else}}Merci pour votre achat! Vous trouverez votre lien de télechargement ci-dessous:{{/if}}</div>
+            </div>
+            <div class='row voffset50'>
+                {{#if isSingleDownload}} {{#each downloads}} {{> download}} {{/each}} {{else}} {{#each bundledProducts}} {{> bundledProduct}} {{/each}} {{/if}}
+            </div>
+            {{/if}} {{#if isApi}}
+            <div class='row voffset50'>
+                <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! You will soon receive an email with the instructions to access your purchase on our learning space.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email pour accéder à votre achat sur notre espace d'apprentissage.{{/if}}</div>
+            </div>
+            {{/if}} {{#if isPhysical}}
+            <div class='row voffset50'>
+                <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! You will soon receive an email with your receipt & information about the shipping of your order.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email pour accéder à votre achat sur notre espace d'apprentissage.{{/if}}</div>
+            </div>
+            {{/if}} {{#if isService}}
+            <div class='row voffset50'>
+                <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! Someone from our team will very soon get in touch with you to provide the service that you purchased.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email d'un membre de notre équipe.{{/if}}</div>
+            </div>
+            {{/if}} {{else}}
+            <div class='row voffset50'>
+                <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Unauthorized{{else}}Accès non autorisé{{/if}}</div>
+            </div>
+            {{/if}}
+        </div>
+        <div class='col-md-2'></div>
     </div>
-
-    <div class='col-md-6 help-title'></div>
-
-  </div>
-
-  {{#if isSuccess}}
-
-  {{#if isDownload}}
-
-  <div class='row voffset50'>
-
-    <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! Please find below the link to download your purchase:{{else}}Merci pour votre achat! Vous trouverez votre lien de télechargement ci-dessous:{{/if}}</div>
-
-  </div>
-
-  <div class='row voffset50'>
-
-    {{#if isSingleDownload}}
-      {{#each downloads}}
-        {{> download}}
-      {{/each}}
-    {{else}}
-      {{#each bundledProducts}}
-        {{> bundledProduct}}
-      {{/each}}
-    {{/if}}
-  </div>
-
-  {{/if}}
-
-  {{#if isApi}}
-
-  <div class='row voffset50'>
-
-    <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! You will soon receive an email with the instructions to access your purchase on our learning space.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email pour accéder à votre achat sur notre espace d'apprentissage.{{/if}}</div>
-
-  </div>
-
-  {{/if}}
-
-  {{#if isService}}
-
-  <div class='row voffset50'>
-
-    <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! Someone from our team will very soon get in touch with you to provide the service that you purchased.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email d'un membre de notre équipe.{{/if}}</div>
-
-  </div>
-
-  {{/if}}
-
-  {{else}}
-
-  <div class='row voffset50'>
-
-    <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Unauthorized{{else}}Accès non autorisé{{/if}}</div>
-
-  </div>
-
-  {{/if}} 
-  
-</div>
-
-<div class='col-md-2'></div>
-
-</div>
-
 </template>

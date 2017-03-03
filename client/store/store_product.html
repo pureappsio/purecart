@@ -1,12 +1,13 @@
 <template name="storeProduct">
 
-	<div class='store-product col-md-4'>
+	<div class='store-product col-md-{{productsLine}}'>
 		<div class='store-product-image-container'>
 			<a href='/products/{{shortName}}'>
-				<img class='store-product-image img-responsive' src='{{imageLink}}'>
+				<img class='store-product-image {{soldOutPicture}} img-fluid' src='{{imageLink}}'>
 			</a>
 		</div>
 		<div class='store-product-name'>{{name}}</div>
+		<div class='store-product-price'><span class='{{soldOut}}'>${{price.USD}}</span> <span class='sold-out-message'>{{soldOutMessage}}</span></div>
 	</div>
 
 </template>

@@ -1,0 +1,38 @@
+/*.main-col-cart {
+	overflow: hidden;
+}*/
+
+.cart-col {
+    text-align: right;
+    font-size: 40px;
+    vertical-align: middle;
+    margin-top: 17px;
+}
+
+.cart-icon {
+    color: black;
+}
+
+.cart-icon:hover {
+    color: gray;
+}
+
+.store-product-link {
+    text-decoration: none;
+}
+
+.sold-out {
+    text-decoration: line-through;
+}
+
+.sold-out-message {
+	color: black;
+}
+
+.sold-out-picture {
+    filter: opacity(50%);
+}
+
+.store-product-image:hover {
+	filter: opacity(33%);
+}
