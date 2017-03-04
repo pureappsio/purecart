@@ -3,7 +3,12 @@
         <thead>
             <tr>
                 <th>{{#if langEN}}Item Name{{else}}Nom de l'Article{{/if}}</th>
+                {{#if isPhysicalProduct}}
+                <th>{{#if langEN}}Quantity{{else}}Quantité{{/if}}</th>
+                <th class='col-right'>{{#if langEN}}Total Price{{else}}Total{{/if}}</th>
+                {{else}}
                 <th class='col-right'>{{#if langEN}}Item Price{{else}}Prix Unitaire{{/if}}</th>
+                {{/if}}
             </tr>
         </thead>
         <tbody>

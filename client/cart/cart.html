@@ -13,7 +13,12 @@
                     <tr>
                         <th>{{#if langEN}}Item Name{{else}}Nom de l'Article{{/if}}</th>
                         <th>{{#if langEN}}Item Price{{else}}Prix Unitaire{{/if}}</th>
+                        {{#if isPhysical}}
+                        <th>{{#if langEN}}Quantity{{else}}Quantité{{/if}}</th>
+                        <th class='col-right'>Total</th>
+                        {{else}}
                         <th class='col-right'>Actions</th>
+                        {{/if}}            
                     </tr>
                 </thead>
                 <tbody>

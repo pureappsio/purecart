@@ -217,12 +217,23 @@ Template.checkoutPayment.helpers({
         // Calculate base price
         if (Session.get('useTaxes') == false) {
             for (i = 0; i < cart.length; i++) {
-                basePrice = basePrice + cart[i].price[Session.get('currency')];
+                if (cart[i].qty) {
+                    basePrice = basePrice + cart[i].price[Session.get('currency')] * cart[i].qty;
+                } else {
+                    basePrice = basePrice + cart[i].price[Session.get('currency')];
+                }
+
             }
         } else {
 
             for (i = 0; i < cart.length; i++) {
-                basePrice = basePrice + cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100);
+                if (cart[i].qty) {
+                    basePrice = basePrice + cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100) * cart[i].qty;
+
+                } else {
+                    basePrice = basePrice + cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100);
+
+                }
             }
 
         }
@@ -246,7 +257,12 @@ Template.checkoutPayment.helpers({
 
         // Calculate total
         for (i = 0; i < cart.length; i++) {
-            tax = tax + cart[i].price[Session.get('currency')] - (cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100)).toFixed(2);
+            if (cart[i].qty) {
+                tax = tax + cart[i].price[Session.get('currency')] * cart[i].qty - (cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100) * cart[i].qty).toFixed(2);
+            } else {
+                tax = tax + cart[i].price[Session.get('currency')] - (cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100)).toFixed(2);
+
+            }
         }
 
         // Apply discount
@@ -264,7 +280,12 @@ Template.checkoutPayment.helpers({
 
         // Calculate total
         for (i = 0; i < cart.length; i++) {
-            total = total + cart[i].price[Session.get('currency')];
+            if (cart[i].qty) {
+                total = total + cart[i].price[Session.get('currency')] * cart[i].qty;
+            } else {
+                total = total + cart[i].price[Session.get('currency')];
+            }
+
         }
 
         // Apply discount
@@ -560,10 +581,10 @@ function createSalesData(paymentProcessor) {
     // Physical product?
     if (Session.get('physicalProduct')) {
         saleData.shipStreet = $('#ship-address').val(),
-        saleData.shipZip = $('#ship-zip').val(),
-        saleData.shipCity = $('#ship-city').val(),
-        saleData.shipCountry = $('#ship-country').val(),
-        saleData.shipPhone = $('#phone').val()
+            saleData.shipZip = $('#ship-zip').val(),
+            saleData.shipCity = $('#ship-city').val(),
+            saleData.shipCountry = $('#ship-country').val(),
+            saleData.shipPhone = $('#phone').val()
     }
 
     saleData.method = paymentProcessor;
@@ -590,6 +611,7 @@ function createSalesData(paymentProcessor) {
     var cart = Session.get('cart');
     var products = [];
     var variants = [];
+    var quantities = [];
     for (i = 0; i < cart.length; i++) {
         products.push(cart[i]._id);
 
@@ -599,9 +621,16 @@ function createSalesData(paymentProcessor) {
             variants.push(null);
         }
 
+        if (cart[i].qty) {
+            quantities.push(cart[i].qty);
+        } else {
+            quantities.push(null);
+        }
+
     }
     saleData.products = products;
     saleData.variants = variants;
+    saleData.quantities = quantities;
 
     // Mobile or Desktop
     if (/Mobi/.test(navigator.userAgent)) {

@@ -1,9 +1,22 @@
 <template name="cartItem">
-
-<tr>
-	<td>{{name}} <span id='product-id'>{{_id}}</span></td>
-	<td>{{startCurrency}}<span id='subtotal'>{{basePrice}}</span>{{endCurrency}}</td>
-	<td class='col-right'><a class='remove-item' href=''>{{#if langEN}}Remove{{else}}Supprimer{{/if}}</a></td>
-</tr>
-
+    <tr class="align-middle">
+        <td>{{name}} <span id='product-id'>{{_id}}</span></td>
+        <td>{{startCurrency}}<span id='subtotal'>{{basePrice}}</span>{{endCurrency}}</td>
+        {{#if isPhysical}}
+        <td>
+            <div class="input-group qty-input">
+                <span class="input-group-btn">
+        			<button class="btn btn-secondary plus" type="button">+</button>
+      			</span>
+                <input type="text" class="form-control " value="{{qty}}">
+                <span class="input-group-btn">
+        			<button class="btn btn-secondary minus" type="button">-</button>
+      			</span>
+            </div>
+        </td>
+        <td class='col-right'>{{startCurrency}}<span id='product-total'>{{productTotal}}</span>{{endCurrency}}</td>
+        {{else}}
+        <td class='col-right'><a class='remove-item' href=''>{{#if langEN}}Remove{{else}}Supprimer{{/if}}</a></td>
+        {{/if}}
+    </tr>
 </template>

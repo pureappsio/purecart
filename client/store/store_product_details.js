@@ -4,8 +4,7 @@ Template.storeProductDetails.helpers({
 
         if (Session.get('selectedPicture')) {
             return Images.findOne(Session.get('selectedPicture')).link();
-        }
-        else if (Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' })) {
+        } else if (Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' })) {
             var pictureId = Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' }).imageId;
             return Images.findOne(pictureId).link();
         } else if (this.mainMedia) {
@@ -70,9 +69,35 @@ Template.storeProductDetails.events({
         // Add product to cart
         if (Session.get('cart')) {
             var products = Session.get('cart');
-            products.push(this);
+
+            // Check if product is already in cart
+            var alreadyInCart = false;
+            for (i = 0; i < products.length; i++) {
+                if (products[i]._id == this._id) {
+                    products[i].qty += 1;
+                    alreadyInCart = true;
+                    break;
+                }
+            }
+
+            if (alreadyInCart == false) {
+                if (this.qty) {
+                    this.qty += 1;
+                } else {
+                    this.qty = 1;
+                }
+                products.push(this);
+            }
+
             Session.set('cart', products);
+            
         } else {
+
+            if (this.qty) {
+                this.qty += 1;
+            } else {
+                this.qty = 1;
+            }
             Session.set('cart', [this]);
         }
 

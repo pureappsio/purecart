@@ -2,6 +2,14 @@
 	overflow: hidden;
 }*/
 
+td {
+    vertical-align: middle !important;
+}
+
+.qty-input {
+    width: 130px !important;
+}
+
 .cart-col {
     text-align: right;
     font-size: 40px;

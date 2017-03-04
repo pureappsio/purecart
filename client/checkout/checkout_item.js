@@ -1,54 +1,68 @@
 Template.checkoutItem.helpers({
 
-  useTaxes: function() {
-    return Session.get('useTaxes');
-  },
+    useTaxes: function() {
+        return Session.get('useTaxes');
+    },
 
-  basePrice: function() {
+    isPhysical: function() {
 
-    var basePrice = 0;
+        isPhysical = false;
 
-    // Calculate base price
-    if (Session.get('useTaxes') == false) {
-      basePrice = this.price[Session.get('currency')];
-    }
-    else {
-      basePrice = this.price[Session.get('currency')] / (1 + Session.get('tax')/100);
-    }
-    
-    // Apply discount
-    if (Session.get('usingDiscount')) {
-      basePrice = basePrice * (1 - Session.get('usingDiscount').amount/100);
-    }
+        var cart = Session.get('cart');
 
-    return basePrice.toFixed(2);
-  },
-  taxes: function() {
+        console.log(cart);
 
-    var tax = this.price[Session.get('currency')] - (this.price[Session.get('currency')] / (1 + Session.get('tax')/100)).toFixed(2);
+        for (i = 0; i < cart.length; i++) {
+            if (cart[i].type == 'physical') {
+                isPhysical = true;
+            }
+        }
 
-    // Apply discount
-    if (Session.get('usingDiscount')) {
-      tax = tax * (1 - Session.get('usingDiscount').amount/100);
-    }
+        return isPhysical;
 
-    return tax.toFixed(2);
-  },
-  startCurrency: function() {
-    if (Session.get('currency') == 'USD') {
-      return '$';
+    },
+    basePrice: function() {
+
+        var basePrice = 0;
+
+        // Calculate base price
+        if (Session.get('useTaxes') == false) {
+            basePrice = this.price[Session.get('currency')];
+        } else {
+            basePrice = this.price[Session.get('currency')] / (1 + Session.get('tax') / 100);
+        }
+
+        // Apply discount
+        if (Session.get('usingDiscount')) {
+            basePrice = basePrice * (1 - Session.get('usingDiscount').amount / 100);
+        }
+
+        return basePrice.toFixed(2);
+    },
+    taxes: function() {
+
+        var tax = this.price[Session.get('currency')] - (this.price[Session.get('currency')] / (1 + Session.get('tax') / 100)).toFixed(2);
+
+        // Apply discount
+        if (Session.get('usingDiscount')) {
+            tax = tax * (1 - Session.get('usingDiscount').amount / 100);
+        }
+
+        return tax.toFixed(2);
+    },
+    startCurrency: function() {
+        if (Session.get('currency') == 'USD') {
+            return '$';
+        } else {
+            return '';
+        }
+    },
+    endCurrency: function() {
+        if (Session.get('currency') == 'EUR') {
+            return '€';
+        } else {
+            return '';
+        }
     }
-    else {
-      return '';
-    }
-  },
-  endCurrency: function() {
-    if (Session.get('currency') == 'EUR') {
-      return '€';
-    }
-    else {
-      return '';
-    }
-  }
 
 });

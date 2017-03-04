@@ -186,6 +186,13 @@ Meteor.methods({
                 product.name += ' (' + variant.name + ')';
             }
 
+            // Quantity?
+            if (saleData.quantities[i] != null) {
+                quantity = saleData.quantities[i];
+            } else {
+                quantity = 1;
+            }
+
             // Price
             if (saleData.discount) {
                 price = (parseFloat(product.price[saleData.currency]) * (1 - saleData.discount)).toFixed(2);
@@ -198,7 +205,7 @@ Meteor.methods({
                 "sku": product._id,
                 "price": price,
                 "currency": saleData.currency,
-                "quantity": 1
+                "quantity": quantity
             };
             items.push(item);
 
@@ -341,7 +348,7 @@ Meteor.methods({
             // Put sale as failed
             saleData.success = false;
             saleData.date = new Date();
-            saleData.invoiceId = Sales.find({}).fetch().length + 1;            
+            saleData.invoiceId = Sales.find({}).fetch().length + 1;
 
             // Insert sale
             saleId = Sales.insert(saleData)
@@ -387,6 +394,6 @@ Meteor.methods({
         // Recovery email
         Meteor.call('sendRecoverEmail', sale);
     }
-    
+
 
 });
