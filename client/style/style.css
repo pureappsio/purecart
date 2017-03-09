@@ -4,6 +4,14 @@ button {
     cursor: pointer;
 }
 
+#spinner {
+    text-align: center;
+    opacity: 1;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+}
+
 .heading-row {
     color: white;
     background-color: black;
@@ -141,6 +149,7 @@ button {
     cursor: pointer;
 }
 
+
 /*.store-product-image-details {
     border: 1px solid black;
 }*/
@@ -215,6 +224,8 @@ button {
 .column-title {
     font-weight: bold;
     text-align: center;
+    font-size: 20px;
+    background-color: #EEEEEE;
 }
 
 .col-right {

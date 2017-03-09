@@ -30,6 +30,9 @@ Template.cartItem.events({
                     cart[i].qty += -1;
                 }
 
+                if (cart[i].qty == 0) {
+                    cart.splice(i, 1);
+                }
             }
         }
 

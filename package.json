@@ -17,6 +17,7 @@
     "paypal-rest-sdk": "*",
     "request": "*",
     "sendgrid": "*",
+    "spin": "0.0.1",
     "tether": "^1.4.0",
     "tinymce": "^4.5.4"
   }

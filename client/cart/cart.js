@@ -87,9 +87,8 @@ Template.cart.helpers({
 
         // Calculate total
         for (i = 0; i < cart.length; i++) {
-            if (cart[i].qty) {
+            if (typeof cart[i].qty !== 'undefined') {
                 tax = tax + cart[i].price[Session.get('currency')] * cart[i].qty - (cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100) * cart[i].qty).toFixed(2);
-
             } else {
                 tax = tax + cart[i].price[Session.get('currency')] - (cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100)).toFixed(2);
             }
@@ -110,7 +109,7 @@ Template.cart.helpers({
 
         // Calculate total
         for (i = 0; i < cart.length; i++) {
-            if (cart[i].qty) {
+            if (typeof cart[i].qty !== 'undefined') {
                 total = total + cart[i].price[Session.get('currency')] * cart[i].qty;
             } else {
                 total = total + cart[i].price[Session.get('currency')];
