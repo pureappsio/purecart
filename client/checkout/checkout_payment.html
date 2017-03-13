@@ -13,22 +13,41 @@
         </thead>
         <tbody>
             {{#each products}} {{> checkoutItem}} {{/each}}
+            <!-- <tr>
+                <td></td>
+                {{#if isPhysical}}
+                <td></td>
+                {{/if}}
+                <td class='col-right'>Total: {{startCurrency}}{{total}} {{endCurrency}}</td>
+            </tr> -->
         </tbody>
     </table>
     <div class='row voffset15'></div>
     {{#if useTaxes}}
     <div class='row'>
         <div class='col-md-7'></div>
-        <div class='col-md-5 col-right'>{{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span> {{endCurrency}}</div>
+        <div class='col-md-5 col-right'>
+            <div class='col-right-total'>
+                {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span> {{endCurrency}}
+            </div>
+        </div>
     </div>
     <div class='row'>
         <div class='col-md-7'></div>
-        <div class='col-md-5 col-right'>{{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}</div>
+        <div class='col-md-5 col-right'>
+            <div class='col-right-total'>
+                {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}
+            </div>
+        </div>
     </div>
     {{/if}}
     <div class='row'>
         <div class='col-md-7'></div>
-        <div class='col-md-5 col-right'>Total: {{startCurrency}}{{total}} {{endCurrency}}</div>
+        <div class='col-md-5 col-right'>
+            <div class='col-right-total'>
+                Total: {{startCurrency}}{{total}} {{endCurrency}}
+            </div>
+        </div>
     </div>
     <div class='row voffset30'>
         {{#if isSimpleTheme}}

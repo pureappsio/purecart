@@ -4,6 +4,10 @@ button {
     cursor: pointer;
 }
 
+.col-right-total {
+margin-right: 12px;
+}
+
 #spinner {
     text-align: center;
     opacity: 1;
@@ -321,6 +325,7 @@ body {
         text-align: right;
         right: 0;
         position: absolute;
+        margin-top: 70px;
     }
 }
 

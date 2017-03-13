@@ -64,18 +64,23 @@ Template.checkoutPayment.rendered = function() {
     // Get location of visitor
     Meteor.call('getUserLocation', function(err, data) {
 
+        // No physical product by default
+        Session.set('physicalProduct', false);
+
         if (err) {
             console.log(err);
-            Session.set('useTaxes', false);
-            Session.set('currency', 'USD');
-            Session.set('countryCode', 'US');
+            Session.set('useTaxes', true);
+            Session.set('currency', 'EUR');
+            Session.set('countryCode', 'DE');
 
             // Count visits
             var products = Session.get('cart');
 
             for (i = 0; i < products.length; i++) {
 
-
+                if (products[i].type == 'physical') {
+                    Session.set('physicalProduct', true);
+                }
 
                 session = {
                     date: new Date(),
@@ -146,6 +151,8 @@ Template.checkoutPayment.helpers({
 
         if (Session.get('physicalProduct')) {
             return true;
+        } else {
+            return false;
         }
 
     },

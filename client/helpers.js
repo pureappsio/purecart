@@ -22,6 +22,19 @@ Template.registerHelper("getMeta", function(meta) {
     return Metas.findOne({ type: meta }).value;
 });
 
+// Template.registerHelper("usePixel", function() {
+
+//     if (Session.get('usePixel')) {
+
+//         return Session.get('usePixel');
+
+//     }
+//     else {
+//         return true;
+//     }
+
+// });
+
 Template.registerHelper("isAdmin", function() {
     if (Meteor.user()) {
         if (Meteor.user().role == 'admin') {

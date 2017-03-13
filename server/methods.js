@@ -804,6 +804,7 @@ Meteor.methods({
         } else {
             console.log('Using direct IP location')
             data = Meteor.call('UserLocation/get');
+            data.country_code = 'DE';
         }
 
         return data;
