@@ -1,0 +1,49 @@
+<template name="saleDetails">
+    <div class='row voffset30'>
+        <div class='col-md-3'>
+            <h3>Sale #{{invoiceId}}</h3></div>
+    </div>
+    <div class='row voffset30'>
+        <div class='col-md-3'>Subtotal: {{subtotal}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Tax: {{tax}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Total: {{amount}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>Currency: {{currency}}</div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-3'>
+            <h4>Products</h4></div>
+    </div>
+    {{#each saleProducts}}{{> productListing}}{{/each}}
+    <div class='row voffset15'>
+        <div class='col-md-3'>
+            <h4>Customer Details</h4></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-6'>{{firstName}} - {{lastName}}</div>
+    </div>
+    {{#if shipStreet}}
+    <div class='row'>
+        <div class='col-md-6'>{{shipStreet}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-6'>{{shipZip}} {{shipCity}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-6'>{{shipCountry}}</div>
+    </div>
+    <div class='row'>
+        <div class='col-md-6'>{{shipPhone}}</div>
+    </div>
+    {{/if}}
+    <div class='row voffset30'>
+        <div class='col-md-4'>
+            <a href='/admin' class='btn btn-block btn-primary'>Come Back</a>
+        </div>
+    </div>
+</template>

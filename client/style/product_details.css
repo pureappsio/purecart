@@ -1,0 +1,15 @@
+.store-product-additional-container {
+    margin-top: 30px;
+}
+
+@media (max-width: 576px) {
+    .store-product-additional-container {
+        display: none !important;
+    }
+}
+
+@media (min-width: 576px) {
+    .product-button-mobile {
+        display: none !important;
+    }
+}

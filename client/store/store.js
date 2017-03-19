@@ -14,7 +14,21 @@ Template.store.rendered = function() {
         }
     }
 
+    Session.set('storeExitIntent', false);
+
 };
+
+Template.store.events({
+
+    'mousemove, mouseleave': function(event) {
+
+        // Show exit intent
+        showExitIntent(event, 'storefront', 'offer');
+
+    }
+
+});
+
 
 Template.store.helpers({
 
@@ -28,6 +42,9 @@ Template.store.helpers({
 
     },
 
+    emailContact: function() {
+        return 'mailto:' + Metas.findOne({ type: 'brandEmail' }).value;
+    },
     storeName: function() {
         return Metas.findOne({ type: 'brandName' }).value;
     },

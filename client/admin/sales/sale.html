@@ -1,7 +1,7 @@
 <template name="sale">
 
 <tr>
-	<td>#{{invoiceId}}</td>
+	<td><a href='/sales/{{_id}}'>#{{invoiceId}}</a></td>
 	<td>{{status}}</td>
 	<td>{{startCurrency}}{{amount}} {{endCurrency}} ({{startCurrency}}{{tax}} {{endCurrency}} tax)</td>
 	<td>

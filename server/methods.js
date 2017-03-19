@@ -4,6 +4,23 @@ const sendgrid = require('sendgrid')(Meteor.settings.sendGridAPIKey);
 
 Meteor.methods({
 
+    validateEmail: function(text) {
+
+        var re = /^[\w-]+(\.[\w-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*?\.[a-z]{2,6}|(\d{1,3}\.){3}\d{1,3})(:\d{4})?$/;
+        console.log(re.test(text));
+        return re.test(text);
+
+    },
+    updateConversionRates: function() {
+
+        var answer = HTTP.get('http://api.fixer.io/latest');
+
+        Meteor.call('insertMeta', {
+            type: 'rates',
+            value: answer.data.rates
+        });
+
+    },
     validateProduct: function(saleData) {
 
         saleData.success = 'validation';
@@ -402,6 +419,67 @@ Meteor.methods({
 
     },
 
+    sendAutomatedRecoverEmail: function(emailAddress, cart) {
+
+        console.log('Recovering automatically to email: ' + emailAddress);
+
+        // Get language
+        language = Meteor.call('checkLanguage');
+
+        // Building email
+        date = moment().add(10, 'minutes').toDate();
+        if (language == 'fr') {
+            subject = "Besoin d'assistance pour votre achat?";
+        } else {
+            subject = "Do you need any assistance with your purchase?";
+        }
+
+        // Get product
+        var product = Products.findOne(cart[0]);
+
+        // Template
+        if (language == 'fr') {
+            SSR.compileTemplate('recoverEmail', Assets.getText('recover_email_fr.html'));
+        } else {
+            SSR.compileTemplate('recoverEmail', Assets.getText('recover_email.html'));
+        }
+
+        emailData = {
+            productName: product.name,
+            productUrl: Meteor.absoluteUrl() + 'checkout?product_id=' + product._id
+        }
+        text = SSR.render("recoverEmail", emailData);
+
+        var brandName = Meteor.call('getBrandName');
+        var brandEmail = Meteor.call('getBrandEmail');
+
+        // Build mail
+        var helper = sendgridModule.mail;
+        from_email = new helper.Email(brandEmail);
+        to_email = new helper.Email(emailAddress);
+        subject = subject;
+        content = new helper.Content("text/html", text);
+        mail = new helper.Mail(from_email, subject, to_email, content);
+        mail.from_email.name = brandName;
+
+        // Send later
+        var sendDate = new Date();
+        sendDate = new Date(sendDate.getTime() + 1 * 60 * 1000);
+        mail.setSendAt(moment(sendDate).unix());
+
+        // Send
+        var requestBody = mail.toJSON()
+        var request = sendgrid.emptyRequest()
+        request.method = 'POST'
+        request.path = '/v3/mail/send'
+        request.body = requestBody
+        sendgrid.API(request, function(err, response) {
+            if (response.statusCode != 202) {
+                console.log('Recover email sent');
+            }
+        });
+
+    },
     sendRecoverEmail: function(sale) {
 
         // Check if email list is connected
@@ -413,7 +491,7 @@ Meteor.methods({
             language = Meteor.call('checkLanguage');
 
             // Building email
-            date = moment().add(20, 'minutes').toDate();
+            date = moment().add(10, 'minutes').toDate();
             if (language == 'fr') {
                 subject = "Besoin d'assistance pour votre achat?";
             } else {
@@ -635,6 +713,11 @@ Meteor.methods({
             subtotal = '$' + sale.subtotal;
             tax = '$' + sale.tax;
             price = '$' + sale.amount;
+        }
+        if (sale.currency == 'GBP') {
+            subtotal = '£' + sale.subtotal;
+            tax = '£' + sale.tax;
+            price = '£' + sale.amount;
         }
 
         // Get products

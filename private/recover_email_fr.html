@@ -1,20 +1,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-  <meta name="viewport" content="width=device-width" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Besoin d'Aide?</title>
-  <link href="styles.css" media="all" rel="stylesheet" type="text/css" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Besoin d'Aide?</title>
+    <link href="styles.css" media="all" rel="stylesheet" type="text/css" />
 </head>
 
 <body itemscope itemtype="http://schema.org/EmailMessage">
-
-  <p>Bonjour {{firstName}} {{lastName}},</p>
-
-  <p>Je viens de voir que vous avez essayé d'acheter mon produit {{productName}}, et il semble que vous ayez eu un problème. Si vous avez besoin d'assistance pour votre achat, merci de me le faire savoir en repondant à cet email, je serais heureux de pouvoir vous aider.</p>
-
-  <p>Je vous invite aussi à réessayer par vous-même en visitant le lien suivant:</p>
-
-  <p><a href='{{productUrl}}'>{{productUrl}}</a></p>
-
+    {{#if firstName}}
+    <p>Bonjour {{firstName}} {{lastName}},</p>
+    {{else}}
+    <p>Bonjour,</p>
+    {{/if}}
+    <p>Je viens de voir que vous avez essayé d'acheter mon produit {{productName}}, et il semble que vous ayez eu un problème. Si vous avez besoin d'assistance pour votre achat, merci de me le faire savoir en repondant à cet email, je serais heureux de pouvoir vous aider.</p>
+    <p>Je vous invite aussi à réessayer par vous-même en visitant le lien suivant:</p>
+    <p><a href='{{productUrl}}'>{{productUrl}}</a></p>
 </body>
+
 </html>

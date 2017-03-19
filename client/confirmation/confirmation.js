@@ -5,6 +5,8 @@ Template.confirmation.rendered = function() {
         Session.set('mainPicture', url);
     });
 
+    Session.set('pixelTrackingPage', 'purchase');
+
 }
 
 Template.confirmation.helpers({

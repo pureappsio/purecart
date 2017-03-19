@@ -222,6 +222,13 @@ Template.editProduct.events({
             _id: this._id
         };
 
+        // Base price
+        if ($('#base-price-usd').val() != "") {
+            product.basePrice = {};
+            product.basePrice.USD = parseFloat($('#base-price-usd').val());
+            product.basePrice.EUR = parseFloat($('#base-price-eur').val());
+        }
+
         // Bundled
         if (this.bundledProducts) {
 
@@ -257,27 +264,10 @@ Template.editProduct.events({
 
         }
 
-        // Picture of product
-        // if (this.imageId) {
-        //     product.imageId = this.imageId;
-        // }
-
         // Linked to shipwire?
         if (this.shipwireId) {
             product.shipwireId = this.shipwireId;
         }
-
-        // if (this.mainMedia) {
-        //     product.mainMedia = this.mainMedia;
-        // }
-
-        // if (Session.get('thumb')) {
-        //     product.imageId = Session.get('thumb');
-        // }
-
-        // if (Session.get('mainMedia')) {
-        //     product.mainMedia = Session.get('mainMedia');
-        // }
 
         // Show or hide from store
         if ($('#hide-store :selected').val() == 'show') {

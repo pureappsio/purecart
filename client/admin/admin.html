@@ -4,21 +4,39 @@
         <h2>Admin Panel</h2> <span><a target="_blank" href='/store'>Visit Store</a></span>
         <nav aria-label="admin">
             <ul class="pagination">
-                <li class="page-item"><a class='section-selector page-link' href='#' id="brand">Brand Details</a></li>
-                <li class="page-item"><a class='section-selector page-link' href='#' id="payment">Payment Processor</a></li>
-                <li class="page-item"><a class='section-selector page-link' href='#' id="products">Products</a></li>
-                <li class="page-item"><a class='section-selector page-link' href='#' id="inventory">Inventory</a></li>
-                <li class="page-item"><a class='section-selector page-link' href='#' id="discounts">Discounts</a></li>
-                <li class="page-item"><a class='section-selector page-link' href='#' id="sales">Sales</a></li>
-                <li class="page-item"><a class='section-selector page-link' href='#' id="theme">Theme</a></li>
-                <li class="page-item"><a class='section-selector page-link' href='#' id="integrations">Integrations</a></li>
+                <li class="page-item">
+                    <a class='section-selector page-link' href='#' id="brand">Brand Details</a>
+                </li>
+                <li class="page-item">
+                    <a class='section-selector page-link' href='#' id="store">Store</a>
+                </li>
+                <li class="page-item">
+                    <a class='section-selector page-link' href='#' id="payment">Payment Processor</a>
+                </li>
+                <li class="page-item">
+                    <a class='section-selector page-link' href='#' id="products">Products</a>
+                </li>
+                <li class="page-item">
+                    <a class='section-selector page-link' href='#' id="inventory">Inventory</a>
+                </li>
+                <li class="page-item">
+                    <a class='section-selector page-link' href='#' id="discounts">Discounts</a>
+                </li>
+                <li class="page-item">
+                    <a class='section-selector page-link' href='#' id="sales">Sales</a>
+                </li>
+                <li class="page-item">
+                    <a class='section-selector page-link' href='#' id="theme">Theme</a>
+                </li>
+                <li class="page-item">
+                    <a class='section-selector page-link' href='#' id="integrations">Integrations</a>
+                </li>
             </ul>
         </nav>
         {{#if showSection 'inventory'}} {{> inventory}} {{/if}} {{#if showSection 'brand'}}
         <div class='row'>
             <h3>Brand Details</h3>
         </div>
-        
         <div class='row'>
             <div class='col-md-4'>
                 {{> uploadForm imageId='titlePicture'}}
@@ -55,7 +73,15 @@
             </div>
         </div>
         <div class='row'>
-        <h3>Store Data</h3>
+            <div class='col-md-4'>
+                <input id='google-tracking' type='text' class='form-control' placeholder="Google Analytics ..." value='{{getMeta "tracking"}}'>
+            </div>
+            <div class='col-md-3'>
+                <button id='set-tracking' class='btn btn-block btn-primary'>Set Google Analytics</button>
+            </div>
+        </div>
+        <div class='row'>
+            <h3>Store Data</h3>
         </div>
         <div class='row'>
             <div class='col-md-3'>
@@ -71,8 +97,7 @@
                 <input id='store-country' type='text' class='form-control' placeholder="Store country ..." value='{{getMeta "storeCountry"}}'>
             </div>
         </div>
-        {{> storeFrontPage}}
-        {{/if}} {{#if showSection 'payment'}}
+        {{/if}} {{#if showSection 'store'}} {{> storeFrontPage}} {{/if}} {{#if showSection 'payment'}}
         <h3>Payment Processor</h3>
         <div class='row'>
             <div class='col-md-2'>Payment processor:</div>

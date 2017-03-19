@@ -2,6 +2,39 @@
 	overflow: hidden;
 }*/
 
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal-title {
+    font-size: 30px;
+}
+
+.modal-body {
+    font-size: 22px;
+}
+
+.intent-discount {
+    text-align: center;
+    font-size: 26px;
+    border: 5px dashed black;
+}
+
+.modal:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -4px;
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
 td {
     vertical-align: middle !important;
 }
@@ -17,7 +50,33 @@ td {
     margin-top: 17px;
 }
 
+.header-link {
+    margin-right: 20px;
+    color: gray;
+}
+
+.header-link:hover {
+    text-decoration: none;
+    color: black;
+}
+
+.header-link:active {
+    text-decoration: none;
+}
+
+.header-link:visited {
+    text-decoration: none;
+}
+
+.store-center-col {
+    text-align: center;
+    font-size: 30px;
+    vertical-align: middle;
+    margin-top: 23px;
+}
+
 .cart-icon {
+    font-size: 30px;
     color: black;
 }
 

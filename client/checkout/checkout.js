@@ -9,6 +9,16 @@ Template.checkout.rendered = function() {
         Session.set('brandEmail', email);
     });
 
+    Session.set('storeExitIntent', false);
+    Session.set('pixelTrackingPage', 'checkout');
+
+    // Automated recover
+    window.onbeforeunload = function() {
+
+        if (Session.get('customerEmail')) {
+            Meteor.call('sendAutomatedRecoverEmail', Session.get('customerEmail'), Session.get('cart'));
+        }
+    };
 
 }
 
@@ -39,5 +49,19 @@ Template.checkout.helpers({
 });
 
 Template.checkout.events({
+
+    'mousemove, mouseleave': function(event) {
+
+        // Show exit intent
+        showExitIntent(event, 'checkout', 'help');
+
+    },
+    'keyup #email': function() {
+        Meteor.call('validateEmail', $('#email').val(), function(err, data) {
+            if (data == true) {
+                Session.set('customerEmail', $('#email').val());
+            }
+        });
+    }
 
 });

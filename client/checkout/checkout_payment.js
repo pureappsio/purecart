@@ -61,87 +61,28 @@ Template.checkoutPayment.rendered = function() {
 
     });
 
-    // Get location of visitor
-    Meteor.call('getUserLocation', function(err, data) {
+    // No physical product by default
+    Session.set('physicalProduct', false);
 
-        // No physical product by default
-        Session.set('physicalProduct', false);
+    // Count visits
+    var products = Session.get('cart');
 
-        if (err) {
-            console.log(err);
-            Session.set('useTaxes', true);
-            Session.set('currency', 'EUR');
-            Session.set('countryCode', 'DE');
+    for (i = 0; i < products.length; i++) {
 
-            // Count visits
-            var products = Session.get('cart');
-
-            for (i = 0; i < products.length; i++) {
-
-                if (products[i].type == 'physical') {
-                    Session.set('physicalProduct', true);
-                }
-
-                session = {
-                    date: new Date(),
-                    productId: products[i]._id,
-                    type: 'checkout',
-                    country: 'US'
-                };
-
-                Meteor.call('insertSession', session);
-
-            }
-
-
-        } else {
-
-            var country_code = data.country_code;
-            Session.set('countryCode', country_code);
-
-            // Count visits
-            var products = Session.get('cart');
-
-            for (i = 0; i < products.length; i++) {
-
-                // Check for physical products
-                if (products[i].type == 'physical') {
-                    Session.set('physicalProduct', true);
-                }
-
-                session = {
-                    date: new Date(),
-                    productId: products[i]._id,
-                    type: 'checkout',
-                    country: country_code
-                };
-
-                Meteor.call('insertSession', session);
-
-            }
-
-            Meteor.call('isEuropeanCustomer', country_code, function(err, data) {
-
-                if (data) {
-                    Session.set('useTaxes', true);
-                    Session.set('currency', 'EUR');
-
-                    Meteor.call('getVAT', country_code, function(err, data) {
-
-                        Session.set('tax', data);
-
-                    });
-
-                } else {
-                    Session.set('useTaxes', false);
-                    Session.set('currency', 'USD');
-                }
-
-            });
-
+        if (products[i].type == 'physical') {
+            Session.set('physicalProduct', true);
         }
 
-    });
+        session = {
+            date: new Date(),
+            productId: products[i]._id,
+            type: 'checkout',
+            country: Session.get('countryCode')
+        };
+
+        Meteor.call('insertSession', session);
+
+    }
 
 }
 
@@ -224,21 +165,27 @@ Template.checkoutPayment.helpers({
         // Calculate base price
         if (Session.get('useTaxes') == false) {
             for (i = 0; i < cart.length; i++) {
+
+                var price = computePrice(cart[i].price);
+
                 if (typeof cart[i].qty !== 'undefined') {
-                    basePrice = basePrice + cart[i].price[Session.get('currency')] * cart[i].qty;
+                    basePrice = basePrice + price * cart[i].qty;
                 } else {
-                    basePrice = basePrice + cart[i].price[Session.get('currency')];
+                    basePrice = basePrice + price;
                 }
 
             }
         } else {
 
             for (i = 0; i < cart.length; i++) {
+
+                var price = computePrice(cart[i].price);
+
                 if (typeof cart[i].qty !== 'undefined') {
-                    basePrice = basePrice + cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100) * cart[i].qty;
+                    basePrice = basePrice + price / (1 + Session.get('tax') / 100) * cart[i].qty;
 
                 } else {
-                    basePrice = basePrice + cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100);
+                    basePrice = basePrice + price / (1 + Session.get('tax') / 100);
 
                 }
             }
@@ -264,10 +211,13 @@ Template.checkoutPayment.helpers({
 
         // Calculate total
         for (i = 0; i < cart.length; i++) {
+
+            var price = computePrice(cart[i].price);
+
             if (typeof cart[i].qty !== 'undefined') {
-                tax = tax + cart[i].price[Session.get('currency')] * cart[i].qty - (cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100) * cart[i].qty).toFixed(2);
+                tax = tax + price * cart[i].qty - (price / (1 + Session.get('tax') / 100) * cart[i].qty).toFixed(2);
             } else {
-                tax = tax + cart[i].price[Session.get('currency')] - (cart[i].price[Session.get('currency')] / (1 + Session.get('tax') / 100)).toFixed(2);
+                tax = tax + price - (price / (1 + Session.get('tax') / 100)).toFixed(2);
 
             }
         }
@@ -287,10 +237,13 @@ Template.checkoutPayment.helpers({
 
         // Calculate total
         for (i = 0; i < cart.length; i++) {
+
+            var price = computePrice(cart[i].price);
+
             if (typeof cart[i].qty !== 'undefined') {
-                total = total + cart[i].price[Session.get('currency')] * cart[i].qty;
+                total = total + price * cart[i].qty;
             } else {
-                total = total + cart[i].price[Session.get('currency')];
+                total = total + price;
             }
 
         }
@@ -305,20 +258,20 @@ Template.checkoutPayment.helpers({
     dataIssue: function() {
         return Session.get('dataIssue');
     },
-    startCurrency: function() {
-        if (Session.get('currency') == 'USD') {
-            return '$';
-        } else {
-            return '';
-        }
-    },
-    endCurrency: function() {
-        if (Session.get('currency') == 'EUR') {
-            return '€';
-        } else {
-            return '';
-        }
-    },
+    // startCurrency: function() {
+    //     if (Session.get('currency') == 'USD') {
+    //         return '$';
+    //     } else {
+    //         return '';
+    //     }
+    // },
+    // endCurrency: function() {
+    //     if (Session.get('currency') == 'EUR') {
+    //         return '€';
+    //     } else {
+    //         return '';
+    //     }
+    // },
     paymentStatus: function() {
         return Session.get('paymentStatus');
     },

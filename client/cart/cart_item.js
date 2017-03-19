@@ -91,11 +91,13 @@ Template.cartItem.helpers({
 
         var basePrice = 0;
 
+        var price = computePrice(this.price);
+
         // Calculate base price
         if (Session.get('useTaxes') == false) {
-            basePrice = this.price[Session.get('currency')] * this.qty;
+            basePrice = price * this.qty;
         } else {
-            basePrice = this.price[Session.get('currency')] / (1 + Session.get('tax') / 100) * this.qty;
+            basePrice = price / (1 + Session.get('tax') / 100) * this.qty;
         }
 
         // Apply discount
@@ -110,11 +112,13 @@ Template.cartItem.helpers({
 
         var basePrice = 0;
 
+        var price = computePrice(this.price);
+
         // Calculate base price
         if (Session.get('useTaxes') == false) {
-            basePrice = this.price[Session.get('currency')];
+            basePrice = price;
         } else {
-            basePrice = this.price[Session.get('currency')] / (1 + Session.get('tax') / 100);
+            basePrice = price / (1 + Session.get('tax') / 100);
         }
 
         // Apply discount
@@ -126,7 +130,9 @@ Template.cartItem.helpers({
     },
     taxes: function() {
 
-        var tax = this.price[Session.get('currency')] - (this.price[Session.get('currency')] / (1 + Session.get('tax') / 100)).toFixed(2);
+        var price = computePrice(this.price);
+
+        var tax = price - (price / (1 + Session.get('tax') / 100)).toFixed(2);
 
         // Apply discount
         if (Session.get('usingDiscount')) {
@@ -134,20 +140,20 @@ Template.cartItem.helpers({
         }
 
         return tax.toFixed(2);
-    },
-    startCurrency: function() {
-        if (Session.get('currency') == 'USD') {
-            return '$';
-        } else {
-            return '';
-        }
-    },
-    endCurrency: function() {
-        if (Session.get('currency') == 'EUR') {
-            return '€';
-        } else {
-            return '';
-        }
     }
+    // startCurrency: function() {
+    //     if (Session.get('currency') == 'USD') {
+    //         return '$';
+    //     } else {
+    //         return '';
+    //     }
+    // },
+    // endCurrency: function() {
+    //     if (Session.get('currency') == 'EUR') {
+    //         return '€';
+    //     } else {
+    //         return '';
+    //     }
+    // }
 
 });

@@ -26,10 +26,6 @@ Meteor.publish("userMetas", function () {
 	return Metas.find({});
 });
 
-// Meteor.publish("userSessions", function () {
-// 	return Sessions.find({});
-// });
-
 Meteor.publish("userElements", function () {
 	return Elements.find({});
 });

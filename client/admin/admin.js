@@ -301,6 +301,12 @@ Template.admin.events({
         Meteor.call('insertMeta', { type: 'pixel', value: $('#facebook-pixel').val() });
 
     },
+    'click #set-tracking': function() {
+
+        // Add
+        Meteor.call('insertMeta', { type: 'tracking', value: $('#google-tracking').val() });
+
+    },
     'click #create-discount': function() {
 
         // Discount

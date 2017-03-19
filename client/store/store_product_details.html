@@ -1,14 +1,10 @@
 <template name="storeProductDetails">
     <div class='row main-row'>
         <div class='col-md-12 store-product-details-row'>
+            {{> storeHeader}}
             <div class='row store-product-details'>
                 <div class='col-md-1'></div>
                 <div class='col-md-10'>
-                    <div class='row'>
-                        <div class='col-md-3'>
-                            <img class='img-fluid' src='{{mainPicture}}'>
-                        </div>
-                    </div>
                     <div class='row voffset30'>
                         <div class='col-md-6'>
                             <div class='store-product-image-container'>
@@ -26,8 +22,17 @@
                         </div>
                         <div class='col-md-6'>
                             <div class='product-detail-title'>{{name}}</div>
+                            <div class='product-detail-price'>
+                                {{startCurrency}}{{getPrice price}}{{endCurrency}} {{#if basePrice}} <span class='base-price base-price-detail'> {{startCurrency}}{{getPrice basePrice}}{{endCurrency}}</span>{{/if}}
+                            </div>
+                            <div class='product-detail-button product-button-mobile'>
+                                {{#if soldOut}}
+                                <button class='btn btn-default btn-lg btn-block disabled'>SOLD OUT</button>
+                                {{else}}
+                                <button id='add-cart' class='btn btn-warning btn-lg btn-block'>ADD TO CART</button>
+                                {{/if}}
+                            </div>
                             <div class='product-detail-description'>{{{description}}}</div>
-                            <div class='product-detail-price'>${{{price.USD}}}</div>
                             <div class='product-detail-button'>
                                 {{#if soldOut}}
                                 <button class='btn btn-default btn-lg btn-block disabled'>SOLD OUT</button>
@@ -36,13 +41,13 @@
                                 {{/if}}
                             </div>
                             <div class='product-detail-button'>
-                               
                                 <a href='/store' class='btn btn-secondary btn-lg btn-block'>Back to Home Page</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {{> storeFooter}}
         </div>
     </div>
 </template>

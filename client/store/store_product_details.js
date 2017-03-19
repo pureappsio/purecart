@@ -90,7 +90,7 @@ Template.storeProductDetails.events({
             }
 
             Session.set('cart', products);
-            
+
         } else {
 
             if (this.qty) {

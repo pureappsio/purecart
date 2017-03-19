@@ -3,39 +3,36 @@ Future = Npm.require('fibers/future');
 import braintree from 'braintree';
 import paypal from 'paypal-rest-sdk';
 
-// Use SandBox locally
-if (process.env.ROOT_URL == "http://localhost:3000/") {
+if (Meteor.settings.braintree.mode == 'sandbox') {
 
     // Sandbox
     gateway = braintree.connect({
         environment: braintree.Environment.Sandbox,
-        publicKey: Meteor.settings.sandboxPublicKey,
-        privateKey: Meteor.settings.sandboxPrivateKey,
-        merchantId: Meteor.settings.sandboxMerchantId
+        publicKey: Meteor.settings.braintree.publicKey,
+        privateKey: Meteor.settings.braintree.privateKey,
+        merchantId: Meteor.settings.braintree.merchantId
     });
 
-    // Merchant IDs
-    var merchantIds = {
-        EUR: Meteor.settings.sandboxMerchantEUR,
-        USD: Meteor.settings.sandboxMerchantUSD
-    };
+}
 
-} else {
+if (Meteor.settings.braintree.mode == 'production') {
 
     // Real
     gateway = braintree.connect({
         environment: braintree.Environment.Production,
-        publicKey: Meteor.settings.livePublicKey,
-        privateKey: Meteor.settings.livePrivateKey,
-        merchantId: Meteor.settings.liveMerchantId
+        publicKey: Meteor.settings.braintree.publicKey,
+        privateKey: Meteor.settings.braintree.privateKey,
+        merchantId: Meteor.settings.braintree.merchantId
     });
 
-    var merchantIds = {
-        EUR: Meteor.settings.liveMerchantEUR,
-        USD: Meteor.settings.liveMerchantUSD
-    };
-
 }
+
+// Merchant IDs
+var merchantIds = {
+    EUR: Meteor.settings.braintree.merchantEUR,
+    USD: Meteor.settings.braintree.merchantUSD,
+    GBP: Meteor.settings.braintree.merchantGBP
+};
 
 // Paypal
 paypal.configure({
@@ -45,6 +42,19 @@ paypal.configure({
 });
 
 Meteor.methods({
+
+
+    computePrice(price, currency) {
+
+        if (price[currency]) {
+            return price[currency];
+        } else {
+            var rates = Metas.findOne({ type: 'rates' }).value;
+            var finalPrice = price.EUR * rates[currency];
+            return parseFloat(finalPrice.toFixed(0) + '.99');
+        }
+
+    },
 
     authorizePaypalOrder: function(saleId, orderId) {
 
@@ -194,10 +204,11 @@ Meteor.methods({
             }
 
             // Price
+            var convertedPrice = Meteor.call('computePrice', product.price, saleData.currency);
             if (saleData.discount) {
-                price = (parseFloat(product.price[saleData.currency]) * (1 - saleData.discount)).toFixed(2);
+                price = (convertedPrice * (1 - saleData.discount)).toFixed(2);
             } else {
-                price = product.price[saleData.currency];
+                price = convertedPrice;
             }
 
             var item = {

@@ -1,20 +1,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-  <meta name="viewport" content="width=device-width" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Need Help?</title>
-  <link href="styles.css" media="all" rel="stylesheet" type="text/css" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Need Help?</title>
+    <link href="styles.css" media="all" rel="stylesheet" type="text/css" />
 </head>
 
 <body itemscope itemtype="http://schema.org/EmailMessage">
-
-  <p>Hello {{firstName}} {{lastName}},</p>
-
-  <p>I saw that you tried to purchase the product {{productName}}, and it seems that you had an issue to complete your purchase. If you need any assistance to complete your purchase, please let me know by replying to this email, I'd be happy to help you out.</p>
-
-  <p>I also invite you to simply retry your purchase by clicking on the following URL:</p>
-
-  <p><a href='{{productUrl}}'>{{productUrl}}</a></p>
-
+    {{#if firstName}}
+    <p>Hello {{firstName}} {{lastName}},</p>
+    {{else}}
+    <p>Hello,</p>
+    {{/if}}
+    <p>I saw that you tried to purchase the product {{productName}}, and it seems that you had an issue to complete your purchase. If you need any assistance to complete your purchase, please let me know by replying to this email, I'd be happy to help you out.</p>
+    <p>I also invite you to simply retry your purchase by clicking on the following URL:</p>
+    <p><a href='{{productUrl}}'>{{productUrl}}</a></p>
 </body>
+
 </html>

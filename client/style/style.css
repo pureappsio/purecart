@@ -1,7 +1,41 @@
 /* CSS declarations go here */
+.navbar-brand {
+  padding: 0px;
+}
+
+.navbar-brand>img {
+  max-width: 225px;
+}
+
+.navbar-toggler {
+    margin-top: 23px !important;
+    min-height: 40px !important;
+}
+
+.nav-item {
+    font-size: 22px !important;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.nav-icons {
+    padding-top: 4px;
+}
 
 button {
     cursor: pointer;
+}
+
+.col-center {
+    text-align: center;
+}
+
+.base-price {
+    text-decoration: line-through;
+}
+
+.base-price-detail {
+    color: red;
 }
 
 .col-right-total {
@@ -41,7 +75,7 @@ margin-right: 12px;
 
 .footer-title {
     font-size: 16px;
-    margin-top: 50px;
+    margin-top: 25px;
     margin-bottom: 25px;
     text-align: center;
     color: darkgray;
@@ -186,6 +220,7 @@ margin-right: 12px;
 
 .product-detail-description {
     text-align: justify;
+    margin-top: 15px;
 }
 
 .product-detail-button {
@@ -351,8 +386,4 @@ body {
 .admin-panel {
     padding: 10px;
     background-color: white;
-}
-
-.store-product-additional-container {
-    margin-top: 30px;
 }
