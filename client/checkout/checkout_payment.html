@@ -1,74 +1,115 @@
 <template name="checkoutPayment">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>{{#if langEN}}Item Name{{else}}Nom de l'Article{{/if}}</th>
-                {{#if isPhysicalProduct}}
-                <th>{{#if langEN}}Quantity{{else}}Quantité{{/if}}</th>
-                <th class='col-right'>{{#if langEN}}Total Price{{else}}Total{{/if}}</th>
-                {{else}}
-                <th class='col-right'>{{#if langEN}}Item Price{{else}}Prix Unitaire{{/if}}</th>
+    <div class='row checkout-mobile'>
+        <div class='col-8'>
+            <a id='show-summary' data-toggle="collapse" href="#ordersummary">Show order summary</a>
+        </div>
+        <div class='col-4 mobile-checkout-price'><span>{{startCurrency}}{{total}} {{endCurrency}}</span></div>
+        <div class="collapse" id="ordersummary">
+            <div class='checkout-collapse'>
+                <div class='checkout-collapse-items'>
+                    {{#each products}} {{> checkoutMobileItem}} {{/each}}
+                </div>
+                {{#if useTaxes}}
+                <div class='row'>
+                    <div class='col-md-7'></div>
+                    <div class='col-md-5 col-right'>
+                        <div class='col-right-total'>
+                            {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span> {{endCurrency}}
+                        </div>
+                    </div>
+                </div>
+                <div class='row'>
+                    <div class='col-md-7'></div>
+                    <div class='col-md-5 col-right'>
+                        <div class='col-right-total'>
+                            {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}
+                        </div>
+                    </div>
+                </div>
                 {{/if}}
-            </tr>
-        </thead>
-        <tbody>
-            {{#each products}} {{> checkoutItem}} {{/each}}
-            <!-- <tr>
+                <div class='row'>
+                    <div class='col-md-7'></div>
+                    <div class='col-md-5 col-right'>
+                        <div class='col-right-total'>
+                            Total: {{startCurrency}}{{total}} {{endCurrency}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='checkout-desktop'>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{{#if langEN}}Item Name{{else}}Nom de l'Article{{/if}}</th>
+                    {{#if isPhysicalProduct}}
+                    <th>{{#if langEN}}Quantity{{else}}Quantité{{/if}}</th>
+                    <th class='col-right'>{{#if langEN}}Total Price{{else}}Total{{/if}}</th>
+                    {{else}}
+                    <th class='col-right'>{{#if langEN}}Item Price{{else}}Prix Unitaire{{/if}}</th>
+                    {{/if}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#each products}} {{> checkoutItem}} {{/each}}
+                <!-- <tr>
                 <td></td>
                 {{#if isPhysical}}
                 <td></td>
                 {{/if}}
                 <td class='col-right'>Total: {{startCurrency}}{{total}} {{endCurrency}}</td>
             </tr> -->
-        </tbody>
-    </table>
-    <div class='row voffset15'></div>
-    {{#if useTaxes}}
-    <div class='row'>
-        <div class='col-md-7'></div>
-        <div class='col-md-5 col-right'>
-            <div class='col-right-total'>
-                {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span> {{endCurrency}}
+            </tbody>
+        </table>
+        <div class='row voffset15'></div>
+        {{#if useTaxes}}
+        <div class='row'>
+            <div class='col-md-7'></div>
+            <div class='col-md-5 col-right'>
+                <div class='col-right-total'>
+                    {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span> {{endCurrency}}
+                </div>
             </div>
         </div>
-    </div>
-    <div class='row'>
-        <div class='col-md-7'></div>
-        <div class='col-md-5 col-right'>
-            <div class='col-right-total'>
-                {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}
+        <div class='row'>
+            <div class='col-md-7'></div>
+            <div class='col-md-5 col-right'>
+                <div class='col-right-total'>
+                    {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}
+                </div>
             </div>
         </div>
-    </div>
-    {{/if}}
-    <div class='row'>
-        <div class='col-md-7'></div>
-        <div class='col-md-5 col-right'>
-            <div class='col-right-total'>
-                Total: {{startCurrency}}{{total}} {{endCurrency}}
+        {{/if}}
+        <div class='row'>
+            <div class='col-md-7'></div>
+            <div class='col-md-5 col-right'>
+                <div class='col-right-total'>
+                    Total: {{startCurrency}}{{total}} {{endCurrency}}
+                </div>
             </div>
         </div>
     </div>
     <div class='row voffset30'>
         {{#if isSimpleTheme}}
-        <div class='col-md-12'>
-            <form class="form-inline">
-                <label class=' mb-2 mr-sm-2 mb-sm-0' for="discount-code">
-                    {{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}
-                </label>
-                <input class='form-control  mb-2 mr-sm-2 mb-sm-0' type='text' id='discount-code'>
-                <button id='apply-discount' class='btn btn-primary'>{{#if langEN}}Apply{{else}}Appliquer{{/if}}</button>
-                <span id='discount-message'></span>
-            </form>
+        <div class='col-8'>
+           <!--  <label class='checkout-label' for="discount-code">
+                {{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}
+            </label> -->
+            <input class='form-control mb-2 mr-sm-2 mb-sm-0' type='text' id='discount-code' placeholder='{{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}'>
         </div>
-        {{else}}
-        <div class='col-md-8'>
-            <input placeholder='{{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}' class='form-control' type='text' id='discount-code'>
-        </div>
-        <div class='col-md-4'>
+        <div class='col-4'>
             <button id='apply-discount' class='btn btn-block btn-primary'>{{#if langEN}}Apply{{else}}Appliquer{{/if}}</button>
         </div>
-        {{/if}}
+        <span id='discount-message'></span>
+    {{else}}
+    <div class='col-md-8'>
+        <input placeholder='{{#if langEN}}Have a discount code? {{else}}Vous avez un code promo?{{/if}}' class='form-control' type='text' id='discount-code'>
+    </div>
+    <div class='col-md-4'>
+        <button id='apply-discount' class='btn btn-block btn-primary'>{{#if langEN}}Apply{{else}}Appliquer{{/if}}</button>
+    </div>
+    {{/if}}
     </div>
     <div class='row voffset30'>
         <div class='col-md-12'>
@@ -78,22 +119,22 @@
         <div class='row'>
             <div class='col-md-12'>
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input class='form-control input-lg' type='text' id='email'>
+                    <label class='checkout-label' for="email">Email</label>
+                    <input class='form-control input-lg' type='text' id='email' placeholder="Email">
                 </div>
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
                 <div class="form-group">
-                    <label for="first-name">{{#if langEN}}First Name{{else}}Prénom{{/if}}</label>
-                    <input class='form-control input-lg' type='text' id='first-name'>
+                    <label class='checkout-label' for="first-name">{{#if langEN}}First Name{{else}}Prénom{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='first-name' placeholder="First name">
                 </div>
             </div>
             <div class='col-md-6'>
                 <div class="form-group">
-                    <label for="last-name">{{#if langEN}}Last Name{{else}}Nom{{/if}}</label>
-                    <input class='form-control input-lg' type='text' id='last-name'>
+                    <label class='checkout-label' for="last-name">{{#if langEN}}Last Name{{else}}Nom{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='last-name' placeholder="Last name">
                 </div>
             </div>
         </div>
@@ -101,36 +142,36 @@
         <div class='row'>
             <div class='col-md-12'>
                 <div class="form-group">
-                    <label for="street-address">{{#if langEN}}Street Address{{else}}Adresse{{/if}}</label>
-                    <input class='form-control input-lg' type='text' id='ship-address'>
+                    <label class='checkout-label' for="street-address">{{#if langEN}}Street Address{{else}}Adresse{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-address' placeholder="Street Address">
                 </div>
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
                 <div class="form-group">
-                    <label for="zip">{{#if langEN}}ZIP Code{{else}}Code Postal{{/if}}</label>
-                    <input class='form-control input-lg' type='text' id='ship-zip'>
+                    <label class='checkout-label' for="zip">{{#if langEN}}ZIP Code{{else}}Code Postal{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-zip' placeholder="Postal code">
                 </div>
             </div>
             <div class='col-md-6'>
                 <div class="form-group">
-                    <label for="city">{{#if langEN}}City{{else}}Ville{{/if}}</label>
-                    <input class='form-control input-lg' type='text' id='ship-city'>
+                    <label class='checkout-label' for="city">{{#if langEN}}City{{else}}Ville{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-city' placeholder="City">
                 </div>
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
                 <div class="form-group">
-                    <label for="country">{{#if langEN}}Country{{else}}Pays{{/if}}</label>
-                    <input class='form-control input-lg' type='text' id='ship-country'>
+                    <label class='checkout-label' for="country">{{#if langEN}}Country{{else}}Pays{{/if}}</label>
+                    <input class='form-control input-lg' type='text' id='ship-country' placeholder="Country">
                 </div>
             </div>
             <div class='col-md-6'>
                 <div class="form-group">
-                    <label for="phone">{{#if langEN}}Phone Number{{else}}Numéro de Téléphone{{/if}}</label>
-                    <input class='form-control input-lg' type='tel' id='phone'>
+                    <label class='checkout-label' for="phone">{{#if langEN}}Phone Number{{else}}Numéro de Téléphone{{/if}}</label>
+                    <input class='form-control input-lg' type='tel' id='phone' placeholder="Phone">
                 </div>
             </div>
         </div>

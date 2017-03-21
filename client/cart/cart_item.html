@@ -1,6 +1,8 @@
 <template name="cartItem">
     <tr class="align-middle">
-        <td>{{name}} <span id='product-id'>{{_id}}</span></td>
+        <td>
+            {{#if productPicture}}<img class='img-fluid cart-picture' src='{{productPicture}}'>{{/if}}{{name}} <span id='product-id'>{{_id}}</span>
+        </td>
         <td>{{startCurrency}}<span id='subtotal'>{{basePrice}}</span>{{endCurrency}}</td>
         {{#if isPhysical}}
         <td>

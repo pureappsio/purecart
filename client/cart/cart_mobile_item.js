@@ -1,4 +1,4 @@
-Template.cartItem.events({
+Template.cartMobileItem.events({
 
     'click .plus': function() {
 
@@ -40,7 +40,7 @@ Template.cartItem.events({
         Session.set('cart', cart);
 
     },
-    'click .remove-item': function() {
+    'click .btn-cart': function() {
 
         // Get cart
         var cart = Session.get('cart');
@@ -63,7 +63,7 @@ Template.cartItem.events({
 
 });
 
-Template.cartItem.helpers({
+Template.cartMobileItem.helpers({
 
     productPicture: function() {
 
@@ -76,7 +76,6 @@ Template.cartItem.helpers({
             return Images.findOne(this.imageId).link();
         }
     },
-
     isPhysical: function() {
 
         isPhysical = false;
@@ -139,33 +138,6 @@ Template.cartItem.helpers({
         }
 
         return basePrice.toFixed(2);
-    },
-    taxes: function() {
-
-            var price = computePrice(this.price);
-
-            var tax = price - (price / (1 + Session.get('tax') / 100)).toFixed(2);
-
-            // Apply discount
-            if (Session.get('usingDiscount')) {
-                tax = tax * (1 - Session.get('usingDiscount').amount / 100);
-            }
-
-            return tax.toFixed(2);
-        }
-        // startCurrency: function() {
-        //     if (Session.get('currency') == 'USD') {
-        //         return '$';
-        //     } else {
-        //         return '';
-        //     }
-        // },
-        // endCurrency: function() {
-        //     if (Session.get('currency') == 'EUR') {
-        //         return '€';
-        //     } else {
-        //         return '';
-        //     }
-        // }
+    }
 
 });

@@ -3,7 +3,7 @@ Template.storeFrontPage.onRendered(function() {
     // Init
     CKEDITOR.replace('front-text');
 
-    var values = ['storefront', 'checkout', 'cart'];
+    var values = ['storefront', 'checkout', 'cart', 'recovery'];
 
     for (i in values) {
 

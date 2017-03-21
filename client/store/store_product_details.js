@@ -2,8 +2,8 @@ Template.storeProductDetails.helpers({
 
     mainImageLink: function() {
 
-        if (Session.get('selectedPicture')) {
-            return Images.findOne(Session.get('selectedPicture')).link();
+        if (Session.get('selectedPicture_' + this._id)) {
+            return Images.findOne(Session.get('selectedPicture_' + this._id)).link();
         } else if (Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' })) {
             var pictureId = Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' }).imageId;
             return Images.findOne(pictureId).link();
@@ -57,7 +57,7 @@ Template.storeProductDetails.onRendered(function() {
     // Get image
     Meteor.call('getTitle', function(err, url) {
         Session.set('mainPicture', url);
-    });
+    });    
 
 });
 

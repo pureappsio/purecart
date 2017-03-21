@@ -435,7 +435,7 @@ Meteor.methods({
         }
 
         // Get product
-        var product = Products.findOne(cart[0]);
+        var product = cart[0];
 
         // Template
         if (language == 'fr') {

@@ -2,13 +2,11 @@
     <div class='row main-row'>
         <div class='col-md-2'></div>
         <div class='col-md-8 main-col main-col-cart'>
-            <div class='row row-checkout-title'>
-                <div class='col-md-4'>
-                    <img class='img-fluid' src='{{mainPicture}}'>
-                </div>
+            {{> storeHeader}}
+            <div class='row cart-title'>
+                <div class='col-md-12'>{{#if langEN}}Cart{{else}}Panier{{/if}}</div>
             </div>
-            <div class='row voffset50'></div>
-            <table class="table">
+            <table class="table cart-table">
                 <thead>
                     <tr>
                         <th>{{#if langEN}}Item Name{{else}}Nom de l'Article{{/if}}</th>
@@ -18,13 +16,16 @@
                         <th class='col-right'>Total</th>
                         {{else}}
                         <th class='col-right'>Actions</th>
-                        {{/if}}            
+                        {{/if}}
                     </tr>
                 </thead>
                 <tbody>
                     {{#each products}} {{> cartItem}} {{/each}}
                 </tbody>
             </table>
+            <div class='cart-mobile'>
+                {{#each products}} {{> cartMobileItem}} {{/each}}
+            </div>
             <div class='row voffset15'></div>
             {{#if useTaxes}}
             <div class='row'>
@@ -45,6 +46,7 @@
                     <button id='checkout' class='btn btn-lg btn-block btn-warning'>Checkout</button>
                 </div>
             </div>
+        
         </div>
         <div class='col-md-2'></div>
     </div>
