@@ -1,0 +1,268 @@
+<template name="admin">
+    {{#if isAppUser}}
+    <div class='admin-panel'>
+        <div class='row'>
+            <div class='col-md-2'>
+                <h2>Admin Panel</h2></div>
+            <div class='col-md-2'>
+                <a class='btn btn-block btn-primary' target="_blank" href='{{storeLink}}'>Visit Store</a>
+            </div>
+            <div class='col-md-2'>
+                <button id='logout' class='btn btn-block btn-danger'>Logout</button>
+            </div>
+        </div>
+        <div class='row voffset15'>
+            <nav aria-label="admin">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="brand">Brand Details</a>
+                    </li>
+                    <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="store">Store</a>
+                    </li>
+                    <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="payment">Payment Processor</a>
+                    </li>
+                    <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="products">Products</a>
+                    </li>
+                    <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="inventory">Inventory</a>
+                    </li>
+                    <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="discounts">Discounts</a>
+                    </li>
+                    <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="sales">Sales</a>
+                    </li>
+                    <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="theme">Theme</a>
+                    </li>
+                    <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="integrations">Integrations</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <!-- Inventory -->
+        {{#if showSection 'inventory'}} {{> inventory}} {{/if}}
+        <!-- Brand details -->
+        {{#if showSection 'brand'}} {{> brandDetails}} {{/if}}
+        <!--  Store front -->
+        {{#if showSection 'store'}} {{> storeFrontPage}} {{/if}}
+        <!-- Payment -->
+        {{#if showSection 'payment'}} {{> paymentProcessor}} {{/if}}
+        <!-- Products -->
+        {{#if showSection 'products'}} {{> products}} {{/if}}
+        <!-- Discounts -->
+        {{#if showSection 'discounts'}}
+        <div class='row'>
+            <div class='col-md-3'>
+                <h3>Create Discount</h3>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-3'>
+                <input id='discount-name' type='text' class='form-control' placeholder="Discount name ...">
+            </div>
+            <div class='col-md-2'>
+                <input id='discount-code' type='text' class='form-control' placeholder="Discount code ...">
+            </div>
+            <div class='col-md-2'>
+                <input id='discount-amount' type='text' class='form-control' placeholder="Amount ...">
+            </div>
+            <div class='col-md-1'>
+                <select id='discount-type' class='form-control'>
+                    <option value='percent'>%</option>
+                    <option value='amount'>$</option>
+                </select>
+            </div>
+            <div class='col-md-2'>
+                <div class="input-group" id='datetimepicker'>
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                    <input id='discount-expiry-date' class="set-due-date form-control" type="text" />
+                </div>
+            </div>
+            <div class='col-md-2'>
+                <button id='create-discount' class='btn-primary btn btn-block'>Create Discount</button>
+            </div>
+        </div>
+        <div class='row voffset15'>
+            <div class='col-md-3'>
+                <h3>Discounts</h3>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Expiry</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each discounts}} {{> discount}} {{/each}}
+            </tbody>
+        </table>
+        {{/if}} {{#if showSection 'sales'}}
+        <div class='row'>
+            <div class='col-md-3'>
+                <h3>Sales</h3>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                    <th>Email</th>
+                    <th>Date</th>
+                    <th>Edit</th>
+                    <th>Invoice</th>
+                    <th>Receipt</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each sales}} {{> sale}} {{/each}}
+            </tbody>
+        </table>
+        <div class='row voffset15'>
+            <div class='col-md-3'>
+                <h3>Tax</h3>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-3'>
+                <button id='get-vat' class='btn-primary btn btn-block'>Get VAT</button>
+            </div>
+            <div class='col-md-3'>
+                Total collected VAT: <span id='vat'></span>
+            </div>
+        </div>
+        <div class='row voffset15'>
+            <div class='col-md-3'>
+                <h3>Sales</h3>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-3'>
+                <select id='export-option' class='form-control'>
+                    <option value='last-month'>Last Month</option>
+                    <option value="three-months">Three Months</option>
+                    <option value='all'>All Time</option>
+                </select>
+            </div>
+            <div class='col-md-3'>
+                <select id='export-currency' class='form-control'>
+                    <option value='sales'>Sales Currencies</option>
+                    <option value='EUR'>EUR</option>
+                    <option value='USD'>USD</option>
+                    <option value='PLN'>PLN</option>
+                </select>
+            </div>
+            <div class='col-md-3'>
+                <button id='export-sales' class='btn-primary btn btn-block'>Export Sales</button>
+            </div>
+        </div>
+        {{/if}} {{#if showSection 'theme'}}
+        <div class='row '>
+            <div class='col-md-3'>
+                <h3>Theme</h3>
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-2'>
+                Checkout Style
+            </div>
+            <div class='col-md-3'>
+                <select id='checkout-theme' class='form-control'>
+                    <option value='simple'>Simple</option>
+                    <option value='extended'>Extended</option>
+                </select>
+            </div>
+            <div class='col-md-3'>
+                <button id='save-checkout-theme' class='btn btn-block btn-primary'>Save Checkout Style</button>
+            </div>
+            <div class='col-md-3'>Theme: {{getMeta "checkoutTheme"}}</div>
+        </div>
+        <div class='row'>
+            <div class='col-md-2'>
+                Store Articles per Line
+            </div>
+            <div class='col-md-3'>
+                <select id='articles-line' class='form-control'>
+                    <option value='3'>Three Articles per Line</option>
+                    <option value='4'>Four Articles per Line</option>
+                </select>
+            </div>
+            <div class='col-md-3'>
+                <button id='save-articles-line' class='btn btn-block btn-primary'>Save</button>
+            </div>
+            <div class='col-md-3'>Article per line: {{getMeta "articlesLine"}}</div>
+        </div>
+        <div class='row'>
+            <div class='col-md-2'>
+                Home Page
+            </div>
+            <div class='col-md-3'>
+                <select id='home-page' class='form-control'>
+                    <option value='store'>Store</option>
+                    <option value='checkout'>Checkout</option>
+                </select>
+            </div>
+            <div class='col-md-3'>
+                <button id='save-home-page' class='btn btn-block btn-primary'>Save Home Page</button>
+            </div>
+            <div class='col-md-3'>Home Page: {{getMeta "homePage"}}</div>
+        </div>
+        {{/if}} {{#if showSection 'integrations'}}
+        <h3>API Key</h3>
+        <div class='row'>
+            <div class='col-md-3'>
+                <button id='generate-key' class='btn btn-block btn-primary'>Generate API Key</button>
+            </div>
+            <div class='col-md-3'>
+                <span id='api-key'>{{key}}</span>
+            </div>
+        </div>
+        <h3>Email List</h3>
+        <div class='row'>
+            <div class='col-md-3'>
+                <select class='form-control' id='email-lists'></select>
+            </div>
+            <div class='col-md-3'>
+                <button id='set-list' class='btn btn-block btn-primary'>Connect to List</button>
+            </div>
+        </div>
+        <h3>Add Integration</h3>
+        <div class='row'>
+            <div class='col-md-1'>Type: </div>
+            <div class='col-md-2'>
+                <select class='form-control' id='integration-type'>
+                    <option value='purecourses'>PureCourses</option>
+                    <option value='puremail'>PureMail</option>
+                    <option value='puremetrics'>PureMetrics</option>
+                    <option value='purepages'>PurePages</option>
+                </select>
+            </div>
+            <div class='col-md-1'>URL: </div>
+            <div class='col-md-3'>
+                <input class='form-control' id='integration-url'>
+            </div>
+            <div class='col-md-1'>Key: </div>
+            <div class='col-md-2'>
+                <input class='form-control' id='integration-key'>
+            </div>
+            <div class='col-md-2'>
+                <button id='add-integration' class='btn btn-block btn-primary'>Link</button>
+            </div>
+        </div>
+        <h3>Integrations</h3> {{#each integrations}} {{> integration}} {{/each}} {{/if}}
+    </div>
+    {{/if}}
+</template>

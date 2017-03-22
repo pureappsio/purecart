@@ -64,7 +64,8 @@ Template.storeFrontPage.events({
         // Insert
         Meteor.call('insertMeta', {
             type: name,
-            value: value
+            value: value,
+            userId: Meteor.user()._id
         });
 
         if (value == false) {
@@ -86,24 +87,28 @@ Template.storeFrontPage.events({
 
         Meteor.call('insertMeta', {
             type: 'useStoreFront',
-            value: $('#use-store-front').val()
+            value: $('#use-store-front').val(),
+            userId: Meteor.user()._id
         });
 
         Meteor.call('insertMeta', {
             type: 'storeFrontText',
-            value: CKEDITOR.instances['front-text'].getData()
+            value: CKEDITOR.instances['front-text'].getData(),
+            userId: Meteor.user()._id
         });
 
         if (Session.get('frontPicture')) {
             Meteor.call('insertMeta', {
                 type: 'storeFrontPicture',
-                value: Session.get('frontPicture')
+                value: Session.get('frontPicture'),
+                userId: Meteor.user()._id
             });
         }
 
         Meteor.call('insertMeta', {
             type: 'storeFrontHeadline',
-            value: $('#front-headline').val()
+            value: $('#front-headline').val(),
+            userId: Meteor.user()._id
         });
     }
 

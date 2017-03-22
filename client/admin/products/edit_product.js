@@ -106,16 +106,6 @@ Template.editProduct.helpers({
         }
 
     },
-    // image: function() {
-    //     if (this.imageId) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // },
-    // imageLink: function(imageId) {
-    //     return Images.findOne(imageId).link();
-    // },
     mediaElements: function() {
         return Elements.find({ type: 'productPictures', productId: this._id })
     },
@@ -133,7 +123,8 @@ Template.editProduct.events({
 
             type: 'salesElement',
             value: $('#sales-element-name').val(),
-            productId: this._id
+            productId: this._id,
+            userId: Meteor.user()._id
 
         }
 
@@ -164,7 +155,8 @@ Template.editProduct.events({
             var media = {
                 type: 'productPictures',
                 imageId: Session.get('productMedia'),
-                productId: this._id
+                productId: this._id,
+                userId: Meteor.user()._id
             }
 
             // Insert
@@ -183,7 +175,8 @@ Template.editProduct.events({
                 EUR: parseFloat($('#variant-price-eur').val()),
                 USD: parseFloat($('#variant-price-usd').val())
             },
-            productId: this._id
+            productId: this._id,
+            userId: Meteor.user()._id
         };
 
         // Type
@@ -219,7 +212,8 @@ Template.editProduct.events({
                 EUR: parseFloat($('#product-price-eur').val()),
                 USD: parseFloat($('#product-price-usd').val())
             },
-            _id: this._id
+            _id: this._id,
+            userId: Meteor.user()._id
         };
 
         // Base price

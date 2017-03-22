@@ -1,7 +1,7 @@
 Template.inventory.helpers({
 
     products: function() {
-        return Products.find({ type: 'physical' });
+        return Products.find({ type: 'physical', userId: Meteor.user()._id });
     }
 
 });

@@ -4,6 +4,25 @@ const sendgrid = require('sendgrid')(Meteor.settings.sendGridAPIKey);
 
 Meteor.methods({
 
+    setGateway: function(gateway) {
+
+        console.log(gateway);
+
+        // Check if exists
+        if (Gateways.findOne({type: gateway.type, userId: gateway.userId})) {
+
+            console.log('Updating gateway');
+            Gateways.update({type: gateway.type, userId: gateway.userId}, {$set: gateway});
+
+        }
+        else {
+
+            // New gateway
+            console.log('New gateway');
+            Gateways.insert(gateway);
+        }
+
+    },
     validateEmail: function(text) {
 
         var re = /^[\w-]+(\.[\w-]+)*@([a-z0-9-]+(\.[a-z0-9-]+)*?\.[a-z]{2,6}|(\d{1,3}\.){3}\d{1,3})(:\d{4})?$/;

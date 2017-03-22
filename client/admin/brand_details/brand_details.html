@@ -1,0 +1,73 @@
+<template name="brandDetails">
+    <div class='row'>
+        <h3>Brand Details</h3>
+    </div>
+    <div class='row'>
+        <div class='col-md-4'>
+            {{> uploadForm imageId='titlePicture'}}
+        </div>
+        <div class='col-md-3'>
+            <button id='set-title' class='btn btn-block btn-primary'>Set Title Picture</button>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-4'>
+            {{> uploadForm imageId='iconPicture'}}
+        </div>
+        <div class='col-md-3'>
+            <button id='set-icon' class='btn btn-block btn-primary'>Set Store Icon</button>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-2'>
+            <input id='brand-name' type='text' class='form-control' placeholder="Brand name ..." value='{{getMeta "brandName"}}'>
+        </div>
+        <div class='col-md-2'>
+            <input id='brand-email' type='text' class='form-control' placeholder="Brand email..." value='{{getMeta "brandEmail"}}'>
+        </div>
+        <div class='col-md-3'>
+            <button id='set-brand-data' class='btn btn-block btn-primary'>Set Brand Data</button>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-4'>
+            <input id='language' type='text' class='form-control' placeholder="Language ..." value='{{getMeta "language"}}'>
+        </div>
+        <div class='col-md-3'>
+            <button id='set-language' class='btn btn-block btn-primary'>Set Language</button>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-4'>
+            <input id='facebook-pixel' type='text' class='form-control' placeholder="Facebook pixel ..." value='{{getMeta "pixel"}}'>
+        </div>
+        <div class='col-md-3'>
+            <button id='set-pixel' class='btn btn-block btn-primary'>Set Pixel</button>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-4'>
+            <input id='google-tracking' type='text' class='form-control' placeholder="Google Analytics ..." value='{{getMeta "tracking"}}'>
+        </div>
+        <div class='col-md-3'>
+            <button id='set-tracking' class='btn btn-block btn-primary'>Set Google Analytics</button>
+        </div>
+    </div>
+    <div class='row voffset15'>
+        <h3>Store Data</h3>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>
+            <input id='store-street' type='text' class='form-control' placeholder="Store street ..." value='{{getMeta "storeStreet"}}'>
+        </div>
+        <div class='col-md-3'>
+            <input id='store-zip' type='text' class='form-control' placeholder="Store ZIP ..." value='{{getMeta "storeZip"}}'>
+        </div>
+        <div class='col-md-3'>
+            <input id='store-city' type='text' class='form-control' placeholder="Store city ..." value='{{getMeta "storeCity"}}'>
+        </div>
+        <div class='col-md-3'>
+            <input id='store-country' type='text' class='form-control' placeholder="Store country ..." value='{{getMeta "storeCountry"}}'>
+        </div>
+    </div>
+</template>

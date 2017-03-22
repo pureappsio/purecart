@@ -19,7 +19,7 @@ Template.registerHelper("langEN", function() {
 });
 
 Template.registerHelper("getMeta", function(meta) {
-    return Metas.findOne({ type: meta }).value;
+    return Metas.findOne({ type: meta, userId: Session.get('sellerId') }).value;
 });
 
 Template.registerHelper("startCurrency", function() {
@@ -73,6 +73,19 @@ Template.registerHelper("endCurrency", function() {
 Template.registerHelper("isAdmin", function() {
     if (Meteor.user()) {
         if (Meteor.user().role == 'admin') {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+
+});
+
+Template.registerHelper("isAppUser", function() {
+    if (Meteor.user()) {
+        if (Meteor.user().role == 'admin' || Meteor.user().role == 'appuser') {
             return true;
         } else {
             return false;

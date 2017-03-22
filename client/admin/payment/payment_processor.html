@@ -1,0 +1,75 @@
+<template name="paymentProcessor">
+    <div class='row'>
+        <div class='col-md-4'>
+            <h3>Paypal</h3></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>
+            <select class='form-control' id='paypal-mode'>
+                <option value='sandbox'>Sandbox</option>
+                <option value='production'>Production</option>
+            </select>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Paypal client ID ...' value='{{getMeta "paypalClientId"}}' class='form-control' id='paypal-id'>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Paypal client secret ...' value='{{getMeta "paypalSecret"}}' class='form-control' id='paypal-secret'>
+        </div>
+        <div class='col-md-3'>
+            <button id='set-paypal' class='btn btn-block btn-primary'>Set Paypal Data</button>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-md-4'>
+            <h3>Braintree</h3></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>
+            <select class='form-control' id='braintree-mode'>
+                <option value='sandbox'>Sandbox</option>
+                <option value='production'>Production</option>
+            </select>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Braintree public key ...' value='{{getMeta "braintreePublicKey"}}' class='form-control' id='braintree-public'>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Braintree private key ...' value='{{getMeta "braintreePrivateKey"}}' class='form-control' id='braintree-private'>
+        </div>
+        <div class='col-md-3'>
+            <button id='set-braintree' class='btn btn-block btn-primary'>Set Braintree Data</button>
+        </div>
+    </div>
+    <div class='row'>
+    <div class='col-md-3'>
+            <input type='text' placeholder='Braintree merchant ID ...' value='{{getMeta "braintreeMerchantId"}}' class='form-control' id='braintree-merchant'>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Braintree merchant ID EUR ...' value='{{getMeta "braintreeMerchantEUR"}}' class='form-control' id='braintree-eur'>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Braintree merchant ID USD ...' value='{{getMeta "braintreeMerchantUSD"}}' class='form-control' id='braintree-usd'>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Braintree merchant ID GBP ...' value='{{getMeta "braintreeMerchantGBP"}}' class='form-control' id='braintree-gbp'>
+        </div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-4'>
+            <h3>Checkout options</h3></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>
+            <select id='payment-type' class='form-control'>
+                <option value='paypal'>Paypal</option>
+                <option value='braintree'>Braintree Drop-In UI</option>
+                <option value='braintreehosted'>Braintree Hosted Fields</option>
+                <option value='paypalbraintree'>Paypal & Braintree</option>
+            </select>
+        </div>
+        <div class='col-md-3'>
+            <button id='set-payment' class='btn btn-block btn-primary'>Set Payment Processor</button>
+        </div>
+    </div>
+</template>

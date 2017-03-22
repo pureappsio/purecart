@@ -1,5 +1,83 @@
 Meteor.methods({
 
+    getCartTitle: function(userId) {
+
+        if (Metas.findOne({ type: 'brandName', userId: userId })) {
+            var title = Metas.findOne({ type: 'brandName', userId: userId }).value;
+
+        } else {
+            var title = 'PureCart';
+        }
+
+        return title;
+
+    },
+    getCartIcon: function(userId) {
+
+        if (Metas.findOne({ type: 'icon', userId: userId })) {
+            var iconId = Metas.findOne({ type: 'icon', userId: userId }).value;
+            var icon = Images.findOne(iconId).link();
+
+        } else {
+            var icon = '/favicon.png?v=2';
+        }
+
+        return icon;
+
+    },
+    getUserDomain: function(domain) {
+
+        console.log('Domain:' + domain);
+
+        if (domain == 'admin') {
+            return Meteor.users.findOne({ role: domain });
+        } else {
+            if (Meteor.users.findOne({ domain: domain })) {
+                return Meteor.users.findOne({ domain: domain });
+            } else {
+                return Meteor.users.findOne({ role: 'admin' });
+            }
+        }
+
+    },
+
+    setUserDomain: function(domain) {
+
+        Meteor.users.update(Meteor.user()._id, { $set: { domain: domain } });
+
+        console.log(Meteor.user());
+
+    },
+
+    createUserAccount: function(data) {
+
+        console.log(data);
+
+        // Check if exist
+        if (Meteor.users.findOne({ "emails.0.address": data.email })) {
+
+            console.log('Updating existing app user');
+            var userId = Meteor.users.findOne({ "emails.0.address": data.email })._id;
+
+        } else {
+
+            console.log('Creating new app user');
+
+            // Create
+            var userId = Accounts.createUser({
+                email: data.email,
+                password: data.password
+            });
+
+            // Assign role
+            Meteor.users.update(userId, { $set: { role: data.role } });
+
+        }
+
+        return userId;
+
+    },
+
     modifyStock: function(productId, increment) {
 
         console.log(productId);
@@ -79,14 +157,13 @@ Meteor.methods({
     setPayment: function(paymentType) {
 
         // Set
-        // Meteor.users.update({role: 'admin'}, { $set: { payment: paymentType } });
-        Meteor.call('insertMeta', { type: 'payment', value: paymentType });
+        Meteor.call('insertMeta', { type: 'payment', value: paymentType, userId: Meteor.user()._id });
 
     },
-    getPayment: function() {
+    getPayment: function(userId) {
 
-        if (Metas.findOne({ type: 'payment' })) {
-            var payment = Metas.findOne({ type: 'payment' }).value;
+        if (Metas.findOne({ type: 'payment', userId: userId })) {
+            var payment = Metas.findOne({ type: 'payment', userId: userId }).value;
         } else {
 
             // Default to paypal
@@ -316,13 +393,11 @@ Meteor.methods({
         Meteor.call('insertMeta', { type: 'titlePicture', value: title });
 
     },
-    getTitle: function() {
+    getTitle: function(userId) {
 
-        if (Metas.findOne({ type: 'titlePicture' })) {
-            var pictureId = Metas.findOne({ type: 'titlePicture' }).value;
+        if (Metas.findOne({ type: 'titlePicture', userId: userId })) {
+            var pictureId = Metas.findOne({ type: 'titlePicture', userId: userId }).value;
             return Images.findOne(pictureId).link();
-        } else if (Metas.findOne({ type: 'title' })) {
-            return Metas.findOne({ type: 'title' }).value;
         }
 
     },

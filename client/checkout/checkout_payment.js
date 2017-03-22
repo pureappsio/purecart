@@ -17,7 +17,7 @@ Template.checkoutPayment.rendered = function() {
     });
 
     // Check payment type
-    Meteor.call('getPayment', function(err, paymentType) {
+    Meteor.call('getPayment', Session.get('sellerId'), function(err, paymentType) {
 
         // Set
         Session.set('payment', paymentType);
@@ -25,7 +25,7 @@ Template.checkoutPayment.rendered = function() {
         // Init Braintree Drop In
         if (paymentType == 'braintree') {
 
-            Meteor.call('getClientToken', function(err, clientToken) {
+            Meteor.call('getClientToken', Session.get('sellerId'), function(err, clientToken) {
 
                 if (err) {
                     console.log('There was an error', err);
@@ -45,7 +45,7 @@ Template.checkoutPayment.rendered = function() {
                 $('#braintree-hosted').show();
             }
 
-            Meteor.call('getClientToken', function(err, clientToken) {
+            Meteor.call('getClientToken', Session.get('sellerId'), function(err, clientToken) {
 
                 if (err) {
                     console.log('There was an error', err);
@@ -99,9 +99,12 @@ Template.checkoutPayment.helpers({
     },
     isSimpleTheme: function() {
 
-        if (Metas.findOne({ type: 'checkoutTheme' })) {
+        if (Metas.findOne({ type: 'checkoutTheme', userId: Session.get('sellerId') })) {
 
-            if (Metas.findOne({ type: 'checkoutTheme' }).value == 'simple') {
+            if (Metas.findOne({
+                    type: 'checkoutTheme',
+                    userId: Session.get('sellerId')
+                }).value == 'simple') {
                 return true;
             } else {
                 return false;
@@ -123,9 +126,9 @@ Template.checkoutPayment.helpers({
     },
     paypalBraintree: function() {
 
-        if (Metas.findOne({ type: 'payment' })) {
+        if (Metas.findOne({ type: 'payment', userId: Session.get('sellerId') })) {
 
-            if (Metas.findOne({ type: 'payment' }).value == 'paypalbraintree') {
+            if (Metas.findOne({ type: 'payment', userId: Session.get('sellerId') }).value == 'paypalbraintree') {
                 return true;
             }
 
@@ -535,7 +538,8 @@ function createSalesData(paymentProcessor) {
     var saleData = {
         firstName: $('#first-name').val(),
         lastName: $('#last-name').val(),
-        email: $('#email').val()
+        email: $('#email').val(),
+        userId: Session.get('sellerId')
     }
 
     // Physical product?

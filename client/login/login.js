@@ -4,7 +4,11 @@ Template.login.events({
 
         Meteor.loginWithPassword($('#email').val(), $('#password').val(), function() {
 
-            Router.go('/admin');
+            if (Meteor.user().role == 'appuser' && !Meteor.user().domain) {
+                Router.go('/domain');
+            } else {
+                Router.go('/admin');
+            }
 
         });
 

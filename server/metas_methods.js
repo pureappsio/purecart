@@ -5,11 +5,11 @@ Meteor.methods({
         console.log(meta);
 
         // Check if exist
-        if (Metas.findOne({ type: meta.type })) {
+        if (Metas.findOne({ type: meta.type, userId: meta.userId })) {
 
             // Update
             console.log('Updating meta');
-            Metas.update({ type: meta.type }, { $set: { value: meta.value } });
+            Metas.update({ type: meta.type, userId: meta.userId }, { $set: { value: meta.value } });
 
         } else {
 

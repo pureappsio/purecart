@@ -1,15 +1,11 @@
 Template.store.rendered = function() {
 
-    // Get image
-    Meteor.call('getTitle', function(err, url) {
-        Session.set('mainPicture', url);
-    });
-
-    if (Metas.findOne({ type: 'useStoreFront' })) {
-        if (Metas.findOne({ type: 'useStoreFront' }).value == 'yes') {
+    // Find Store front
+    if (Metas.findOne({ type: 'useStoreFront', userId: Session.get('sellerId') })) {
+        if (Metas.findOne({ type: 'useStoreFront', userId: Session.get('sellerId') }).value == 'yes') {
 
             // Add background image
-            var pictureId = Metas.findOne({ type: 'storeFrontPicture' }).value;
+            var pictureId = Metas.findOne({ type: 'storeFrontPicture', userId: Session.get('sellerId') }).value;
             $('.heading-row').css('background-image', 'url(' + Images.findOne(pictureId).link() + ')');
         }
     }
@@ -34,8 +30,8 @@ Template.store.helpers({
 
     useStoreFront: function() {
 
-        if (Metas.findOne({ type: 'useStoreFront' })) {
-            if (Metas.findOne({ type: 'useStoreFront' }).value == 'yes') {
+        if (Metas.findOne({ type: 'useStoreFront', userId: Session.get('sellerId') })) {
+            if (Metas.findOne({ type: 'useStoreFront', userId: Session.get('sellerId') }).value == 'yes') {
                 return true;
             }
         }
@@ -43,23 +39,23 @@ Template.store.helpers({
     },
 
     emailContact: function() {
-        return 'mailto:' + Metas.findOne({ type: 'brandEmail' }).value;
+        return 'mailto:' + Metas.findOne({ type: 'brandEmail', userId: Session.get('sellerId') }).value;
     },
     storeName: function() {
-        return Metas.findOne({ type: 'brandName' }).value;
+        return Metas.findOne({ type: 'brandName', userId: Session.get('sellerId') }).value;
     },
     mainPicture: function() {
         return Session.get('mainPicture');
     },
     products: function() {
 
-        var products = Products.find({ show: true }, { sort: { _id: -1 } }).fetch();
+        var products = Products.find({ show: true, userId: Session.get('sellerId') }, { sort: { _id: -1 } }).fetch();
 
         var storeProductsRow = [];
         groupIndex = 0;
 
-        if (Metas.findOne({ type: 'articlesLine' })) {
-            productsLine = Metas.findOne({ type: 'articlesLine' }).value;
+        if (Metas.findOne({ type: 'articlesLine', userId: Session.get('sellerId') })) {
+            productsLine = Metas.findOne({ type: 'articlesLine', userId: Session.get('sellerId') }).value;
         } else {
             productsLine = 3;
         }
