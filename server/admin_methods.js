@@ -1,5 +1,23 @@
 Meteor.methods({
 
+    updateApp: function() {
+
+        // console.log('Update');
+        Metas.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+        Products.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+        Variants.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+        Sales.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+        Customers.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+
+        Validations.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+        Sessions.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+
+        Discounts.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+        Elements.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+
+        Gateways.update({}, { $set: { userId: Meteor.user()._id } }, { multi: true });
+
+    },
     getCartTitle: function(userId) {
 
         if (Metas.findOne({ type: 'brandName', userId: userId })) {
@@ -203,8 +221,9 @@ Meteor.methods({
 
             var integration = Integrations.findOne({ type: 'purecourses' });
 
-            // Get lists
+            // Get course
             var url = "http://" + integration.url + "/api/courses?key=" + integration.key;
+            url += '&user=' + Meteor.user().emails[0].address;
             var answer = HTTP.get(url);
             // console.log(answer.data.courses);
             return answer.data.courses;
@@ -226,6 +245,7 @@ Meteor.methods({
             // Get lists
             var url = "http://" + integration.url + "/api/modules?key=" + integration.key;
             url += '&course=' + courseId;
+            url += '&user=' + Meteor.user().emails[0].address;
             var answer = HTTP.get(url);
             //console.log(answer.data.modules);
             return answer.data.modules;
@@ -245,6 +265,7 @@ Meteor.methods({
             // Get lists
             var url = "http://" + integration.url + "/api/bonuses?key=" + integration.key;
             url += '&course=' + courseId;
+            url += '&user=' + Meteor.user().emails[0].address;
             console.log(url);
             var answer = HTTP.get(url);
             // console.log(answer.data.courses);
@@ -375,24 +396,24 @@ Meteor.methods({
         return language;
 
     },
-    setBrandData: function(name, email) {
+    // setBrandData: function(name, email) {
 
-        Meteor.call('insertMeta', { type: 'brandName', value: name });
+    //     Meteor.call('insertMeta', { type: 'brandName', value: name });
 
-        Meteor.call('insertMeta', { type: 'brandEmail', value: email });
+    //     Meteor.call('insertMeta', { type: 'brandEmail', value: email });
 
+    // },
+    getBrandName: function(userId) {
+        return Metas.findOne({ type: 'brandName', userId: userId }).value;
     },
-    getBrandName: function() {
-        return Metas.findOne({ type: 'brandName' }).value;
+    getBrandEmail: function(userId) {
+        return Metas.findOne({ type: 'brandEmail', userId: userId }).value;
     },
-    getBrandEmail: function() {
-        return Metas.findOne({ type: 'brandEmail' }).value;
-    },
-    setTitle: function(title) {
+    // setTitle: function(title) {
 
-        Meteor.call('insertMeta', { type: 'titlePicture', value: title });
+    //     Meteor.call('insertMeta', { type: 'titlePicture', value: title });
 
-    },
+    // },
     getTitle: function(userId) {
 
         if (Metas.findOne({ type: 'titlePicture', userId: userId })) {

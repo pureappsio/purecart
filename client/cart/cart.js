@@ -1,21 +1,19 @@
 Template.cart.rendered = function() {
 
     // Check language
-    Meteor.call('checkLanguage', function(err, data) {
+    // Meteor.call('checkLanguage', function(err, data) {
 
-        Session.set('language', data);
+    //     Session.set('language', data);
 
-    });
+    // });
 
     // Get image
-    Meteor.call('getTitle', function(err, url) {
-        Session.set('mainPicture', url);
-    });
+    // Meteor.call('getTitle', function(err, url) {
+    //     Session.set('mainPicture', url);
+    // });
 
     Session.set('storeExitIntent', false);
-
     Session.set('pixelTrackingPage', 'cart');
-
 
     if (Session.get('cart')) {
 
@@ -28,7 +26,8 @@ Template.cart.rendered = function() {
                 date: new Date(),
                 productId: products[i]._id,
                 type: 'cart',
-                country: Session.get('countryCode')
+                country: Session.get('countryCode'),
+                userId: Session.get('sellerId')
             };
 
             Meteor.call('insertSession', session);

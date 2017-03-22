@@ -9,13 +9,12 @@ Meteor.methods({
         console.log(gateway);
 
         // Check if exists
-        if (Gateways.findOne({type: gateway.type, userId: gateway.userId})) {
+        if (Gateways.findOne({ type: gateway.type, userId: gateway.userId })) {
 
             console.log('Updating gateway');
-            Gateways.update({type: gateway.type, userId: gateway.userId}, {$set: gateway});
+            Gateways.update({ type: gateway.type, userId: gateway.userId }, { $set: gateway });
 
-        }
-        else {
+        } else {
 
             // New gateway
             console.log('New gateway');
@@ -67,8 +66,8 @@ Meteor.methods({
                 if (product.useFeedback == 'yes') {
 
                     // Send tripwire to client
-                    var brandName = Meteor.call('getBrandName');
-                    var brandEmail = Meteor.call('getBrandEmail');
+                    var brandName = Meteor.call('getBrandName', sale.userId);
+                    var brandEmail = Meteor.call('getBrandEmail', sale.userId);
 
                     // Build mail
                     var helper = sendgridModule.mail;
@@ -119,8 +118,8 @@ Meteor.methods({
                 if (product.tripwireType == 'email') {
 
                     // Send tripwire to client
-                    var brandName = Meteor.call('getBrandName');
-                    var brandEmail = Meteor.call('getBrandEmail');
+                    var brandName = Meteor.call('getBrandName', sale.userId);
+                    var brandEmail = Meteor.call('getBrandEmail', sale.userId);
 
                     // Build mail
                     var helper = sendgridModule.mail;
@@ -349,8 +348,13 @@ Meteor.methods({
     },
     insertSession: function(session) {
 
-        console.log(session);
-        Sessions.insert(session);
+        if (!Meteor.user()) {
+            console.log(session);
+            Sessions.insert(session);
+        }
+        else {
+            console.log('Admin, not inserting session');
+        }
 
     },
     sendFailedNotification: function(sale) {
@@ -367,7 +371,7 @@ Meteor.methods({
             sale = Sales.findOne(sale._id);
 
             // Build message
-            var brandName = Meteor.call('getBrandName');
+            var brandName = Meteor.call('getBrandName', sale.userId);
             if (sale.currency == 'EUR') {
                 var message = 'Failed transaction on ' + brandName + ' for ' + sale.amount + ' €';
             }
@@ -408,7 +412,7 @@ Meteor.methods({
             sale = Sales.findOne(sale._id);
 
             // Build message
-            var brandName = Meteor.call('getBrandName');
+            var brandName = Meteor.call('getBrandName', sale.userId);
             if (sale.currency == 'EUR') {
                 var message = 'New sale on ' + brandName + ' for ' + sale.amount + ' €';
             }
@@ -469,8 +473,8 @@ Meteor.methods({
         }
         text = SSR.render("recoverEmail", emailData);
 
-        var brandName = Meteor.call('getBrandName');
-        var brandEmail = Meteor.call('getBrandEmail');
+        var brandName = Meteor.call('getBrandName', product.userId);
+        var brandEmail = Meteor.call('getBrandEmail', product.userId);
 
         // Build mail
         var helper = sendgridModule.mail;
@@ -535,8 +539,8 @@ Meteor.methods({
             }
             text = SSR.render("recoverEmail", emailData);
 
-            var brandName = Meteor.call('getBrandName');
-            var brandEmail = Meteor.call('getBrandEmail');
+            var brandName = Meteor.call('getBrandName', sale.userId);
+            var brandEmail = Meteor.call('getBrandEmail', sale.userId);
 
             // Build mail
             var helper = sendgridModule.mail;
@@ -619,9 +623,12 @@ Meteor.methods({
     },
     enrollCustomer: function(sale) {
 
+        // User
+        var user = Meteor.users.findOne(sale.userId);
+
         // Get data
-        var brandName = Meteor.call('getBrandName');
-        var brandEmail = Meteor.call('getBrandEmail');
+        var brandName = Meteor.call('getBrandName', sale.userId);
+        var brandEmail = Meteor.call('getBrandEmail', sale.userId);
 
         // Go through all products
         for (p in sale.products) {
@@ -641,7 +648,12 @@ Meteor.methods({
                     var variant = Variants.findOne(sale.variants[p]);
                     productName = product.name + ' (' + variant.name + ' )';
 
-                    var enrollData = { email: sale.email, courses: variant.courses };
+                    var enrollData = {
+                        email: sale.email,
+                        courses: variant.courses,
+                        teacherEmail: user.emails[0].address
+                    };
+
                     if (variant.modules) {
                         enrollData.modules = variant.modules;
                     }
@@ -659,10 +671,16 @@ Meteor.methods({
 
                     productName = product.name;
 
+                    var enrollData = {
+                        email: sale.email,
+                        courses: product.courses,
+                        teacherEmail: user.emails[0].address
+                    };
+
                     // Make request to create account
                     var integration = Integrations.findOne({ type: 'purecourses' });
                     var url = "https://" + integration.url + "/api/users?key=" + integration.key;
-                    var answer = HTTP.post(url, { data: { email: sale.email, courses: product.courses } });
+                    var answer = HTTP.post(url, { data: enrollData });
                     var userData = answer.data;
 
                 }
@@ -849,8 +867,8 @@ Meteor.methods({
         }
 
         // Brand
-        var brandName = Meteor.call('getBrandName');
-        var brandEmail = Meteor.call('getBrandEmail');
+        var brandName = Meteor.call('getBrandName', sale.userId);
+        var brandEmail = Meteor.call('getBrandEmail', sale.userId);
 
         emailData.brandName = brandName;
         emailData.brandEmail = brandEmail;

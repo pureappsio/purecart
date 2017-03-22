@@ -49,6 +49,11 @@ Template.admin.onRendered(function() {
 
 Template.admin.events({
 
+    'click #update-app': function() {
+
+        Meteor.call('updateApp');
+
+    },
     'click #logout': function() {
 
         Meteor.logout(function() {

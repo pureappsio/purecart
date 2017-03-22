@@ -10,11 +10,11 @@ Template.checkoutPayment.rendered = function() {
     Session.set('paymentStatus', false);
 
     // Check language
-    Meteor.call('checkLanguage', function(err, data) {
+    // Meteor.call('checkLanguage', function(err, data) {
 
-        Session.set('language', data);
+    //     Session.set('language', data);
 
-    });
+    // });
 
     // Check payment type
     Meteor.call('getPayment', Session.get('sellerId'), function(err, paymentType) {
@@ -77,7 +77,8 @@ Template.checkoutPayment.rendered = function() {
             date: new Date(),
             productId: products[i]._id,
             type: 'checkout',
-            country: Session.get('countryCode')
+            country: Session.get('countryCode'),
+            userId: Session.get('sellerId')
         };
 
         Meteor.call('insertSession', session);
@@ -261,20 +262,6 @@ Template.checkoutPayment.helpers({
     dataIssue: function() {
         return Session.get('dataIssue');
     },
-    // startCurrency: function() {
-    //     if (Session.get('currency') == 'USD') {
-    //         return '$';
-    //     } else {
-    //         return '';
-    //     }
-    // },
-    // endCurrency: function() {
-    //     if (Session.get('currency') == 'EUR') {
-    //         return '€';
-    //     } else {
-    //         return '';
-    //     }
-    // },
     paymentStatus: function() {
         return Session.get('paymentStatus');
     },

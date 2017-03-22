@@ -1,11 +1,11 @@
 Template.checkout.rendered = function() {
 
-    // Get image
-    Meteor.call('getTitle', function(err, url) {
-        Session.set('mainPicture', url);
-    });
+    // // Get image
+    // Meteor.call('getTitle', function(err, url) {
+    //     Session.set('mainPicture', url);
+    // });
 
-    Meteor.call('getBrandEmail', function(err, email) {
+    Meteor.call('getBrandEmail', Session.get('sellerId'), function(err, email) {
         Session.set('brandEmail', email);
     });
 

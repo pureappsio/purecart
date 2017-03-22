@@ -54,10 +54,10 @@ Template.storeProductDetails.helpers({
 
 Template.storeProductDetails.onRendered(function() {
 
-    // Get image
-    Meteor.call('getTitle', function(err, url) {
-        Session.set('mainPicture', url);
-    });    
+    // // Get image
+    // Meteor.call('getTitle', function(err, url) {
+    //     Session.set('mainPicture', url);
+    // });    
 
 });
 
