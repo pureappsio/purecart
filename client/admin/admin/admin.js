@@ -99,12 +99,13 @@ Template.admin.events({
 
         var option = $('#export-option :selected').val();
         var currency = $('#export-currency :selected').val();
+        var userId = Meteor.user()._id;
 
         // Change URL
         if (currency == 'sales') {
-            Router.go("/export_sales?option=" + option);
+            Router.go("/export_sales?option=" + option + '&user=' + userId);
         } else {
-            Router.go("/export_sales?option=" + option + '&currency=' + currency);
+            Router.go("/export_sales?option=" + option + '&currency=' + currency + '&user=' + userId);
         }
 
     },

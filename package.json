@@ -12,6 +12,7 @@
     "braintree": "*",
     "braintree-web": "^3.9.0",
     "jquery-ui": "^1.12.1",
+    "js-sha256": "^0.5.0",
     "knox": "*",
     "meteor-node-stubs": "^0.2.5",
     "paypal-rest-sdk": "*",

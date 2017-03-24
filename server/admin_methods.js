@@ -175,7 +175,11 @@ Meteor.methods({
     setPayment: function(paymentType) {
 
         // Set
-        Meteor.call('insertMeta', { type: 'payment', value: paymentType, userId: Meteor.user()._id });
+        Meteor.call('insertMeta', {
+            type: 'payment',
+            value: paymentType,
+            userId: Meteor.user()._id
+        });
 
     },
     getPayment: function(userId) {
@@ -385,10 +389,10 @@ Meteor.methods({
         Meteor.call('insertMeta', { type: 'language', value: language });
 
     },
-    checkLanguage: function() {
+    checkLanguage: function(userId) {
 
-        if (Metas.findOne({ type: 'language' })) {
-            var language = Metas.findOne({ type: 'language' }).value;
+        if (Metas.findOne({ type: 'language', userId: userId })) {
+            var language = Metas.findOne({ type: 'language', userId: userId }).value;
         } else {
             var language = 'en';
         }
@@ -396,24 +400,14 @@ Meteor.methods({
         return language;
 
     },
-    // setBrandData: function(name, email) {
 
-    //     Meteor.call('insertMeta', { type: 'brandName', value: name });
-
-    //     Meteor.call('insertMeta', { type: 'brandEmail', value: email });
-
-    // },
     getBrandName: function(userId) {
         return Metas.findOne({ type: 'brandName', userId: userId }).value;
     },
     getBrandEmail: function(userId) {
         return Metas.findOne({ type: 'brandEmail', userId: userId }).value;
     },
-    // setTitle: function(title) {
 
-    //     Meteor.call('insertMeta', { type: 'titlePicture', value: title });
-
-    // },
     getTitle: function(userId) {
 
         if (Metas.findOne({ type: 'titlePicture', userId: userId })) {

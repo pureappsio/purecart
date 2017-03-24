@@ -13,6 +13,10 @@
     }
 }
 
+.payment-radio {
+    margin-right: 14px;
+}
+
 .checkout-collapse-items {
     padding-left: 15px;
     padding-right: 15px;

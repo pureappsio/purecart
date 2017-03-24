@@ -1,45 +1,6 @@
 // Braintree
 Future = Npm.require('fibers/future');
 import braintree from 'braintree';
-// import paypal from 'paypal-rest-sdk';
-
-// if (Meteor.settings.braintree.mode == 'sandbox') {
-
-//     // Sandbox
-//     gateway = braintree.connect({
-//         environment: braintree.Environment.Sandbox,
-//         publicKey: Meteor.settings.braintree.publicKey,
-//         privateKey: Meteor.settings.braintree.privateKey,
-//         merchantId: Meteor.settings.braintree.merchantId
-//     });
-
-// }
-
-// if (Meteor.settings.braintree.mode == 'production') {
-
-//     // Real
-//     gateway = braintree.connect({
-//         environment: braintree.Environment.Production,
-//         publicKey: Meteor.settings.braintree.publicKey,
-//         privateKey: Meteor.settings.braintree.privateKey,
-//         merchantId: Meteor.settings.braintree.merchantId
-//     });
-
-// }
-
-// // Merchant IDs
-// var merchantIds = {
-//     EUR: Meteor.settings.braintree.merchantEUR,
-//     USD: Meteor.settings.braintree.merchantUSD,
-//     GBP: Meteor.settings.braintree.merchantGBP
-// };
-
-// // Paypal
-// paypal.configure({
-//     'mode': Meteor.settings.paypal.mode,
-//     'client_id': Meteor.settings.paypal.client_id,
-//     'client_secret': Meteor.settings.paypal.client_secret
-// });
 
 Meteor.methods({
 
@@ -106,7 +67,7 @@ Meteor.methods({
         // Braintree gateway
         var braintreeGateway = Gateways.findOne({ type: 'braintree', userId: userId });
         console.log(braintreeGateway);
-        
+
         if (braintreeGateway.mode == 'sandbox') {
             var gateway = braintree.connect({
                 environment: braintree.Environment.Sandbox,
@@ -178,18 +139,26 @@ Meteor.methods({
                             console.log(error.response);
                             fut.return({ state: 'error' });
                         } else {
-                            console.log("Get Payment Response");
+
                             fut.return(payment);
                         }
                     });
 
                     var payment = fut.wait();
-                    //console.log(JSON.stringify(payment));
+                    // console.log("Payment Response: ");
+                    // console.log(JSON.stringify(payment));
 
                     if (payment.state == 'approved') {
 
                         // Update sale
-                        Sales.update(saleId, { $set: { success: true } });
+                        Sales.update(saleId, {
+                            $set: {
+                                success: true,
+                                firstName: payment.payer.payer_info.first_name,
+                                lastName: payment.payer.payer_info.last_name,
+                                email: payment.payer.payer_info.email,
+                            }
+                        });
 
                         // After sale actions
                         Meteor.call('afterSaleActions', sale);
@@ -266,7 +235,7 @@ Meteor.methods({
         console.log(items);
 
         // Get brand name
-        var brandName = Meteor.call('getBrandName');
+        var brandName = Meteor.call('getBrandName', saleData.userId);
 
         var create_payment_json = {
             "intent": "sale",

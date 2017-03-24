@@ -1,17 +1,5 @@
 Template.cart.rendered = function() {
 
-    // Check language
-    // Meteor.call('checkLanguage', function(err, data) {
-
-    //     Session.set('language', data);
-
-    // });
-
-    // Get image
-    // Meteor.call('getTitle', function(err, url) {
-    //     Session.set('mainPicture', url);
-    // });
-
     Session.set('storeExitIntent', false);
     Session.set('pixelTrackingPage', 'cart');
 

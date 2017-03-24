@@ -153,6 +153,7 @@
             <div class='col-md-3'>
                 <select id='export-option' class='form-control'>
                     <option value='last-month'>Last Month</option>
+                    <option value="two-months">Two Months</option>
                     <option value="three-months">Three Months</option>
                     <option value='all'>All Time</option>
                 </select>
@@ -262,13 +263,14 @@
                 <button id='add-integration' class='btn btn-block btn-primary'>Link</button>
             </div>
         </div>
-        <h3>Integrations</h3> {{#each integrations}} {{> integration}} {{/each}} {{/if}}
+        <h3>Integrations</h3> {{#each integrations}} {{> integration}} {{/each}}
         <h3>Admin</h3>
         <div class='row'>
             <div class='col-md-3'>
                 <button id='update-app' class='btn btn-block btn-primary'>Update App</button>
             </div>
         </div>
+        {{/if}}
     </div>
     {{/if}}
 </template>

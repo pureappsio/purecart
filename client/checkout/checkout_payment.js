@@ -9,13 +9,6 @@ Template.checkoutPayment.rendered = function() {
     // Reset status of payment
     Session.set('paymentStatus', false);
 
-    // Check language
-    // Meteor.call('checkLanguage', function(err, data) {
-
-    //     Session.set('language', data);
-
-    // });
-
     // Check payment type
     Meteor.call('getPayment', Session.get('sellerId'), function(err, paymentType) {
 
@@ -523,10 +516,15 @@ function createSalesData(paymentProcessor) {
 
     // Send to server
     var saleData = {
-        firstName: $('#first-name').val(),
-        lastName: $('#last-name').val(),
-        email: $('#email').val(),
         userId: Session.get('sellerId')
+    }
+
+    if (paymentProcessor != 'paypal') {
+
+        saleData.firstName = $('#first-name').val();
+        saleData.lastName = $('#last-name').val();
+        saleData.email = $('#email').val();
+        
     }
 
     // Physical product?

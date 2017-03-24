@@ -1,6 +1,6 @@
 node_modules/
 deploy.sh
+.DS_Store
 settings_prod.json
 .deploy_*/
 .meteor/
-.DS_Store

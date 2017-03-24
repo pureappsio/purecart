@@ -96,6 +96,16 @@ Template.brandDetails.events({
         });
 
     },
+    'click #set-facebook-ad': function() {
+
+        // Add
+        Meteor.call('insertMeta', {
+            type: 'adAccountId',
+            value: $('#facebook-ad').val(),
+            userId: Meteor.user()._id
+        });
+
+    },
     'click #set-tracking': function() {
 
         // Add

@@ -351,8 +351,7 @@ Meteor.methods({
         if (!Meteor.user()) {
             console.log(session);
             Sessions.insert(session);
-        }
-        else {
+        } else {
             console.log('Admin, not inserting session');
         }
 
@@ -446,8 +445,11 @@ Meteor.methods({
 
         console.log('Recovering automatically to email: ' + emailAddress);
 
+         // Get product
+        var product = cart[0];
+
         // Get language
-        language = Meteor.call('checkLanguage');
+        language = Meteor.call('checkLanguage', product.userId);
 
         // Building email
         date = moment().add(10, 'minutes').toDate();
@@ -457,8 +459,7 @@ Meteor.methods({
             subject = "Do you need any assistance with your purchase?";
         }
 
-        // Get product
-        var product = cart[0];
+       
 
         // Template
         if (language == 'fr') {
@@ -511,7 +512,7 @@ Meteor.methods({
             console.log('Sending recovery email');
 
             // Get language
-            language = Meteor.call('checkLanguage');
+            language = Meteor.call('checkLanguage', sale.userId);
 
             // Building email
             date = moment().add(10, 'minutes').toDate();

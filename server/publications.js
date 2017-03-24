@@ -30,6 +30,9 @@ Meteor.publish("userGateways", function() {
     return Integrations.find();
 });
 
+Meteor.publish("userAudiences", function() {
+    return Audiences.find();
+});
 
 Meteor.publish("userIntegrations", function() {
     return Integrations.find({ userId: this.userId });

@@ -1,3 +1,19 @@
+Template.storeProductDetails.onRendered(function () {
+
+    if (this.data) {
+        session = {
+            date: new Date(),
+            productId: this.data._id,
+            type: 'visit',
+            country: Session.get('countryCode'),
+            userId: Session.get('sellerId')
+        };
+
+        Meteor.call('insertSession', session);
+    }
+
+});
+
 Template.storeProductDetails.helpers({
 
     mainImageLink: function() {
