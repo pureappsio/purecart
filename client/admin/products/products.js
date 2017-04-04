@@ -17,8 +17,8 @@ Template.products.events({
                 // Select
                 $('#product-option').append("<select id='product-courses' class='form-control'></select>")
 
-                // Init picker
-                $('#product-courses').selectpicker();
+                // // Init picker
+                // $('#product-courses').selectpicker();
 
                 // Integrations
                 for (i = 0; i < data.length; i++) {
@@ -28,8 +28,8 @@ Template.products.events({
                     }));
                 }
 
-                // Refresh picker
-                $('#product-courses').selectpicker('refresh');
+                // // Refresh picker
+                // $('#product-courses').selectpicker('refresh');
 
             });
 
@@ -61,7 +61,7 @@ Template.products.events({
         product.type = type;
 
         if (type == 'api') {
-            product.courses = $('#product-courses').val();
+            product.courses = $('#product-courses :selected').val();
         }
         if (type == 'download') {
             product.url = $('#product-url').val();

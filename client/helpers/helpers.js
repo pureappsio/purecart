@@ -19,7 +19,12 @@ Template.registerHelper("langEN", function() {
 });
 
 Template.registerHelper("getMeta", function(meta) {
-    return Metas.findOne({ type: meta, userId: Session.get('sellerId') }).value;
+    if (Meteor.user()) {
+        return Metas.findOne({ type: meta, userId: Meteor.user()._id }).value;
+
+    } else {
+        return Metas.findOne({ type: meta, userId: Session.get('sellerId') }).value;
+    }
 });
 
 Template.registerHelper("startCurrency", function() {
@@ -45,9 +50,8 @@ Template.registerHelper("getPrice", function(price) {
 
         if (price[Session.get('currency')]) {
             return price[Session.get('currency')];
-        }
-        else {
-            var rates = Metas.findOne({type: 'rates'}).value;
+        } else {
+            var rates = Metas.findOne({ type: 'rates' }).value;
             var finalPrice = price.EUR * rates[Session.get('currency')];
             return finalPrice.toFixed(0) + '.99';
         }

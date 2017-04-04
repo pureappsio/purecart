@@ -445,7 +445,7 @@ Meteor.methods({
 
         console.log('Recovering automatically to email: ' + emailAddress);
 
-         // Get product
+        // Get product
         var product = cart[0];
 
         // Get language
@@ -459,7 +459,7 @@ Meteor.methods({
             subject = "Do you need any assistance with your purchase?";
         }
 
-       
+
 
         // Template
         if (language == 'fr') {
@@ -651,9 +651,12 @@ Meteor.methods({
 
                     var enrollData = {
                         email: sale.email,
-                        courses: variant.courses,
-                        teacherEmail: user.emails[0].address
+                        courses: variant.courses
                     };
+
+                    if (user.role != 'admin') {
+                        enrollData.teacherEmail = user.emails[0].address;
+                    }
 
                     if (variant.modules) {
                         enrollData.modules = variant.modules;
@@ -675,8 +678,14 @@ Meteor.methods({
                     var enrollData = {
                         email: sale.email,
                         courses: product.courses,
-                        teacherEmail: user.emails[0].address
                     };
+
+                    if (user.role != 'admin') {
+                        enrollData.teacherEmail = user.emails[0].address;
+                    }
+
+                    console.log('Enrollment data: ');
+                    console.log(enrollData);
 
                     // Make request to create account
                     var integration = Integrations.findOne({ type: 'purecourses' });

@@ -199,7 +199,12 @@ Template.admin.helpers({
             return Meteor.absoluteUrl();
         } else {
             var hostnameArray = document.location.hostname.split(".");
-            return 'http://' + Meteor.user().domain + '.' + hostnameArray[0] + '.' + hostnameArray[1];
+            if (hostnameArray.length == 2) {
+                return 'http://' + Meteor.user().domain + '.' + hostnameArray[0] + '.' + hostnameArray[1];
+
+            } else if (hostnameArray.length == 3) {
+                return 'http://' + Meteor.user().domain + '.' + hostnameArray[1] + '.' + hostnameArray[2];
+            }
         }
 
     },

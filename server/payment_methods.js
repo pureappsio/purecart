@@ -160,6 +160,8 @@ Meteor.methods({
                             }
                         });
 
+                        sale = Sales.findOne(saleId);
+
                         // After sale actions
                         Meteor.call('afterSaleActions', sale);
 

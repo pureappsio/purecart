@@ -1,4 +1,28 @@
 /* CSS declarations go here */
+
+.fa-delete {
+    color: gray;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.fa-delete:hover {
+    color: red;
+}
+
+
+.fa-edit {
+    padding-top: 3px;
+    color: gray;
+    cursor: pointer;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.fa-edit:hover {
+    color: blue;
+}
+
 .navbar-brand {
   padding: 0px;
 }

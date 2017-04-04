@@ -1,9 +1,9 @@
 Template.confirmation.rendered = function() {
 
     // Get image
-    Meteor.call('getTitle', function(err, url) {
-        Session.set('mainPicture', url);
-    });
+    // Meteor.call('getTitle', function(err, url) {
+    //     Session.set('mainPicture', url);
+    // });
 
     Session.set('pixelTrackingPage', 'purchase');
 
@@ -85,33 +85,7 @@ Template.confirmation.helpers({
 
     },
     mainPicture: function() {
-            return Session.get('mainPicture');
-        }
-        // productName: function() {
-
-    //     var product = Products.findOne(this.products[0]);
-    //     var productName = product.name;
-
-    //     if (this.variants[0] != null) {
-    //         variant = Variants.findOne(this.variants[0]);
-    //         productName += ' (' + variant.name + ' )';
-    //     }
-
-    //     return productName;
-    // },
-    // productUrl: function() {
-
-    //     console.log(this);
-
-    //     var product = Products.findOne(this.products[0]);
-
-    //     if (this.variants[0] != null) {
-    //         variant = Variants.findOne(this.variants[0]);
-    //         return variant.url;
-    //     } else {
-    //         return product.url;
-    //     }
-
-    // }
+        return Session.get('mainPicture');
+    }
 
 });

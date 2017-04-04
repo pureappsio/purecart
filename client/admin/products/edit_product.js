@@ -51,7 +51,7 @@ Template.editProduct.onRendered(function() {
                 $('#product-option').append("<select id='product-courses' class='form-control'></select>")
 
                 // Init picker
-                $('#product-courses').selectpicker();
+                // $('#product-courses').selectpicker();
 
                 // Integrations
                 for (i = 0; i < data.length; i++) {
@@ -63,7 +63,7 @@ Template.editProduct.onRendered(function() {
 
                 // Refresh picker
                 $('#product-courses').val(courses);
-                $('#product-courses').selectpicker('refresh');
+                // $('#product-courses').selectpicker('refresh');
 
             });
 

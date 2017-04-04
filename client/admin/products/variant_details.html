@@ -1,14 +1,43 @@
 <template name="variantDetails">
-    <h3>Variant: {{name}}</h3>
+    <div class='row voffset30'>
+        <div class='col-md-6'>
+            <h3>Variant: {{name}}</h3></div>
+    </div>
+    <div class='row voffset30'>
+        <div class='col-md-3'>
+            <label>Name</label>
+            <input id='variant-name' class='form-control' type="text" value="{{name}}">
+        </div>
+        <div class='col-md-3'>
+            <label>Price USD</label>
+            <input id='variant-usd' class='form-control' type="text" value="{{price.USD}}">
+        </div>
+        <div class='col-md-3'>
+            <label>Price EUR</label>
+            <input id='variant-eur' class='form-control' type="text" value="{{price.EUR}}">
+        </div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-3'>
+            <button class='btn btn-block btn-primary' id='edit-variant'>Edit Variant</button>
+        </div>
+        <div class='col-md-3'>
+            <a href='/products/edit/{{productId}}' class='btn btn-block btn-warning'>Come Back</a>
+        </div>
+    </div>
+    <div class='row voffset30'>
+        <div class='col-md-3'>
+            <h3>Sales elements</h3></div>
+    </div>
     <div class='row'>
         <div class='col-md-1'>
             <input id='sales-element-order' class='form-control'>
         </div>
         <div class='col-md-3'>
-        	<input id='sales-element-name' class='form-control' placeholder="Name ...">
+            <input id='sales-element-name' class='form-control' placeholder="Name ...">
         </div>
         <div class='col-md-3'>
-        	 <button id='add-sales-element' class='btn btn-block btn-warning'>Add Sales Element</button>
+            <button id='add-sales-element' class='btn btn-block btn-warning'>Add Sales Element</button>
         </div>
     </div>
     {{#each salesElements}} {{> salesElement}} {{/each}}

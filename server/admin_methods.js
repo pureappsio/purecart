@@ -1,5 +1,17 @@
 Meteor.methods({
 
+    getSessions: function(productId) {
+
+        return Sessions.find({ productId: productId, type: 'checkout' }).fetch().length;
+
+    },
+    editVariant: function(variant) {
+
+        console.log(variant);
+
+        Variants.update(variant._id, { $set: variant });
+
+    },
     updateApp: function() {
 
         // console.log('Update');
@@ -227,7 +239,12 @@ Meteor.methods({
 
             // Get course
             var url = "http://" + integration.url + "/api/courses?key=" + integration.key;
-            url += '&user=' + Meteor.user().emails[0].address;
+
+            if (Meteor.user().role != 'admin') {
+                url += '&user=' + Meteor.user().emails[0].address;
+            }
+            console.log(url);
+
             var answer = HTTP.get(url);
             // console.log(answer.data.courses);
             return answer.data.courses;

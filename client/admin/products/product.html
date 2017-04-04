@@ -1,7 +1,7 @@
 <template name="product">
     <tr>
-        <td>{{_id}}</td>
-        <td><a href='/products/edit/{{_id}}'>{{name}} {{#if isBundle}}(Bundle){{/if}}</a></td>
+        <td><a href='{{storeLink}}checkout?product_id={{_id}}'>Link</a></td>
+        <td>{{name}} {{#if isBundle}}(Bundle){{/if}}</td>
         <td>
             <input id='product-usd-{{_id}}' class='price form-control' value={{price.USD}}>
         </td>
@@ -12,8 +12,8 @@
         <td>{{sales}}</td>
         <td>{{conversions}}%</td>
         <td>
-<!--             <button class='btn btn-warning edit-product'>Edit</button>
- -->            <button class='btn btn-danger delete-product'>X</button>
+            <a href='/products/edit/{{_id}}'><i class="fa fa-pencil fa-edit edit-product" aria-hidden="true"></i></a>
+            <i class="fa fa-trash fa-delete delete-product" aria-hidden="true"></i>
         </td>
     </tr>
 </template>
