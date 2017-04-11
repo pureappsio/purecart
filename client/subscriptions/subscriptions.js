@@ -14,7 +14,7 @@ Tracker.autorun(function() {
     // Meteor.subscribe('userSessions');
     Meteor.subscribe('userIntegrations');
     Meteor.subscribe('userGateways');
-    Meteor.subscribe('userAudiences');
+    Meteor.subscribe('userReviews');
 
     Meteor.subscribe('userMetas');
     Meteor.subscribe('allUsers');

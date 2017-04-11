@@ -30,6 +30,9 @@
                         <a class='section-selector page-link' href='#' id="inventory">Inventory</a>
                     </li>
                     <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="reviews">Reviews</a>
+                    </li>
+                    <li class="page-item">
                         <a class='section-selector page-link' href='#' id="discounts">Discounts</a>
                     </li>
                     <li class="page-item">
@@ -56,6 +59,8 @@
         {{#if showSection 'payment'}} {{> paymentProcessor}} {{/if}}
         <!-- Products -->
         {{#if showSection 'products'}} {{> products}} {{/if}}
+        <!-- Products -->
+        {{#if showSection 'reviews'}} {{> reviews}} {{/if}}
         <!-- Discounts -->
         {{#if showSection 'discounts'}}
         <div class='row'>

@@ -13,3 +13,31 @@
         display: none !important;
     }
 }
+
+.reviews-title {
+
+    font-size: 30px;
+    margin-bottom: 15px;
+ 
+}
+
+.store-review {
+    margin-top: 20px !important;
+}
+
+.review-button {
+	text-align: right;
+}
+
+.review-star {
+	color: #ffbd00;
+	font-size: 20px;
+}
+
+.review-date {
+    margin-left: 10px;
+}
+
+.review-name {
+    font-weight: bold;
+}

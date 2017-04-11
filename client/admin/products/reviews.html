@@ -1,0 +1,57 @@
+<template name="reviews">
+    <div class='row voffset15'>
+        <div class='col-md-3'>
+            <h3>Reviews</h3>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Product</th>
+                <th>Rating</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each reviews}} {{> review}} {{/each}}
+        </tbody>
+    </table>
+    <div class='row voffset15'>
+        <div class='col-md-3'>
+            <h3>Add Manual Review</h3>
+        </div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-3'>
+            <label>First Name</label>
+            <input type="text" class='form-control' id='first-name'>
+        </div>
+        <div class='col-md-3'>
+            <label>Last Name</label>
+            <input type="text" class='form-control' id='last-name'>
+        </div>
+        <div class='col-md-2'>
+            <label>Rating</label>
+            <input type="text" class='form-control' id='rating'>
+        </div>
+        <div class='col-md-4'>
+            <label>Product</label>
+            <select class='form-control' id='product'>
+                {{#each products}} {{> productSelect}} {{/each}}
+            </select>
+        </div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-12'>
+            <label>Testimonial</label>
+            <input type="text" class='form-control' id='testimonial'>
+        </div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-3'></div>
+        <div class='col-md-6'>
+            <button class='btn btn-block btn-primary' id='add-review'>Add</button>
+        </div>
+    </div>
+</template>

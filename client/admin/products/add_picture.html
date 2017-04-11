@@ -1,6 +1,11 @@
 <template name="addPicture">
-
-  <div class='col-md-2'><img src='{{imageLink imageId}}' class='img-fluid'>
-  <button class='btn btn-block btn-warning pic-delete'>Delete</button></div>
-
+    <div class='col-md-2'>
+        {{#if isVideo}}
+        <video class='img-fluid'>
+            <source src='{{imageLink imageId}}' type="video/mp4">
+        </video>
+        {{else}}
+        <img src='{{imageLink imageId}}' class='img-fluid'> {{/if}}
+        <button class='btn btn-block btn-warning pic-delete'>Delete</button>
+    </div>
 </template>

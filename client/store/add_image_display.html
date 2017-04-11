@@ -1,7 +1,11 @@
 <template name="addImageDisplay">
-
-<div class='col-md-4'>
-	<img class='store-product-image img-fluid' src='{{imageLink imageId}}'>
-</div>
-
+    <div class='col-md-4'>
+        {{#if isVideo}}
+        <video class='store-product-image img-fluid'>
+            <source src='{{imageLink imageId}}' type="video/mp4">
+        </video>
+        {{else}}
+        <img class='store-product-image img-fluid' src='{{imageLink imageId}}'>
+        {{/if}}
+    </div>
 </template>

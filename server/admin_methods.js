@@ -1,5 +1,16 @@
 Meteor.methods({
 
+    addReview: function(review) {
+
+        console.log(review);
+        Reviews.insert(review);
+
+    },
+    removeReview: function(reviewId) {
+
+        Reviews.remove(reviewId);
+
+    },
     getSessions: function(productId) {
 
         return Sessions.find({ productId: productId, type: 'checkout' }).fetch().length;

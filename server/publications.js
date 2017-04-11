@@ -42,6 +42,10 @@ Meteor.publish("userMetas", function() {
     return Metas.find({});
 });
 
+Meteor.publish("userReviews", function() {
+    return Reviews.find({});
+});
+
 Meteor.publish("allUsers", function() {
     return Meteor.users.find({});
 });

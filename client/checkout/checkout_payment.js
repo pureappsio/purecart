@@ -1,3 +1,4 @@
+// Braintree
 Session.set('paymentFormStatus', null);
 var isBraintreeInitialized = false;
 var braintree = require('braintree-web');
@@ -14,6 +15,94 @@ Template.checkoutPayment.rendered = function() {
 
         // Set
         Session.set('payment', paymentType);
+
+        // Stripe
+        if (paymentType == 'stripe') {
+
+            console.log('Stripe init');
+
+            Meteor.call('getStripeData', Session.get('sellerId'), function(err, data) {
+
+                // Stripe
+                var stripe = Stripe(data.publishable_key);
+
+                // Create an instance of Elements
+                var elements = stripe.elements();
+
+                var style = {
+                    base: {
+                        color: '#32325d',
+                        lineHeight: '24px',
+                        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                        fontSmoothing: 'antialiased',
+                        fontSize: '16px',
+                        '::placeholder': {
+                            color: '#aab7c4'
+                        }
+                    },
+                    invalid: {
+                        color: '#fa755a',
+                        iconColor: '#fa755a'
+                    }
+                };
+
+                // Create an instance of the card Element
+                var card = elements.create('card', { style: style });
+
+                // Add an instance of the card Element into the `card-element` <div>
+                card.mount('#card-element');
+
+                // Handle real-time validation errors from the card Element.
+                card.addEventListener('change', function(event) {
+                    var displayError = document.getElementById('card-errors');
+                    if (event.error) {
+                        displayError.textContent = event.error.message;
+                    } else {
+                        displayError.textContent = '';
+                    }
+                });
+
+                // Handle form submission
+                var form = document.getElementById('braintree-form');
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    stripe.createToken(card).then(function(result) {
+
+                        if (result.error) {
+
+                            // Inform the user if there was an error
+                            var errorElement = document.getElementById('card-errors');
+                            errorElement.textContent = result.error.message;
+
+                        } else {
+
+                            // Sale data
+                            var saleData = createSalesData('stripe');
+
+                            // Token
+                            saleData.token = result.token;
+
+                            // Send the token to your server
+                            Meteor.call('stripeCheckout', saleData, function(err, sale) {
+
+                                Session.set('paymentFormStatus', null);
+                                if (sale.success == true) {
+                                    Router.go("/purchase_confirmation?sale_id=" + sale._id);
+                                }
+                                if (sale.success == false) {
+                                    Router.go("/failed_payment?sale_id=" + sale._id);
+                                }
+
+                            });
+                        }
+                    });
+                });
+
+
+            });
+
+        }
 
         // Init Braintree Drop In
         if (paymentType == 'braintree') {
@@ -141,6 +230,24 @@ Template.checkoutPayment.helpers({
     paypalPayment: function() {
 
         if (Session.get('payment') == 'paypal') {
+            return true;
+        } else {
+            return false;
+        }
+
+    },
+    stripePayment: function() {
+
+        if (Session.get('payment') == 'stripe') {
+            return true;
+        } else {
+            return false;
+        }
+
+    },
+    cardPayment: function() {
+
+        if (Session.get('payment') == 'stripe' || Session.get('payment') == 'braintree' || Session.get('payment') == 'braintreehosted') {
             return true;
         } else {
             return false;
@@ -524,7 +631,7 @@ function createSalesData(paymentProcessor) {
         saleData.firstName = $('#first-name').val();
         saleData.lastName = $('#last-name').val();
         saleData.email = $('#email').val();
-        
+
     }
 
     // Physical product?

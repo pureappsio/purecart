@@ -3,8 +3,8 @@
         <div class='col-md-12 store-product-details-row'>
             {{> storeHeader}}
             <div class='row store-product-details'>
-                <div class='col-md-1'></div>
-                <div class='col-md-10'>
+                <div class='col-md-2'></div>
+                <div class='col-md-8'>
                     <div class='row voffset30'>
                         <div class='col-md-6'>
                             <div class='store-product-image-container'>
@@ -40,11 +40,29 @@
                                 <button id='add-cart' class='btn btn-warning btn-lg btn-block'>ADD TO CART</button>
                                 {{/if}}
                             </div>
-                            <div class='product-detail-button'>
+                            <!--   <div class='product-detail-button'>
                                 <a href='/store' class='btn btn-secondary btn-lg btn-block'>Back to Home Page</a>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
+                    <!-- Reviews -->
+                    <div class="row voffset30">
+                        <div class='col-md-12'>
+                            <div class='reviews-title'>Customer Reviews</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class='col-md-9'>
+                            {{#if areReviews}} {{#each star in averageRating}} {{#if isFull star}}
+                            <i class="fa review-star fa-star" aria-hidden="true"></i> {{else if isHalf star}}
+                            <i class="fa review-star fa-star-half-o " aria-hidden="true"></i> {{else}}
+                            <i class="fa review-star fa-star-o" aria-hidden="true"></i> {{/if}} {{/each}} <span class='review-date'>Average over {{nbReviews}} review{{#if severalReviews}}s{{/if}}</span> {{else}} No review yet {{/if}}
+                        </div>
+                        <div class='col-md-3 review-button'>
+                            <button class='btn btn-block btn-secondary'>Write a Review</button>
+                        </div>
+                    </div>
+                    {{#each reviews}} {{> storeProductReview}} {{/each}}
                 </div>
             </div>
             {{> storeFooter}}

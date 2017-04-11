@@ -1,0 +1,14 @@
+<template name="storeProductReview">
+    <div class="row store-review">
+        <div class='col-md-12'>
+            <div>{{#each star in starsRating}} {{#if isFull star}}
+                <i class="fa review-star fa-star" aria-hidden="true"></i> {{else if isHalf star}}
+                <i class="fa review-star fa-star-half-o " aria-hidden="true"></i> {{else}}
+                <i class="fa review-star fa-star-o" aria-hidden="true"></i> {{/if}} {{/each}} <!-- <span class='review-date'>{{formatDate}}</span> --></div>
+            <div class='review-name'>
+                {{firstName}} {{lastName}}
+            </div>
+            <div>{{{testimonial}}}</div>
+        </div>
+    </div>
+</template>

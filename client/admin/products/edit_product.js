@@ -316,8 +316,8 @@ Template.editProduct.events({
                 // Select
                 $('#product-option').append("<select id='product-courses' class='form-control'></select>")
 
-                // Init picker
-                $('#product-courses').selectpicker();
+                // // Init picker
+                // $('#product-courses').selectpicker();
 
                 // Integrations
                 for (i = 0; i < data.length; i++) {
@@ -327,8 +327,8 @@ Template.editProduct.events({
                     }));
                 }
 
-                // Refresh picker
-                $('#product-courses').selectpicker('refresh');
+                // // Refresh picker
+                // $('#product-courses').selectpicker('refresh');
 
             });
 

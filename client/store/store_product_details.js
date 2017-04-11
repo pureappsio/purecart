@@ -1,4 +1,4 @@
-Template.storeProductDetails.onRendered(function () {
+Template.storeProductDetails.onRendered(function() {
 
     if (this.data) {
         session = {
@@ -16,6 +16,92 @@ Template.storeProductDetails.onRendered(function () {
 
 Template.storeProductDetails.helpers({
 
+    isFull: function(star) {
+
+        if (star.type == 'full') {
+            return true;
+        }
+
+    },
+    isHalf: function(star) {
+
+        if (star.type == 'half') {
+            return true;
+        }
+
+    },
+    isEmpty: function(star) {
+
+        if (star.type == 'empty') {
+            return true;
+        }
+
+    },
+    averageRating: function() {
+
+        var reviews = Reviews.find({ productId: this._id }).fetch();
+
+        var averageRating = 0;
+        for (r in reviews) {
+            averageRating += reviews[r].rating;
+        }
+        averageRating = averageRating / reviews.length;
+
+        var stars = [];
+
+        // Full
+        var fullStars = Math.trunc(averageRating);
+        for (i = 0; i < fullStars; i++) {
+            stars.push({ type: 'full' });
+        }
+
+        // Half
+        var halfStars = averageRating - fullStars;
+        if (halfStars != 0) {
+            halfStars = Math.ceil(halfStars);
+            for (j = 0; j < halfStars; j++) {
+                stars.push({ type: 'half' });
+            }
+        }
+
+        // Empty
+        var emptyStars = 5 - fullStars - halfStars;
+        if (emptyStars != 0) {
+            for (k = 0; k < emptyStars; k++) {
+                stars.push({ type: 'empty' });
+            }
+        }
+
+        return stars;
+
+    },
+
+    severalReviews: function() {
+
+        var reviews = Reviews.find({ productId: this._id }).fetch().length;
+
+        if (reviews >= 2) {
+            return true;
+        }
+
+    },
+    areReviews: function() {
+
+        var reviews = Reviews.find({ productId: this._id }).fetch().length;
+
+        if (reviews > 0) {
+            return true;
+        }
+
+    },
+    nbReviews: function() {
+        return Reviews.find({ productId: this._id }).fetch().length;
+    },
+    reviews: function() {
+
+        return Reviews.find({ productId: this._id });
+
+    },
     mainImageLink: function() {
 
         if (Session.get('selectedPicture_' + this._id)) {
@@ -44,6 +130,13 @@ Template.storeProductDetails.helpers({
     isVideo: function() {
         if (this.mainMedia) {
             var media = Images.findOne(this.mainMedia);
+            if (media.ext == 'mp4') {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (Session.get('selectedPicture_' + this._id)) {
+            var media = Images.findOne(Session.get('selectedPicture_' + this._id));
             if (media.ext == 'mp4') {
                 return true;
             } else {

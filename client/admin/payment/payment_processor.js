@@ -2,17 +2,22 @@ Template.paymentProcessor.onRendered(function() {
 
     if (Metas.findOne({ type: 'paypalMode', userId: Meteor.user()._id })) {
         var mode = Metas.findOne({ type: 'paypalMode', userId: Meteor.user()._id }).value;
-        $('#paypal-mode').val(mode)
+        $('#paypal-mode').val(mode);
     }
 
     if (Metas.findOne({ type: 'braintreeMode', userId: Meteor.user()._id })) {
         var mode = Metas.findOne({ type: 'braintreeMode', userId: Meteor.user()._id }).value;
-        $('#braintree-mode').val(mode)
+        $('#braintree-mode').val(mode);
+    }
+
+    if (Metas.findOne({ type: 'stripeMode', userId: Meteor.user()._id })) {
+        var mode = Metas.findOne({ type: 'stripeMode', userId: Meteor.user()._id }).value;
+        $('#stripe-mode').val(mode);
     }
 
     if (Metas.findOne({ type: 'payment', userId: Meteor.user()._id })) {
         var type = Metas.findOne({ type: 'payment', userId: Meteor.user()._id }).value;
-        $('#payment-type').val(type)
+        $('#payment-type').val(type);
     }
 
 });
@@ -53,6 +58,37 @@ Template.paymentProcessor.events({
             client_id: $('#paypal-id').val(),
             mode: $('#paypal-mode :selected').val(),
             client_secret: $('#paypal-secret').val()
+        })
+
+    },
+    'click #set-stripe': function() {
+
+        // Metas
+        Meteor.call('insertMeta', {
+            type: 'stripeSecretKey',
+            value: $('#stripe-secret').val(),
+            userId: Meteor.user()._id
+        });
+
+        Meteor.call('insertMeta', {
+            type: 'stripePublishableKey',
+            value: $('#stripe-publishable').val(),
+            userId: Meteor.user()._id
+        });
+
+        Meteor.call('insertMeta', {
+            type: 'stripeMode',
+            value: $('#stripe-mode :selected').val(),
+            userId: Meteor.user()._id
+        });
+
+        // Gateaway
+        Meteor.call('setGateway', {
+            userId: Meteor.user()._id,
+            type: 'stripe',
+            publishable_key: $('#stripe-publishable').val(),
+            mode: $('#stripe-mode :selected').val(),
+            secret_key: $('#stripe-secret').val()
         })
 
     },

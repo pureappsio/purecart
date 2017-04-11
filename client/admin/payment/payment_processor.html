@@ -20,7 +20,28 @@
             <button id='set-paypal' class='btn btn-block btn-primary'>Set Paypal Data</button>
         </div>
     </div>
+    <div class='row voffset15'>
+        <div class='col-md-4'>
+            <h3>Stripe</h3></div>
+    </div>
     <div class='row'>
+        <div class='col-md-3'>
+            <select class='form-control' id='stripe-mode'>
+                <option value='test'>Test</option>
+                <option value='live'>Live</option>
+            </select>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Stripe secret key ...' value='{{getMeta "stripeSecretKey"}}' class='form-control' id='stripe-secret'>
+        </div>
+        <div class='col-md-3'>
+            <input type='text' placeholder='Stripe publishable key ...' value='{{getMeta "stripePublishableKey"}}' class='form-control' id='stripe-publishable'>
+        </div>
+        <div class='col-md-3'>
+            <button id='set-stripe' class='btn btn-block btn-primary'>Set Stripe Data</button>
+        </div>
+    </div>
+    <div class='row voffset15'>
         <div class='col-md-4'>
             <h3>Braintree</h3></div>
     </div>
@@ -42,7 +63,7 @@
         </div>
     </div>
     <div class='row'>
-    <div class='col-md-3'>
+        <div class='col-md-3'>
             <input type='text' placeholder='Braintree merchant ID ...' value='{{getMeta "braintreeMerchantId"}}' class='form-control' id='braintree-merchant'>
         </div>
         <div class='col-md-3'>
@@ -66,6 +87,7 @@
                 <option value='braintree'>Braintree Drop-In UI</option>
                 <option value='braintreehosted'>Braintree Hosted Fields</option>
                 <option value='paypalbraintree'>Paypal & Braintree</option>
+                <option value='stripe'>Stripe</option>
             </select>
         </div>
         <div class='col-md-3'>

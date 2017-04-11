@@ -117,11 +117,11 @@
     </div>
     {{/if}}
     <form role="form">
-        {{#if braintreePayment}}
+        {{#if cardPayment}}
         <div class='row voffset30'>
-        <div class='col-md-12'>
-            <h2>{{#if langEN}}Contact Details{{else}}Informations Personelles{{/if}}</h2></div>
-    </div>
+            <div class='col-md-12'>
+                <h2>{{#if langEN}}Contact Details{{else}}Informations Personelles{{/if}}</h2></div>
+        </div>
         <div class='row'>
             <div class='col-md-12'>
                 <div class="form-group">
@@ -183,7 +183,7 @@
         </div>
         {{/if}}
     </form>
-    {{#if braintreePayment}}
+    {{#if cardPayment}}
     <div class='row'>
         <div class='col-md-12'>
             <h2>{{#if langEN}}Payment Information{{else}}Informations de Paiement{{/if}}</h2></div>
@@ -195,6 +195,22 @@
                 <div id="dropin"></div>
             </div>
         </div>
+        {{#if stripePayment}}
+        <div class='row'>
+            <div class='col-md-6'>
+                <div class="form-group">
+                    <label for="card-element">
+                        Credit or debit card
+                    </label>
+                    <div id="card-element" class="form-control">
+                        <!-- a Stripe Element will be inserted here. -->
+                    </div>
+                    <!-- Used to display form errors -->
+                    <div id="card-errors"></div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
         <div id='braintree-hosted'>
             <div class='row'>
                 <div class='col-md-12'>
@@ -240,7 +256,7 @@
             {{#if isSimpleTheme}}
             <div class='col-md-3'></div>
             <div class='col-md-6'>
-                {{#if braintreePayment}}
+                {{#if cardPayment}}
                 <button id='purchase' type="submit" class='btn btn-large btn-block btn-warning'>{{#if langEN}}Complete order{{else}}Placer ma commande{{/if}}</button>
                 {{else}}
                 <button id='purchase-paypal' class='btn btn-large btn-block btn-warning'>{{#if langEN}}Checkout with Paypal{{else}}Payer avec Paypal{{/if}}</button>
@@ -249,7 +265,7 @@
             {{else}}
             <div class='col-md-1'></div>
             <div class='col-md-10'>
-                {{#if braintreePayment}}
+                {{#if cardPayment}}
                 <button id='purchase' type="submit" class='btn btn-large btn-block btn-warning'>{{#if langEN}}Complete order{{else}}Placer ma commande{{/if}}</button>
                 {{else}}
                 <button id='purchase-paypal' class='btn btn-large btn-block btn-warning'>{{#if langEN}}Checkout with Paypal{{else}}Payer avec Paypal{{/if}}</button>
@@ -296,7 +312,7 @@
                 <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> {{#if langEN}}Secure Payment{{else}}Paiement Sécurisé{{/if}}
             </div>
             <div class='voffset15'>
-                {{#if langEN}} {{#if paypalBraintree}} All orders are processed via Paypal or Braintree, which are very secure networks. Your payment information is never stored in any way on our servers. {{else}} All orders are processed via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, which is a very secure network. Your payment information is never stored in any way on our servers. {{/if}} {{else}} {{#if paypalBraintree}} Toutes les commandes sont traitées via Paypal ou Braintree, qui est des partenaires très sécurisés. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs. {{else}} Toutes les commandes sont traitées via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, qui est un partenaire très sécurisé. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs. {{/if}} {{/if}}
+                {{#if langEN}} {{#if paypalBraintree}} All orders are processed via Paypal or Braintree, which are very secure networks. Your payment information is never stored in any way on our servers. {{else if stripePayment}} All orders are processed via Stripe, which is a very secure network. Your payment information is never stored in any way on our servers. {{else}} All orders are processed via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, which is a very secure network. Your payment information is never stored in any way on our servers. {{/if}} {{else}} {{#if paypalBraintree}} Toutes les commandes sont traitées via Paypal ou Braintree, qui est des partenaires très sécurisés. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs. {{else}} Toutes les commandes sont traitées via {{#if braintreePayment}}Braintree{{else}}Paypal{{/if}}, qui est un partenaire très sécurisé. Vos données de paiement ne sont à aucun moment stockées sur nos serveurs. {{/if}} {{/if}}
             </div>
         </div>
     </div>
