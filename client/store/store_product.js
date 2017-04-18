@@ -1,5 +1,12 @@
 Template.storeProduct.helpers({
 
+    discount: function() {
+
+        if (Session.get('usingDiscount')) {
+            return true;
+        }
+
+    },
     imageLink: function() {
 
         if (Elements.findOne({order: 1, productId: this._id, type: 'productPictures'})) {

@@ -15,8 +15,9 @@ Template.checkout.rendered = function() {
     // Automated recover
     window.onbeforeunload = function() {
 
-        if (Metas.findOne({type: 'recoveryExitIntent'})) {
-            var value = Metas.findOne({type: 'recoveryExitIntent'}).value;
+        if (Metas.findOne({ type: 'recoveryExitIntent', userId: Session.get('sellerId') })) {
+            
+            var value = Metas.findOne({ type: 'recoveryExitIntent', userId: Session.get('sellerId') }).value;
 
             if (value == true && Session.get('customerEmail')) {
                 Meteor.call('sendAutomatedRecoverEmail', Session.get('customerEmail'), Session.get('cart'));

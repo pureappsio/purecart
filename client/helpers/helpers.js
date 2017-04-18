@@ -44,6 +44,50 @@ Template.registerHelper("startCurrency", function() {
 
 });
 
+Template.registerHelper("getDiscountPrice", function(price) {
+
+    if (Session.get('currency')) {
+
+        if (price[Session.get('currency')]) {
+
+            var currencyPrice = price[Session.get('currency')]
+
+            // Discount
+            if (Session.get('usingDiscount')) {
+                currencyPrice = currencyPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+            }
+
+            return currencyPrice;
+
+        } else {
+
+            var rates = Metas.findOne({ type: 'rates' }).value;
+            var finalPrice = price.EUR * rates[Session.get('currency')];
+
+            console.log(Session.get('usingDiscount'));
+
+            // Discount
+            if (Session.get('usingDiscount')) {
+                finalPrice = finalPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+            }
+
+            return finalPrice.toFixed(0) + '.99';
+
+        }
+
+    } else {
+
+        // Discount
+        if (Session.get('usingDiscount')) {
+            price = price * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+        }
+
+        return price;
+    }
+
+});
+
+
 Template.registerHelper("getPrice", function(price) {
 
     if (Session.get('currency')) {

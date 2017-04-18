@@ -7,8 +7,17 @@
         </div>
         <div class='store-product-name'>{{name}}</div>
         <div class='store-product-price'>
-            <span class='{{soldOut}}'>{{startCurrency}}{{getPrice price}}{{endCurrency}}</span> {{#if basePrice}}
-            <span class='base-price'>{{startCurrency}}{{getPrice basePrice}}{{endCurrency}}</span> {{/if}}
+
+            <span class='{{soldOut}}'>{{startCurrency}}{{getDiscountPrice price}}{{endCurrency}}</span> 
+
+            {{#if basePrice}}
+            <span class='base-price'>{{startCurrency}}{{getPrice basePrice}}{{endCurrency}}</span> 
+            {{/if}}
+
+            {{#if discount}}
+            <span class='base-price'>{{startCurrency}}{{getPrice price}}{{endCurrency}}</span> 
+            {{/if}}
+
             <span class='sold-out-message'>{{soldOutMessage}}</span>
         </div>
     </div>

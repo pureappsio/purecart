@@ -16,6 +16,14 @@ Template.storeProductDetails.onRendered(function() {
 
 Template.storeProductDetails.helpers({
 
+    discount: function() {
+
+        if (Session.get('usingDiscount')) {
+            return true;
+        }
+
+    },
+
     isFull: function(star) {
 
         if (star.type == 'full') {

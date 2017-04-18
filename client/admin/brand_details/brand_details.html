@@ -3,16 +3,22 @@
         <h3>Brand Details</h3>
     </div>
     <div class='row'>
-        <div class='col-md-4'>
+        <div class='col-md-2'>
             {{> uploadForm imageId='titlePicture'}}
+        </div>
+        <div class='col-md-2'>
+            {{titleFile}}
         </div>
         <div class='col-md-3'>
             <button id='set-title' class='btn btn-block btn-primary'>Set Title Picture</button>
         </div>
     </div>
     <div class='row'>
-        <div class='col-md-4'>
+        <div class='col-md-2'>
             {{> uploadForm imageId='iconPicture'}}
+        </div>
+        <div class='col-md-2'>
+            {{iconFile}}
         </div>
         <div class='col-md-3'>
             <button id='set-icon' class='btn btn-block btn-primary'>Set Store Icon</button>
@@ -31,7 +37,10 @@
     </div>
     <div class='row'>
         <div class='col-md-4'>
-            <input id='language' type='text' class='form-control' placeholder="Language ..." value='{{getMeta "language"}}'>
+            <select id='language' class='form-control'>
+                <option value="en">English</option>
+                <option value="fr">French</option>
+            </select>
         </div>
         <div class='col-md-3'>
             <button id='set-language' class='btn btn-block btn-primary'>Set Language</button>

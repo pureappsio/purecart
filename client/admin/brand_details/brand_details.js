@@ -1,5 +1,11 @@
 Template.brandDetails.onRendered(function() {
 
+    Meteor.call('getMeta', 'language', function(err, data) {
+
+        $('#language').val(data);
+
+    });
+
 });
 
 Template.brandDetails.events({
@@ -64,7 +70,7 @@ Template.brandDetails.events({
 
         // Add
         Meteor.call('insertMeta', {
-            value: $('#language').val(),
+            value: $('#language :selected').val(),
             type: 'language',
             userId: Meteor.user()._id
         });
@@ -120,5 +126,20 @@ Template.brandDetails.events({
 });
 
 Template.brandDetails.helpers({
+
+    titleFile: function() {
+        if (Session.get('titlePicture')) {
+            return 'Uploaded file: ' + Images.findOne(Session.get('titlePicture')).name;
+        } else {
+            return 'No file uploaded';
+        }
+    },
+    iconFile: function() {
+        if (Session.get('iconPicture')) {
+            return 'Uploaded file: ' + Images.findOne(Session.get('iconPicture')).name;
+        } else {
+            return 'No file uploaded';
+        }
+    }
 
 });

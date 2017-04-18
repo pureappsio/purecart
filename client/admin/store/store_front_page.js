@@ -7,8 +7,8 @@ Template.storeFrontPage.onRendered(function() {
 
     for (i in values) {
 
-        if (Metas.findOne({ type: values[i] + 'ExitIntent' })) {
-            value = Metas.findOne({ type: values[i] + 'ExitIntent' }).value;
+        if (Metas.findOne({ type: values[i] + 'ExitIntent', userId: Meteor.user()._id })) {
+            value = Metas.findOne({ type: values[i] + 'ExitIntent', userId: Meteor.user()._id }).value;
         } else {
             value = false;
         }
@@ -34,9 +34,9 @@ Template.storeFrontPage.onRendered(function() {
 Template.storeFrontPage.helpers({
 
     isFrontText: function() {
-        if (Metas.findOne({ type: 'storeFrontText' })) {
+        if (Metas.findOne({ type: 'storeFrontText', userId: Meteor.user()._id })) {
 
-            var text = Metas.findOne({ type: 'storeFrontText' });
+            var text = Metas.findOne({ type: 'storeFrontText', userId: Meteor.user()._id });
             if (text != "") {
                 return true;
             }
@@ -55,8 +55,8 @@ Template.storeFrontPage.events({
         var name = id + 'ExitIntent';
 
         // Get current
-        if (Metas.findOne({ type: name })) {
-            value = !(Metas.findOne({ type: name }).value);
+        if (Metas.findOne({ type: name, userId: Meteor.user()._id })) {
+            value = !(Metas.findOne({ type: name, userId: Meteor.user()._id }).value);
         } else {
             value = false;
         }

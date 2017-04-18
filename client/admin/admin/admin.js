@@ -225,6 +225,9 @@ Template.admin.helpers({
 
     sales: function() {
         return Sales.find({ userId: Meteor.user()._id }, { sort: { date: -1 } });
+    },
+    users: function() {
+        return Meteor.users.find();
     }
 
 });

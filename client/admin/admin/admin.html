@@ -271,12 +271,12 @@
             </div>
         </div>
         <h3>Integrations</h3> {{#each integrations}} {{> integration}} {{/each}}
-        <h3>Admin</h3>
-        <div class='row'>
+        <h3>Admin</h3> {{#each users}}{{> user}} {{/each}}
+        <!-- <div class='row'>
             <div class='col-md-3'>
                 <button id='update-app' class='btn btn-block btn-primary'>Update App</button>
             </div>
-        </div>
+        </div> -->
         {{/if}}
     </div>
     {{/if}}

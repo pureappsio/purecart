@@ -9,6 +9,7 @@ Template.uploadForm.helpers({
 });
 
 Template.uploadForm.events({
+    
     'change #fileInput': function(e, template) {
 
         if (this.imageId) {

@@ -1,5 +1,16 @@
 Meteor.methods({
 
+    getMeta: function(meta) {
+
+        return Metas.findOne({ type: meta, userId: Meteor.user()._id }).value;
+
+    },
+    editUser: function(user) {
+
+        console.log(user);
+        Meteor.users.update(user._id, { $set: user });
+
+    },
     addReview: function(review) {
 
         console.log(review);
