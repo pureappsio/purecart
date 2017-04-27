@@ -18,8 +18,19 @@ Template.addPicture.helpers({
 
 Template.addPicture.events({
 
+    'click .set-store': function(){
+
+        Meteor.call('setStorePicture', this._id);
+
+    },
     'click .pic-delete': function() {
         Meteor.call('deleteElement', this._id);
-    }
+    },
+    'click .plus': function() {
+        Meteor.call('changerOrderElement', this._id, 1);
+    },
+    'click .minus': function() {
+        Meteor.call('changerOrderElement', this._id, -1);
+    },
 
 });

@@ -41,6 +41,9 @@
                     <li class="page-item">
                         <a class='section-selector page-link' href='#' id="theme">Theme</a>
                     </li>
+                      <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="stats">Statistics</a>
+                    </li>
                     {{#if isAdmin}}
                     <li class="page-item">
                         <a class='section-selector page-link' href='#' id="integrations">Integrations</a>
@@ -59,8 +62,10 @@
         {{#if showSection 'payment'}} {{> paymentProcessor}} {{/if}}
         <!-- Products -->
         {{#if showSection 'products'}} {{> products}} {{/if}}
-        <!-- Products -->
+        <!-- Reviews -->
         {{#if showSection 'reviews'}} {{> reviews}} {{/if}}
+        <!-- Stats -->
+        {{#if showSection 'stats'}} {{> stats}} {{/if}}
         <!-- Discounts -->
         {{#if showSection 'discounts'}}
         <div class='row'>

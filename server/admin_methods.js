@@ -1,5 +1,114 @@
 Meteor.methods({
 
+    getSessionsCount: function(dateLimit) {
+
+        console.log(Sessions.find({ date: { $gte: dateLimit }, type: 'checkout' }).fetch());
+
+        return Sessions.aggregate(
+            [
+                { $match: { date: { $gte: dateLimit }, type: 'checkout' } }, {
+                    $group: {
+                        _id: {
+                            "year": {
+                                "$substr": ["$date", 0, 4]
+                            },
+                            "month": {
+                                "$substr": ["$date", 5, 2]
+                            },
+                            "day": {
+                                "$substr": ["$date", 8, 2]
+                            }
+                        },
+                        count: { $sum: 1 }
+                    }
+                }
+            ]);
+    },
+    getSalesCount: function(dateLimit) {
+
+        console.log(Sales.find({ date: { $gte: dateLimit }, success: true }).fetch());
+
+        return Sales.aggregate(
+            [
+                { $match: { date: { $gte: dateLimit }, success: true } }, {
+                    $group: {
+                        _id: {
+                            "year": {
+                                "$substr": ["$date", 0, 4]
+                            },
+                            "month": {
+                                "$substr": ["$date", 5, 2]
+                            },
+                            "day": {
+                                "$substr": ["$date", 8, 2]
+                            }
+                        },
+                        count: { $sum: 1 }
+                    }
+                }
+            ]);
+    },
+    getGraphData: function(dateLimit) {
+
+        var sessions = Meteor.call('getSessionsCount', dateLimit);
+        var sales = Meteor.call('getSalesCount', dateLimit);
+
+        sessionData = [];
+        salesData = [];
+
+        for (i in sessions) {
+
+            dataPoint = {}
+
+            dataPoint.y = parseInt(sessions[i].count);
+            var date = sessions[i]._id.year + '-' + sessions[i]._id.month + '-' + sessions[i]._id.day;
+            dataPoint.x = new Date(date);
+
+            sessionData.push(dataPoint);
+
+        }
+
+        for (i in sales) {
+
+            dataPoint = {}
+
+            dataPoint.y = parseInt(sales[i].count);
+            var date = sales[i]._id.year + '-' + sales[i]._id.month + '-' + sales[i]._id.day;
+            dataPoint.x = new Date(date);
+
+            salesData.push(dataPoint);
+
+        }
+
+        // Sort
+        sessionData.sort(date_sort);
+        salesData.sort(date_sort);
+
+        var data = {
+            datasets: [{
+                label: 'Checkout Sessions',
+                fill: false,
+                data: sessionData,
+                pointHoverBackgroundColor: "darkblue",
+                pointHoverBorderColor: "darkblue",
+                pointBorderColor: "darkblue",
+                backgroundColor: "darkblue",
+                borderColor: "darkblue"
+            }, {
+                label: 'Sales',
+                fill: false,
+                data: salesData,
+                pointHoverBackgroundColor: "red",
+                pointHoverBorderColor: "red",
+                pointBorderColor: "red",
+                backgroundColor: "red",
+                borderColor: "red"
+            }]
+        };
+
+        return data;
+
+    },
     getMeta: function(meta) {
 
         return Metas.findOne({ type: meta, userId: Meteor.user()._id }).value;
@@ -25,6 +134,11 @@ Meteor.methods({
     getSessions: function(productId) {
 
         return Sessions.find({ productId: productId, type: 'checkout' }).fetch().length;
+
+    },
+    getAllSessions: function() {
+
+        return Sessions.find({ userId: Meteor.user()._id, type: 'checkout' }).fetch().length;
 
     },
     editVariant: function(variant) {
@@ -163,6 +277,50 @@ Meteor.methods({
 
         // Update
         Products.update(productId, { $set: { price: data.price } });
+
+    },
+    setStorePicture: function(elementId) {
+
+        // Set store picture
+        Elements.update(elementId, {$set: {storePicture: true}});
+
+        // Update all others
+        Elements.update({_id: {$ne: elementId}}, {$set: {storePicture: false}}, {multi: true});
+
+    },
+    changerOrderElement: function(elementId, orderChange) {
+
+        // Get element
+        var element = Elements.findOne(elementId);
+        var currentOrder = element.order;
+        var elements = Elements.find({ productId: element.productId, type: element.type }).fetch();
+
+        if (elements.length == currentOrder && orderChange == 1) {
+            console.log('Not changing order');
+        } else if (currentOrder == 0 && orderChange == -1) {
+            console.log('Not changing order');
+        } else {
+
+            console.log('Changing order');
+
+            if (orderChange == 1) {
+                var pastElement = Elements.findOne({ productId: element.productId, type: element.type, order: currentOrder + 1 });
+            }
+            if (orderChange == -1) {
+                var pastElement = Elements.findOne({ productId: element.productId, type: element.type, order: currentOrder - 1 });
+            }
+
+            // Current element
+            Elements.update(elementId, { $inc: { order: orderChange } });
+
+            // Past
+            if (orderChange == 1) {
+                Elements.update(pastElement._id, { $inc: { order: -1 } });
+            }
+            if (orderChange == -1) {
+                Elements.update(pastElement._id, { $inc: { order: 1 } });
+            }
+        }
 
     },
     insertElement: function(element) {
@@ -468,3 +626,7 @@ Meteor.methods({
     }
 
 });
+
+function date_sort(a, b) {
+    return new Date(a.x).getTime() - new Date(b.x).getTime();
+}

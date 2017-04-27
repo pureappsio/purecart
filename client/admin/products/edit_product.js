@@ -107,7 +107,7 @@ Template.editProduct.helpers({
 
     },
     mediaElements: function() {
-        return Elements.find({ type: 'productPictures', productId: this._id })
+        return Elements.find({ type: 'productPictures', productId: this._id }, {sort: {order: 1}})
     },
     salesElements: function() {
         return Elements.find({ type: 'salesElement', productId: this._id })

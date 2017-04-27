@@ -23,6 +23,10 @@
     color: blue;
 }
 
+.stats-indicator {
+    font-size: 40px;
+}
+
 .navbar-brand {
   padding: 0px;
 }

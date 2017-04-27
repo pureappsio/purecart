@@ -6,6 +6,21 @@
         </video>
         {{else}}
         <img src='{{imageLink imageId}}' class='img-fluid'> {{/if}}
-        <button class='btn btn-block btn-warning pic-delete'>Delete</button>
+        <div class='row justify-content-center'>
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-secondary minus">-</button>
+                <button type="button" class="btn btn-danger pic-delete">Delete</button>
+                <button type="button" class="btn btn-secondary plus">+</button>
+            </div>
+        </div>
+        <div class='row justify-content-center'>
+            {{#if isVideo}} {{else}}
+	            {{#if storePicture}}
+	            	<button type="button" class="btn btn-success disabled">Current Store Picture</button>
+	            {{else}}
+	            	<button type="button" class="btn btn-secondary set-store">Set as Store Picture</button>
+	            {{/if}}
+            {{/if}}
+        </div>
     </div>
 </template>

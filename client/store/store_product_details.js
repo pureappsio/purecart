@@ -9,7 +9,34 @@ Template.storeProductDetails.onRendered(function() {
             userId: Session.get('sellerId')
         };
 
+        // Origin & medium
+        if (Session.get('origin')) {
+            session.origin = Session.get('origin');
+        } else {
+            session.origin = 'organic';
+        }
+        if (Session.get('medium')) {
+            session.medium = Session.get('medium');
+        }
+
         Meteor.call('insertSession', session);
+
+        // Video
+        if (videojs.getPlayers()['product-video-' + this.data._id]) {
+            delete videojs.getPlayers()['product-video-' + this.data._id];
+        }
+
+        // Url
+        var videoUrl = this.data.url;
+
+        videojs("product-video-" + this.data._id, {}, function() {
+
+            var player = this;
+            player.load();
+
+        });
+
+
     }
 
 });
@@ -158,14 +185,14 @@ Template.storeProductDetails.helpers({
         return Session.get('mainPicture');
     },
     areAdditionalImages: function() {
-        if (Elements.findOne({ productId: this._id })) {
+        if (Elements.findOne({ productId: this._id, type: 'productPictures' })) {
             return true;
         } else {
             return false;
         }
     },
     addImages: function() {
-        return Elements.find({ productId: this._id });
+        return Elements.find({ productId: this._id, type: 'productPictures' }, { sort: { order: 1 } });
     }
 });
 

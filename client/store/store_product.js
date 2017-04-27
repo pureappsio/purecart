@@ -9,8 +9,13 @@ Template.storeProduct.helpers({
     },
     imageLink: function() {
 
-        if (Elements.findOne({order: 1, productId: this._id, type: 'productPictures'})) {
-            var pictureId = Elements.findOne({order: 1, productId: this._id, type: 'productPictures'}).imageId;
+        if (Elements.findOne({ storePicture: true, productId: this._id, type: 'productPictures' })) {
+
+            var pictureId = Elements.findOne({ storePicture: true, productId: this._id, type: 'productPictures' }).imageId;
+            return Images.findOne(pictureId).link();
+
+        } else if (Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' })) {
+            var pictureId = Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' }).imageId;
             return Images.findOne(pictureId).link();
         }
 

@@ -18,6 +18,16 @@ Template.cart.rendered = function() {
                 userId: Session.get('sellerId')
             };
 
+            // Origin & medium
+            if (Session.get('origin')) {
+                session.origin = Session.get('origin');
+            } else {
+                session.origin = 'organic';
+            }
+            if (Session.get('medium')) {
+                session.medium = Session.get('medium');
+            }
+
             Meteor.call('insertSession', session);
 
         }
