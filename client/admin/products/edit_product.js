@@ -16,7 +16,7 @@ Template.editProduct.onRendered(function() {
         }
 
         if (this.data.tripwireText) {
-            $('#tripwire-text').val(this.data.tripwireText);
+            CKEDITOR.instances['tripwire-text'].setData(this.data.tripwireText);
         }
 
         if (this.data.tripwireType) {

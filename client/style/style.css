@@ -1,5 +1,27 @@
 /* CSS declarations go here */
 
+#questions-modal {
+    display: none;
+}
+
+.messenger-text {
+    vertical-align: middle;
+}
+
+.messenger-icon {
+    height: 30px;
+    margin-right: 10px;
+    padding: 0;
+}
+
+#coupon-submit {
+    margin-top: 10px;
+}
+
+#coupon-modal {
+    display: none;
+}
+
 .fa-delete {
     color: gray;
     cursor: pointer;

@@ -44,7 +44,7 @@ Template.registerHelper("startCurrency", function() {
 
 });
 
-Template.registerHelper("getDiscountPrice", function(price) {
+Template.registerHelper("getDiscountPrice", function(price, location, productId) {
 
     if (Session.get('currency')) {
 
@@ -54,10 +54,31 @@ Template.registerHelper("getDiscountPrice", function(price) {
 
             // Discount
             if (Session.get('usingDiscount')) {
-                currencyPrice = currencyPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+
+                var discount = Session.get('usingDiscount');
+                var discounted = true;
+
+                if (discount.productId) {
+
+                    if (discount.productId != productId) {
+                        discounted = false;
+                    }
+
+                }
+
+                if (discounted == true) {
+                    if (discount.type == 'amount') {
+                        currencyPrice = currencyPrice - parseFloat(Session.get('usingDiscount').amount);
+                    } else {
+                        currencyPrice = currencyPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+                    }
+                }
+
+
+
             }
 
-            return currencyPrice;
+            return currencyPrice.toFixed(2);
 
         } else {
 
@@ -68,7 +89,12 @@ Template.registerHelper("getDiscountPrice", function(price) {
 
             // Discount
             if (Session.get('usingDiscount')) {
-                finalPrice = finalPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+                if (discount.type == 'amount') {
+                    finalPrice = finalPrice - parseFloat(Session.get('usingDiscount').amount);
+                } else {
+                    finalPrice = finalPrice * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+                }
+
             }
 
             return finalPrice.toFixed(0) + '.99';
@@ -79,7 +105,14 @@ Template.registerHelper("getDiscountPrice", function(price) {
 
         // Discount
         if (Session.get('usingDiscount')) {
-            price = price * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+            if (discount.type == 'amount') {
+                if (location != 'store') {
+                    price = price - parseFloat(Session.get('usingDiscount').amount);
+                }
+            } else {
+                price = price * (1 - parseFloat(Session.get('usingDiscount').amount) / 100);
+            }
+
         }
 
         return price;
@@ -101,7 +134,7 @@ Template.registerHelper("getPrice", function(price) {
         }
 
     } else {
-        return price;
+        return price.toFixed(2);
     }
 
 });

@@ -207,7 +207,7 @@ Meteor.methods({
         }
 
     },
-    getOrigin: function(sale) {
+    getSaleOrigin: function(sale) {
 
         // Affiliate ?
         if (sale.origin) {
@@ -657,6 +657,9 @@ Meteor.methods({
         var brandName = Meteor.call('getBrandName', sale.userId);
         var brandEmail = Meteor.call('getBrandEmail', sale.userId);
 
+        // Found courses?
+        var enrolling = false;
+
         // Go through all products
         for (p in sale.products) {
 
@@ -695,7 +698,11 @@ Meteor.methods({
                     var integration = Integrations.findOne({ type: 'purecourses' });
                     var url = "https://" + integration.url + "/api/users?key=" + integration.key;
                     var answer = HTTP.post(url, { data: enrollData });
-                    var userData = answer.data;
+                    if (enrolling == false) {
+                        var userData = answer.data;
+                        enrolling = true;
+                    }
+
 
                 } else {
 
@@ -717,60 +724,67 @@ Meteor.methods({
                     var integration = Integrations.findOne({ type: 'purecourses' });
                     var url = "https://" + integration.url + "/api/users?key=" + integration.key;
                     var answer = HTTP.post(url, { data: enrollData });
-                    var userData = answer.data;
-
-                }
-
-                if (userData.password) {
-
-                    // Template
-                    SSR.compileTemplate('accessEmail', Assets.getText('access_email_new.html'));
-
-                    // Get data
-                    emailData = {
-                        email: sale.email,
-                        url: integration.url,
-                        password: userData.password,
-                        product: productName
-                    };
-
-                } else {
-
-                    // Template
-                    SSR.compileTemplate('accessEmail', Assets.getText('access_email_update.html'));
-
-                    // Get data
-                    emailData = {
-                        email: sale.email,
-                        url: integration.url,
-                        product: productName
-                    };
-
-                }
-
-                // Build mail
-                var helper = sendgridModule.mail;
-                from_email = new helper.Email(brandEmail);
-                to_email = new helper.Email(sale.email);
-                subject = "How to Access Your Purchase";
-                content = new helper.Content("text/html", SSR.render("accessEmail", emailData));
-                mail = new helper.Mail(from_email, subject, to_email, content);
-                mail.from_email.name = brandName;
-
-                // Send
-                var requestBody = mail.toJSON()
-                var request = sendgrid.emptyRequest()
-                request.method = 'POST'
-                request.path = '/v3/mail/send'
-                request.body = requestBody
-                sendgrid.API(request, function(err, response) {
-                    if (response.statusCode != 202) {
-                        console.log('Enrollement email sent');
+                    if (enrolling == false) {
+                        var userData = answer.data;
+                        enrolling = true;
                     }
-                });
+
+                }
 
             }
 
+        }
+
+        // Send email if enrolled
+        if (enrolling == true) {
+            
+            if (userData.password) {
+
+                // Template
+                SSR.compileTemplate('accessEmail', Assets.getText('access_email_new.html'));
+
+                // Get data
+                emailData = {
+                    email: sale.email,
+                    url: integration.url,
+                    password: userData.password,
+                    product: productName
+                };
+
+            } else {
+
+                // Template
+                SSR.compileTemplate('accessEmail', Assets.getText('access_email_update.html'));
+
+                // Get data
+                emailData = {
+                    email: sale.email,
+                    url: integration.url,
+                    product: productName
+                };
+
+            }
+
+            // Build mail
+            var helper = sendgridModule.mail;
+            from_email = new helper.Email(brandEmail);
+            to_email = new helper.Email(sale.email);
+            subject = "How to Access Your Purchase";
+            content = new helper.Content("text/html", SSR.render("accessEmail", emailData));
+            mail = new helper.Mail(from_email, subject, to_email, content);
+            mail.from_email.name = brandName;
+
+            // Send
+            var requestBody = mail.toJSON()
+            var request = sendgrid.emptyRequest()
+            request.method = 'POST'
+            request.path = '/v3/mail/send'
+            request.body = requestBody
+            sendgrid.API(request, function(err, response) {
+                if (response.statusCode != 202) {
+                    console.log('Enrollement email sent');
+                }
+            });
         }
 
     },
@@ -964,6 +978,57 @@ Meteor.methods({
         }
 
         return data;
+
+    },
+    getOrigin: function(referer) {
+
+        var origin = 'organic';
+
+        if (referer.includes('youtube') || referer.includes('facebook') || referer.includes('twitter')) {
+            origin = 'social';
+        }
+
+        return origin;
+
+    },
+    getMedium: function(referer) {
+
+        var medium = 'google';
+
+        if (referer.includes('youtube')) {
+            medium = 'youtube';
+        }
+        if (referer.includes('facebook')) {
+            medium = 'facebook';
+        }
+        if (referer.includes('twitter')) {
+            medium = 'twitter';
+        }
+
+        return medium;
+
+    },
+    getUserOrigin() {
+
+        // Get headers
+        var httpHeaders = headers.get(this);
+
+        if (httpHeaders.referer) {
+
+            var origin = Meteor.call('getOrigin', httpHeaders.referer);
+            var medium = Meteor.call('getMedium', httpHeaders.referer);
+
+            return {
+                origin: origin,
+                medium: medium
+            }
+
+        } else {
+            return {
+                origin: 'organic',
+                medium: 'google'
+            }
+        }
 
     }
 

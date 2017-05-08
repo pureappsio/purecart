@@ -1,43 +1,59 @@
 Template.storeProductDetails.onRendered(function() {
 
+    // Exit intent
+    if (!Session.get('usingDiscount')) {
+
+        if (/Mobi/.test(navigator.userAgent)) {
+
+            Session.set('scrollTrigger', false);
+
+            // Check scroll 
+            $(window).scroll(function() {
+                var percent = $(window).scrollTop() / $(document).height() * 2 * 100;
+                showMobileExitIntent(percent, 'storefront', 'offer');
+            });
+
+        }
+    }
+
+    // Reset selection
     if (this.data) {
-        session = {
-            date: new Date(),
-            productId: this.data._id,
-            type: 'visit',
-            country: Session.get('countryCode'),
-            userId: Session.get('sellerId')
-        };
 
-        // Origin & medium
-        if (Session.get('origin')) {
-            session.origin = Session.get('origin');
-        } else {
-            session.origin = 'organic';
-        }
-        if (Session.get('medium')) {
-            session.medium = Session.get('medium');
-        }
+        productId = this.data._id;
+        Session.set('selectedPicture_' + this.data._id, null);
 
-        Meteor.call('insertSession', session);
+        // Media
+        var element = Elements.find({ productId: this.data._id, type: 'productPictures' }, { sort: { order: 1 } }).fetch()[0];
+        var media = Images.findOne(element.imageId);
 
         // Video
         if (videojs.getPlayers()['product-video-' + this.data._id]) {
             delete videojs.getPlayers()['product-video-' + this.data._id];
         }
 
-        // Url
-        var videoUrl = this.data.url;
+        // Picture ?
+        if (media.ext == 'mp4') {
+            $('#product-image-' + productId).hide();
+        } else {
+            $('#product-image-' + productId).show();
+        }
 
+        // Init video
         videojs("product-video-" + this.data._id, {}, function() {
 
             var player = this;
+            if (media.ext == 'mp4') {
+                $('#product-video-' + productId).show();
+                videojs.getPlayers()['product-video-' + productId].src({ type: "video/mp4", src: media.link() });
+            } else {
+                $('#product-video-' + productId).hide();
+            }
             player.load();
 
         });
 
-
     }
+
 
 });
 
@@ -46,7 +62,21 @@ Template.storeProductDetails.helpers({
     discount: function() {
 
         if (Session.get('usingDiscount')) {
-            return true;
+
+            var discount = Session.get('usingDiscount');
+
+            // Check if product restricted
+            if (discount.productId) {
+
+                if (discount.productId == this._id) {
+                    return true;
+                }
+
+            } else {
+                if (Session.get('usingDiscount').type == 'percent') {
+                    return true;
+                }
+            }
         }
 
     },
@@ -140,14 +170,11 @@ Template.storeProductDetails.helpers({
     mainImageLink: function() {
 
         if (Session.get('selectedPicture_' + this._id)) {
+            console.log('Link: ' + Images.findOne(Session.get('selectedPicture_' + this._id)).link());
             return Images.findOne(Session.get('selectedPicture_' + this._id)).link();
-        } else if (Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' })) {
-            var pictureId = Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' }).imageId;
+        } else if (Elements.findOne({ productId: this._id, type: 'productPictures' })) {
+            var pictureId = Elements.find({ productId: this._id, type: 'productPictures' }, { sort: { order: 1 } }).fetch()[0].imageId;
             return Images.findOne(pictureId).link();
-        } else if (this.mainMedia) {
-            return Images.findOne(this.mainMedia).link();
-        } else if (this.imageId) {
-            return Images.findOne(this.imageId).link();
         }
     },
     imageLink: function(imageId) {
@@ -163,27 +190,31 @@ Template.storeProductDetails.helpers({
 
     },
     isVideo: function() {
-        if (this.mainMedia) {
-            var media = Images.findOne(this.mainMedia);
-            if (media.ext == 'mp4') {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (Session.get('selectedPicture_' + this._id)) {
+
+        if (Session.get('selectedPicture_' + this._id)) {
+
             var media = Images.findOne(Session.get('selectedPicture_' + this._id));
+
             if (media.ext == 'mp4') {
                 return true;
             } else {
                 return false;
             }
-        } else {
-            return false;
+
+        } else if (Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' })) {
+            var pictureId = Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' }).imageId;
+            var media = Images.findOne(pictureId);
+
+            if (media.ext == 'mp4') {
+                return true;
+            } else {
+                return false;
+            }
         }
     },
-    mainPicture: function() {
-        return Session.get('mainPicture');
-    },
+    // mainPicture: function() {
+    //     return Session.get('mainPicture');
+    // },
     areAdditionalImages: function() {
         if (Elements.findOne({ productId: this._id, type: 'productPictures' })) {
             return true;
@@ -203,10 +234,24 @@ Template.storeProductDetails.onRendered(function() {
     //     Session.set('mainPicture', url);
     // });    
 
+    if (Session.get('storefrontExitIntent') != 'fired') {
+        Session.set('storefrontExitIntent', 'armed');
+    }
+
 });
 
 
 Template.storeProductDetails.events({
+
+    'mousemove, mouseleave': function(event) {
+
+        // Show exit intent
+        if (!Session.get('usingDiscount')) {
+            showExitIntent(event, 'storefront', 'offer');
+        }
+
+
+    },
 
     'click #add-cart': function() {
 

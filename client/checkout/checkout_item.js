@@ -4,6 +4,18 @@ Template.checkoutItem.helpers({
         return Session.get('useTaxes');
     },
 
+    productPicture: function() {
+
+        if (Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true })) {
+            var pictureId = Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true }).imageId;
+            return Images.findOne(pictureId).link();
+        } else if (Elements.findOne({ productId: this._id, type: 'productPictures' })) {
+            var pictureId = Elements.find({ productId: this._id, type: 'productPictures' }, { sort: { order: 1 } }).fetch()[0].imageId;
+            return Images.findOne(pictureId).link();
+        }
+        
+    },
+
     isPhysical: function() {
 
         isPhysical = false;
@@ -23,23 +35,8 @@ Template.checkoutItem.helpers({
     },
     basePrice: function() {
 
-        var basePrice = 0;
-
-        var price = computePrice(this.price);
-
-        // Calculate base price
-        if (Session.get('useTaxes') == false) {
-            basePrice = price;
-        } else {
-            basePrice = price / (1 + Session.get('tax') / 100);
-        }
-
-        // Apply discount
-        if (Session.get('usingDiscount')) {
-            basePrice = basePrice * (1 - Session.get('usingDiscount').amount / 100);
-        }
-
-        return basePrice.toFixed(2);
+        return getBasePrice(this);
+        
     },
     taxes: function() {
 
@@ -53,20 +50,6 @@ Template.checkoutItem.helpers({
         }
 
         return tax.toFixed(2);
-    },
-    // startCurrency: function() {
-    //     if (Session.get('currency') == 'USD') {
-    //         return '$';
-    //     } else {
-    //         return '';
-    //     }
-    // },
-    // endCurrency: function() {
-    //     if (Session.get('currency') == 'EUR') {
-    //         return '€';
-    //     } else {
-    //         return '';
-    //     }
-    // }
+    }
 
 });

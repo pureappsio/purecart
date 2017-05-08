@@ -1,35 +1,53 @@
 <template name="exitIntentModal">
-    <div id='offer-modal' class="modal fade">
-        <div class="modal-dialog" role="document">
+    <div class="modal {{isFading}}" id="offer-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Exclusive offer!</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title">Congratulations!</h5>
+                   <!--  <button type="button" class='close' id='close-offer'>
                         <span aria-hidden="true">&times;</span>
-                    </button>
+                    </button> -->
                 </div>
                 <div class="modal-body">
-                    <p>Get 10% off your next purchase with the code:</p>
-                    <div class='intent-discount'>discount50</div>
+                    <div id='initial-modal-coupon'>
+                        <p>You won a {{couponDiscount}}% off sitewide discount coupon! Where should we send it?</p>
+                        <input type="text" placeholder="Enter your email here..." id='email-coupon' class="form-control form-control-lg">
+                        <button id='coupon-submit' class="btn btn-lg btn-warning btn-block">Get my {{couponDiscount}}% discount now!</button>
+                        <button data-dismiss="modal" class="btn btn-lg btn-secondary btn-block">I prefer to pay the full price</button>
+                    </div>
+                    <div id='coupon-modal'>
+                        <p>Thanks! We sent the coupon to your email. You can also use it right away by using the following code at checkout:</p>
+                        <div class='intent-discount'>{{couponCode}}</div>
+                        <button data-dismiss="modal" class="voffset15 btn btn-lg btn-warning btn-block">Continue Shopping</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id='help-modal' class="modal fade">
+    <div class="modal {{isFading}}" id="help-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <!--    <div class="modal-header">
                     <h5 class="modal-title">Need some help?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                </div>
+                </div> -->
                 <div class="modal-body">
-                    <p>If you need any assistance to complete your purchase, simply send us an email by clicking on the button below:</p>
+                    <div id='initial-modal'>
+                        <p>Do you need any assistance to complete your purchase?</p>
+                        <button class="btn btn-warning btn-lg btn-block" data-dismiss="modal">Continue with my purchase</button>
+                        <button id='more-help' class="btn btn-secondary btn-lg btn-block">I have a few questions first!</button>
+                    </div>
+                    <div id='questions-modal'>
+                        <p>Sure thing! Don't hesitate to contact us, we are always here to help.</p>
+                        <a href='mailto:{{contactEmail}}' class="btn btn-help btn-warning btn-lg btn-block">Send Us an Email</a>
+                        <a href='https://m.me/{{facebookPage}}' class="btn btn-help btn-primary btn-lg btn-block"><img class='messenger-icon' src='/msg_white.png'><span class='messenger-text'>Chat With Us on Messenger</span></a>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <a href="mailto:contact@arest.io" class="btn btn-primary btn-block">Send Us an Email</a>
-                </div>
+                <!-- <div class="modal-footer">
+                   
+                </div> -->
             </div>
         </div>
     </div>

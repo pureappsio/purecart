@@ -1,6 +1,6 @@
 <template name="checkoutItem">
     <tr>
-        <td>{{name}} <span id='product-id'>{{_id}}</span></td>
+        <td>{{#if productPicture}}<img class='img-fluid cart-picture' src='{{productPicture}}'>{{/if}}{{name}} <span id='product-id'>{{_id}}</span></td>
         {{#if isPhysical}}
          <td>
             {{qty}}

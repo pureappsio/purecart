@@ -1,0 +1,54 @@
+<template name="stats">
+    <div class='row'>
+        <div class='col-md-3'>
+            <h3>Statistics</h3></div>
+    </div>
+    <div class='row voffset15 justify-content-center'>
+        <div class='col-md-3 col-center'>
+            <div>30 Days Earnings</div>
+            <div class='stats-indicator'>{{sales}} €</div>
+        </div>
+        <div class='col-md-3 col-center'>
+            <div>Abandon Rate</div>
+            <div class='stats-indicator'>{{abandon}}%</div>
+        </div>
+        <div class='col-md-3 col-center'>
+            <div>Mobile Visitors</div>
+            <div class='stats-indicator'>{{mobile}}%</div>
+        </div>
+        <div class='col-md-3 col-center'>
+            <div>Mobile Sales</div>
+            <div class='stats-indicator'>{{mobileSales}}%</div>
+        </div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-6 col-center'>
+            <canvas id='sales-graph'></canvas>
+        </div>
+        <div class='col-md-6 col-center'>
+            <canvas id='sessions-graph'></canvas>
+        </div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-3 col-center'>
+            <canvas id='origin-graph'></canvas>
+        </div>
+        <div class='col-md-3 col-center'>
+            <canvas id='social-graph'></canvas>
+        </div>
+        <div class='col-md-3 col-center'>
+            <canvas id='sales-country-graph' height="300"></canvas>
+        </div>
+        <div class='col-md-3 col-center'>
+            <canvas id='visitors-country-graph' height="300"></canvas>
+        </div>
+    </div>
+    <div class='row voffset15'>
+        <div class='col-md-3 col-center'>
+            <canvas id='best-visits-graph' height="300"></canvas>
+        </div>
+        <div class='col-md-3 col-center'>
+            <canvas id='best-sales-graph' height="300"></canvas>
+        </div>
+    </div>
+</template>

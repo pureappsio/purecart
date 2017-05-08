@@ -417,7 +417,7 @@ Meteor.methods({
         Meteor.call('sendReceipt', sale);
 
         // Get customer origin
-        Meteor.call('getOrigin', sale);
+        Meteor.call('getSaleOrigin', sale);
 
         // Send notification
         Meteor.call('sendNotification', sale);

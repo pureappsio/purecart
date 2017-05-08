@@ -6,14 +6,14 @@ Template.checkoutMobileItem.helpers({
 
     productPicture: function() {
 
-        if (Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' })) {
-            var pictureId = Elements.findOne({ order: 1, productId: this._id, type: 'productPictures' }).imageId;
+        if (Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true })) {
+            var pictureId = Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true }).imageId;
             return Images.findOne(pictureId).link();
-        } else if (this.mainMedia) {
-            return Images.findOne(this.mainMedia).link();
-        } else if (this.imageId) {
-            return Images.findOne(this.imageId).link();
+        } else if (Elements.findOne({ productId: this._id, type: 'productPictures' })) {
+            var pictureId = Elements.find({ productId: this._id, type: 'productPictures' }, { sort: { order: 1 } }).fetch()[0].imageId;
+            return Images.findOne(pictureId).link();
         }
+        
     },
     isPhysical: function() {
 
@@ -60,23 +60,7 @@ Template.checkoutMobileItem.helpers({
     },
     basePrice: function() {
 
-        var basePrice = 0;
-
-        var price = computePrice(this.price);
-
-        // Calculate base price
-        if (Session.get('useTaxes') == false) {
-            basePrice = price;
-        } else {
-            basePrice = price / (1 + Session.get('tax') / 100);
-        }
-
-        // Apply discount
-        if (Session.get('usingDiscount')) {
-            basePrice = basePrice * (1 - Session.get('usingDiscount').amount / 100);
-        }
-
-        return basePrice.toFixed(2);
+        return getBasePrice(this);
     }
 
 });

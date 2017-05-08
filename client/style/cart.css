@@ -58,13 +58,7 @@
     font-size: 22px;
 }
 
-.intent-discount {
-    text-align: center;
-    font-size: 26px;
-    border: 5px dashed black;
-}
-
-.modal:before {
+/*.modal:before {
     content: '';
     display: inline-block;
     height: 100%;
@@ -76,6 +70,12 @@
     display: inline-block;
     text-align: left;
     vertical-align: middle;
+}*/
+
+.intent-discount {
+    text-align: center;
+    font-size: 26px;
+    border: 5px dashed black;
 }
 
 td {

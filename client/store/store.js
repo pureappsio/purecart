@@ -10,7 +10,9 @@ Template.store.rendered = function() {
         }
     }
 
-    Session.set('storeExitIntent', false);
+    if (Session.get('storefrontExitIntent') != 'fired') {
+        Session.set('storefrontExitIntent', 'armed');
+    }
 
     session = {
         date: new Date(),
@@ -22,15 +24,36 @@ Template.store.rendered = function() {
     // Origin & medium
     if (Session.get('origin')) {
         session.origin = Session.get('origin');
-    }
-    else {
+    } else {
         session.origin = 'organic';
     }
     if (Session.get('medium')) {
         session.medium = Session.get('medium');
     }
 
+    // Mobile or Desktop
+    if (/Mobi/.test(navigator.userAgent)) {
+        session.browser = 'mobile';
+    } else {
+        session.browser = 'desktop';
+    }
+
     Meteor.call('insertSession', session);
+
+    if (!Session.get('usingDiscount')) {
+
+        if (/Mobi/.test(navigator.userAgent)) {
+
+            Session.set('scrollTrigger', false);
+
+            // Check scroll 
+            $(window).scroll(function() {
+                var percent = $(window).scrollTop() / $(document).height() * 2 * 100;
+                showMobileExitIntent(percent, 'storefront', 'offer');
+            });
+
+        }
+    }
 
 };
 
@@ -39,7 +62,9 @@ Template.store.events({
     'mousemove, mouseleave': function(event) {
 
         // Show exit intent
-        showExitIntent(event, 'storefront', 'offer');
+        if (!Session.get('usingDiscount')) {
+            showExitIntent(event, 'storefront', 'offer');
+        }
 
     }
 
@@ -69,7 +94,29 @@ Template.store.helpers({
     },
     products: function() {
 
-        var products = Products.find({ show: true, userId: Session.get('sellerId') }, { sort: { _id: -1 } }).fetch();
+        // var products = Products.find({ show: true, userId: Session.get('sellerId') }, { sort: { _id: -1 } }).fetch();
+
+        // Get products
+        var products = Products.find({ userId: Session.get('sellerId') }, { sort: { name: 1 } }).fetch();
+
+        // Add sales
+        for (i in products) {
+
+            // Get all sales
+            var productSales = Sales.find({
+                products: {
+                    $elemMatch: { $eq: products[i]._id }
+                }
+            }).fetch().length;
+
+            products[i].sales = productSales;
+
+        }
+
+        // Sort
+        products.sort(function(a, b) {
+            return parseFloat(b.sales) - parseFloat(a.sales);
+        });
 
         var storeProductsRow = [];
         groupIndex = 0;

@@ -56,5 +56,18 @@
             <button id='recovery' class='set-popup btn btn-block btn-danger'>Off</button>
         </div>
     </div>
+    <div class='row voffset15'>
+        <h3>Exit Intent Discount</h3>
+    </div>
+    <div class='row'>
+        <div class='col-md-3'>
+            <select class="form-control" id='discount-coupon-id'>
+                {{#each discounts}} {{> discountListing}} {{/each}}
+            </select>
+        </div>
+        <div class='col-md-3'>
+            <button id='discount-coupon' class='btn btn-block btn-primary'>Set Discount</button>
+        </div>
+    </div>
     <div class='voffset50'></div>
 </template>

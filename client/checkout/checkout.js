@@ -9,14 +9,29 @@ Template.checkout.rendered = function() {
         Session.set('brandEmail', email);
     });
 
-    Session.set('storeExitIntent', false);
+    if (Session.get('checkoutExitIntent') != 'fired') {
+        Session.set('checkoutExitIntent', 'armed');
+    }
+
+    if (/Mobi/.test(navigator.userAgent)) {
+
+        Session.set('scrollTrigger', false);
+
+        // Check scroll 
+        $(window).scroll(function() {
+            var percent = $(window).scrollTop() / $(document).height() * 2 * 100;
+            showMobileExitIntent(percent, 'checkout', 'help');
+        });
+
+    }
+
     Session.set('pixelTrackingPage', 'checkout');
 
     // Automated recover
     window.onbeforeunload = function() {
 
         if (Metas.findOne({ type: 'recoveryExitIntent', userId: Session.get('sellerId') })) {
-            
+
             var value = Metas.findOne({ type: 'recoveryExitIntent', userId: Session.get('sellerId') }).value;
 
             if (value == true && Session.get('customerEmail')) {

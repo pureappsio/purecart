@@ -8,18 +8,19 @@
                     <div class='row voffset30'>
                         <div class='col-md-6'>
                             <div class='store-product-image-container'>
-<!--                                 <div class='store-main-image'>
- -->                                    {{#if isVideo}}
-                                    <video class='store-product-image-details img-fluid' controls>
-                                        <source src="{{mainImageLink}}" type="video/mp4">
-                                    </video>
-                                    <!-- <video id='product-video-{{_id}}' class='video-js vjs-big-play-centered vjs-16-9' width="100%" preload="auto" controls>
-                                        <source src="{{mainImageLink}}" type="video/mp4">
-                                    </video> -->
-                                    {{else}}
-                                    <img class='store-product-image-details img-fluid' src='{{mainImageLink}}'> {{/if}}
-<!--                                 </div>
- -->                                {{#if areAdditionalImages}}
+                               <!--  {{#if isVideo}} -->
+                                <!--   <video class='store-product-image-details img-fluid' controls>
+                                    <source src="{{mainImageLink}}" type="video/mp4">
+                                </video> -->
+                                <video id='product-video-{{_id}}' class='video-js vjs-big-play-centered vjs-16-9' width="100%" preload="auto" controls>
+                                    <!-- <source src="{{mainImageLink}}" type="video/mp4"> -->
+                                </video>
+                              <!--   {{else}} -->
+                                <img id='product-image-{{_id}}' class='store-product-image-details img-fluid' src='{{mainImageLink}}'> 
+
+                             <!--    {{/if}}  -->
+
+                                {{#if areAdditionalImages}}
                                 <div class='row store-product-additional-container'>
                                     {{#each addImages}} {{> addImageDisplay}} {{/each}}
                                 </div>
@@ -29,7 +30,7 @@
                         <div class='col-md-6'>
                             <div class='product-detail-title'>{{name}}</div>
                             <div class='product-detail-price'>
-                                {{startCurrency}}{{getDiscountPrice price}}{{endCurrency}} {{#if basePrice}} <span class='base-price base-price-detail'> {{startCurrency}}{{getPrice basePrice}}{{endCurrency}}</span>{{/if}} {{#if discount}} <span class='base-price base-price-detail'> {{startCurrency}}{{getPrice price}}{{endCurrency}}</span>{{/if}}
+                                {{startCurrency}}{{getDiscountPrice price "product" _id}}{{endCurrency}} {{#if basePrice}} <span class='base-price base-price-detail'> {{startCurrency}}{{getPrice basePrice "product" _id}}{{endCurrency}}</span>{{/if}} {{#if discount}} <span class='base-price base-price-detail'> {{startCurrency}}{{getPrice price "product" _id}}{{endCurrency}}</span>{{/if}}
                             </div>
                             <div class='product-detail-button product-button-mobile'>
                                 {{#if soldOut}}
@@ -74,4 +75,5 @@
             {{> storeFooter}}
         </div>
     </div>
+    {{> exitIntentModal}}
 </template>

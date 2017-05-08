@@ -42,12 +42,24 @@ Template.storeFrontPage.helpers({
             }
 
         }
+    },
+    discounts: function() {
+        return Discounts.find({ userId: Meteor.user()._id });
     }
 
 });
 
 Template.storeFrontPage.events({
 
+    'click #discount-coupon': function() {
+
+        Meteor.call('insertMeta', {
+            type: 'exitIntentDiscount',
+            value: $('#discount-coupon-id :selected').val(),
+            userId: Meteor.user()._id
+        });
+
+    },
     'click .set-popup': function(event, template) {
 
         // Get ID

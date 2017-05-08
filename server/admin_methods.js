@@ -1,12 +1,357 @@
 Meteor.methods({
 
-    getSessionsCount: function(dateLimit) {
+    getMobileSessions: function() {
 
-        console.log(Sessions.find({ date: { $gte: dateLimit }, type: 'checkout' }).fetch());
+        var now = new Date();
+        var limitDate = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 30);
+
+        var mobile = Sessions.find({ date: { $gte: limitDate }, browser: 'mobile' }).count();
+        var all = Sessions.find({ date: { $gte: limitDate } }).count();
+        return (mobile / all * 100).toFixed(2);
+
+    },
+    setList: function(list) {
+
+        // Update
+        Integrations.update({ type: 'puremail', userId: Meteor.user()._id }, { $set: { list: list } });
+
+    },
+    subscribeEmail: function(email) {
+
+        // Get integration
+        if (Integrations.findOne({ type: 'puremail', list: { $exists: true } })) {
+
+            // Get integration
+            var integration = Integrations.findOne({ type: 'puremail', list: { $exists: true } });
+
+            // Get sequences
+            var url = "https://" + integration.url + "/api/subscribe?key=" + integration.key;
+
+            parameters = {
+                list: integration.list,
+                email: email
+            };
+
+            // Make request
+            var answer = HTTP.post(url, { data: parameters });
+            console.log(answer);
+
+        }
+
+    },
+    getEmailLists: function() {
+
+        console.log('Getting lists');
+
+        // Get integration
+        if (Integrations.findOne({ type: 'puremail', userId: Meteor.user()._id })) {
+
+            var integration = Integrations.findOne({ type: 'puremail', userId: Meteor.user()._id });
+
+            // Get lists
+            var url = "https://" + integration.url + "/api/lists?key=" + integration.key;
+
+            console.log(url);
+
+            try {
+                var answer = HTTP.get(url);
+                return answer.data.lists;
+
+            } catch (e) {
+                return [];
+            }
+
+        } else {
+            return [];
+        }
+
+    },
+    getListSequences: function() {
+
+        // Get integration
+        if (Integrations.findOne({ type: 'puremail', list: { $exists: true }, userId: Meteor.user()._id })) {
+
+            // Get integration
+            var integration = Integrations.findOne({ type: 'puremail' });
+
+            // Get sequences
+            var url = "https://" + integration.url + "/api/sequences?key=" + integration.key;
+            url += '&list=' + integration.list;
+            var answer = HTTP.get(url);
+            return answer.data.sequences;
+
+        } else {
+            return [];
+        }
+
+    },
+    sortArrays: function(refArray, otherArray) {
+
+        var all = [];
+
+        for (var i = 0; i < otherArray.length; i++) {
+            all.push({ 'A': refArray[i], 'B': otherArray[i] });
+        }
+
+        all.sort(function(a, b) {
+            return b.A - a.A;
+        });
+
+        A = [];
+        B = [];
+
+        for (var i = 0; i < all.length; i++) {
+            A.push(all[i].A);
+            B.push(all[i].B);
+        }
+
+        return [A, B];
+
+    },
+    getRandomColor: function() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    },
+
+    getBestVisitsGraphData: function(type) {
+
+        // Time
+        var now = new Date();
+        var limitDate = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 30);
+
+        // Get products
+        var products = Products.find({ userId: Meteor.user()._id }).fetch();
+        // var sessions = Sessions.find({ date: { $gte: limitDate } }).fetch();
+
+        // All countries
+        var colors = [];
+        var productsNames = [];
+        for (i in products) {
+            productsNames.push(products[i].name)
+            colors.push(Meteor.call('getRandomColor'));
+        }
+
+        // Init result
+        sessionsProduct = [];
+
+        for (c in products) {
+            
+            if (type == 'visits') {
+                sessionsProduct[c] = Sessions.find({ date: { $gte: limitDate }, productId: products[c]._id }).count();
+            }
+            if (type == 'sales') {
+                sessionsProduct[c] = Sales.find({ date: { $gte: limitDate }, products: products[c]._id }).count();
+            }
+        }
+
+        console.log(sessionsProduct);
+
+        var sorted = Meteor.call('sortArrays', sessionsProduct, productsNames);
+        productsNames = sorted[1].slice(0, 4);
+        sessionsProduct = sorted[0].slice(0, 4);
+
+        if (type == 'sales') {
+            label = "Sales by Product";
+        }
+        else {
+            label = "Visits by Product";
+        }
+
+        var data = {
+            labels: productsNames,
+            datasets: [{
+                label: label,
+                data: sessionsProduct,
+                backgroundColor: colors,
+                hoverBackgroundColor: colors
+            }]
+        };
+
+        return data;
+
+    },
+
+    getVisitorsCountryGraphData: function() {
+
+        var now = new Date();
+        var limitDate = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 30);
+
+        // Get sessions
+        var sessions = Sessions.find({ date: { $gte: limitDate } }).fetch();
+
+        // All countries
+        var countries = []
+        var colors = [];
+        for (i in sessions) {
+            if (countries.indexOf(sessions[i].country) == -1 && sessions[i].country != null) {
+                colors.push(Meteor.call('getRandomColor'));
+                countries.push(sessions[i].country);
+            }
+        }
+
+        // Init result
+        sessionsCountry = [];
+        for (c in countries) {
+            sessionsCountry[c] = 0;
+        }
+
+        for (c in countries) {
+            for (s in sessions) {
+                if (sessions[s].country == countries[c]) {
+                    sessionsCountry[c] += 1;
+                }
+            }
+        }
+
+        var sorted = Meteor.call('sortArrays', sessionsCountry, countries);
+        countries = sorted[1].slice(0, 4);
+        sessionsCountry = sorted[0].slice(0, 4);
+
+        var data = {
+            labels: countries,
+            datasets: [{
+                label: "Sessions by Country",
+                data: sessionsCountry,
+                backgroundColor: colors,
+                hoverBackgroundColor: colors
+            }]
+        };
+
+        return data;
+
+    },
+    getCountryGraphData: function() {
+
+        var now = new Date();
+        var limitDate = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 30);
+
+        // Get sales
+        var sales = Sales.find({ date: { $gte: limitDate }, success: true }).fetch();
+
+        // All countries
+        var countries = []
+        var colors = [];
+        for (i in sales) {
+            if (countries.indexOf(sales[i].country) == -1 && sales[i].country != null) {
+                colors.push(Meteor.call('getRandomColor'));
+                countries.push(sales[i].country);
+            }
+
+        }
+
+        // Init result
+        salesCountry = [];
+        for (c in countries) {
+            salesCountry[c] = 0;
+        }
+
+        for (c in countries) {
+            for (s in sales) {
+                if (sales[s].country == countries[c]) {
+                    salesCountry[c] += 1;
+                }
+            }
+        }
+
+        var sorted = Meteor.call('sortArrays', salesCountry, countries);
+        countries = sorted[1].slice(0, 4);
+        salesCountry = sorted[0].slice(0, 4);
+
+        var data = {
+            labels: countries,
+            datasets: [{
+                label: "Sales by Country",
+                data: salesCountry,
+                backgroundColor: colors,
+                hoverBackgroundColor: colors
+            }]
+        };
+
+        return data;
+
+    },
+
+    getOriginGraphData: function() {
+
+        var now = new Date();
+        var limitDate = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 30);
+
+        // Get sessions
+        var social = Sessions.find({ date: { $gte: limitDate }, origin: 'social' }).fetch().length;
+        var ads = Sessions.find({ date: { $gte: limitDate }, origin: 'ads' }).fetch().length;
+        var organic = Sessions.find({ date: { $gte: limitDate }, origin: 'organic' }).fetch().length;
+
+        var data = {
+            labels: [
+                "Organic",
+                "Social",
+                "Ads"
+            ],
+            datasets: [{
+                data: [organic, social, ads],
+                backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56"
+                ],
+                hoverBackgroundColor: [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56"
+                ]
+            }]
+        };
+
+        return data;
+
+    },
+
+    getSocialGraphData: function() {
+
+        var now = new Date();
+        var limitDate = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 30);
+
+        // Get sessions
+        var youtube = Sessions.find({ date: { $gte: limitDate }, medium: 'youtube' }).fetch().length;
+        var facebook = Sessions.find({ date: { $gte: limitDate }, medium: 'facebook' }).fetch().length;
+        var twitter = Sessions.find({ date: { $gte: limitDate }, medium: 'twitter' }).fetch().length;
+
+        var data = {
+            labels: [
+                "Youtube",
+                "Facebook",
+                "Twitter"
+            ],
+            datasets: [{
+                data: [youtube, facebook, twitter],
+                backgroundColor: [
+                    "#e52d27",
+                    "#3b5998",
+                    "#4099FF"
+                ],
+                hoverBackgroundColor: [
+                    "#e52d27",
+                    "#3b5998",
+                    "#4099FF"
+                ]
+            }]
+        };
+
+        console.log(data.datasets);
+
+        return data;
+
+    },
+
+    getSessionsCount: function(type, dateLimit) {
 
         return Sessions.aggregate(
             [
-                { $match: { date: { $gte: dateLimit }, type: 'checkout' } }, {
+                { $match: { date: { $gte: dateLimit }, type: type } }, {
                     $group: {
                         _id: {
                             "year": {
@@ -50,11 +395,13 @@ Meteor.methods({
     },
     getGraphData: function(dateLimit) {
 
-        var sessions = Meteor.call('getSessionsCount', dateLimit);
+        var sessions = Meteor.call('getSessionsCount', 'checkout', dateLimit);
+        var productSessions = Meteor.call('getSessionsCount', 'visit', dateLimit);
         var sales = Meteor.call('getSalesCount', dateLimit);
 
         sessionData = [];
         salesData = [];
+        productSessionsData = [];
 
         for (i in sessions) {
 
@@ -62,9 +409,21 @@ Meteor.methods({
 
             dataPoint.y = parseInt(sessions[i].count);
             var date = sessions[i]._id.year + '-' + sessions[i]._id.month + '-' + sessions[i]._id.day;
-            dataPoint.x = new Date(date);
+            dataPoint.x = (new Date(date)).setHours(0);
 
             sessionData.push(dataPoint);
+
+        }
+
+        for (i in productSessions) {
+
+            dataPoint = {}
+
+            dataPoint.y = parseInt(productSessions[i].count);
+            var date = productSessions[i]._id.year + '-' + productSessions[i]._id.month + '-' + productSessions[i]._id.day;
+            dataPoint.x = (new Date(date)).setHours(0);
+
+            productSessionsData.push(dataPoint);
 
         }
 
@@ -74,7 +433,7 @@ Meteor.methods({
 
             dataPoint.y = parseInt(sales[i].count);
             var date = sales[i]._id.year + '-' + sales[i]._id.month + '-' + sales[i]._id.day;
-            dataPoint.x = new Date(date);
+            dataPoint.x = (new Date(date)).setHours(0);
 
             salesData.push(dataPoint);
 
@@ -83,27 +442,54 @@ Meteor.methods({
         // Sort
         sessionData.sort(date_sort);
         salesData.sort(date_sort);
+        productSessionsData.sort(date_sort);
+
+        // Only show product pages visits for stores
+        if (Metas.findOne({ type: 'homePage', userId: Meteor.user()._id })) {
+            if (Metas.findOne({ type: 'homePage', userId: Meteor.user()._id }).value == 'store') {
+                var plotProductVisits = true;
+            } else {
+                var plotProductVisits = false;
+            }
+        } else {
+            var plotProductVisits = false;
+        }
+
+        var datasets = [{
+            label: 'Checkout Visits',
+            fill: false,
+            data: sessionData,
+            pointHoverBackgroundColor: "darkblue",
+            pointHoverBorderColor: "darkblue",
+            pointBorderColor: "darkblue",
+            backgroundColor: "darkblue",
+            borderColor: "darkblue"
+        }, {
+            label: 'Sales',
+            fill: false,
+            data: salesData,
+            pointHoverBackgroundColor: "red",
+            pointHoverBorderColor: "red",
+            pointBorderColor: "red",
+            backgroundColor: "red",
+            borderColor: "red"
+        }];
+
+        if (plotProductVisits == true) {
+            datasets.push({
+                label: 'Product Pages Visits',
+                fill: false,
+                data: productSessionsData,
+                pointHoverBackgroundColor: "orange",
+                pointHoverBorderColor: "orange",
+                pointBorderColor: "orange",
+                backgroundColor: "orange",
+                borderColor: "orange"
+            });
+        }
 
         var data = {
-            datasets: [{
-                label: 'Checkout Sessions',
-                fill: false,
-                data: sessionData,
-                pointHoverBackgroundColor: "darkblue",
-                pointHoverBorderColor: "darkblue",
-                pointBorderColor: "darkblue",
-                backgroundColor: "darkblue",
-                borderColor: "darkblue"
-            }, {
-                label: 'Sales',
-                fill: false,
-                data: salesData,
-                pointHoverBackgroundColor: "red",
-                pointHoverBorderColor: "red",
-                pointBorderColor: "red",
-                backgroundColor: "red",
-                borderColor: "red"
-            }]
+            datasets: datasets
         };
 
         return data;
@@ -282,10 +668,11 @@ Meteor.methods({
     setStorePicture: function(elementId) {
 
         // Set store picture
-        Elements.update(elementId, {$set: {storePicture: true}});
+        Elements.update(elementId, { $set: { storePicture: true } });
+        var element = Elements.findOne(elementId);
 
         // Update all others
-        Elements.update({_id: {$ne: elementId}}, {$set: {storePicture: false}}, {multi: true});
+        Elements.update({ _id: { $ne: elementId }, type: element.type, productId: element.productId }, { $set: { storePicture: false } }, { multi: true });
 
     },
     changerOrderElement: function(elementId, orderChange) {
@@ -391,23 +778,6 @@ Meteor.methods({
 
         // Update
         Integrations.update({ type: 'puremail' }, { $set: { list: list } });
-
-    },
-    getEmailLists: function() {
-
-        // Get integration
-        if (Integrations.findOne({ type: 'puremail' })) {
-
-            var integration = Integrations.findOne({ type: 'puremail' });
-
-            // Get lists
-            var url = "http://" + integration.url + "/api/lists?key=" + integration.key;
-            var answer = HTTP.get(url);
-            return answer.data.lists;
-
-        } else {
-            return [];
-        }
 
     },
     getCourses: function() {

@@ -8,14 +8,14 @@
         <div class='store-product-name'>{{name}}</div>
         <div class='store-product-price'>
 
-            <span class='{{soldOut}}'>{{startCurrency}}{{getDiscountPrice price}}{{endCurrency}}</span> 
+            <span class='{{soldOut}}'>{{startCurrency}}{{getDiscountPrice price "store" _id}}{{endCurrency}}</span> 
 
             {{#if basePrice}}
-            <span class='base-price'>{{startCurrency}}{{getPrice basePrice}}{{endCurrency}}</span> 
+            <span class='base-price'>{{startCurrency}}{{getPrice basePrice _id}}{{endCurrency}}</span> 
             {{/if}}
 
             {{#if discount}}
-            <span class='base-price'>{{startCurrency}}{{getPrice price}}{{endCurrency}}</span> 
+            <span class='base-price'>{{startCurrency}}{{getPrice price _id}}{{endCurrency}}</span> 
             {{/if}}
 
             <span class='sold-out-message'>{{soldOutMessage}}</span>

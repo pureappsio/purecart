@@ -33,6 +33,18 @@ Template.cart.rendered = function() {
         }
     }
 
+    if (/Mobi/.test(navigator.userAgent)) {
+
+        Session.set('scrollTrigger', false);
+
+        // Check scroll 
+        $(window).scroll(function() {
+            var percent = $(window).scrollTop() / $(document).height() * 2 * 100;
+            showMobileExitIntent(percent, 'cart', 'help');
+        });
+
+    }
+
 };
 
 Template.cart.events({
@@ -77,6 +89,7 @@ Template.cart.helpers({
         // Get cart
         var cart = Session.get('cart');
         var tax = 0;
+        var total = 0;
 
         // Calculate total
         for (i = 0; i < cart.length; i++) {
@@ -84,17 +97,18 @@ Template.cart.helpers({
             var price = computePrice(cart[i].price);
 
             if (typeof cart[i].qty !== 'undefined') {
-                tax = tax + price * cart[i].qty - (price / (1 + Session.get('tax') / 100) * cart[i].qty).toFixed(2);
+                total = total + price * cart[i].qty;
             } else {
-                tax = tax + price - (price / (1 + Session.get('tax') / 100)).toFixed(2);
+                total = total + price;
             }
+
         }
 
         // Apply discount
-        if (Session.get('usingDiscount')) {
-            tax = tax * (1 - Session.get('usingDiscount').amount / 100);
-        }
+        total = applyDiscount(total);
 
+        // Calculate tax
+        tax = total * Session.get('tax') / 100;
         return tax.toFixed(2);
     },
     total: function() {
@@ -117,9 +131,7 @@ Template.cart.helpers({
         }
 
         // Apply discount
-        if (Session.get('usingDiscount')) {
-            total = total * (1 - Session.get('usingDiscount').amount / 100);
-        }
+        total = applyDiscount(total);
 
         return total.toFixed(2);
     },

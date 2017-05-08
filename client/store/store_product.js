@@ -3,7 +3,21 @@ Template.storeProduct.helpers({
     discount: function() {
 
         if (Session.get('usingDiscount')) {
-            return true;
+
+            var discount = Session.get('usingDiscount');
+
+            // Check if product restricted
+            if (discount.productId) {
+
+                if (discount.productId == this._id) {
+                    return true;
+                }
+
+            } else {
+                if (Session.get('usingDiscount').type == 'percent') {
+                    return true;
+                }
+            }
         }
 
     },

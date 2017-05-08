@@ -112,6 +112,16 @@ Template.brandDetails.events({
         });
 
     },
+    'click #set-facebook-page': function() {
+
+        // Add
+        Meteor.call('insertMeta', {
+            type: 'facebookPage',
+            value: $('#facebook-page').val(),
+            userId: Meteor.user()._id
+        });
+
+    },
     'click #set-tracking': function() {
 
         // Add

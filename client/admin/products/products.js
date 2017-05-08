@@ -1,11 +1,5 @@
 Template.products.onRendered(function() {
 
-    // Meteor.call('getSortedProducts', function(err, data) {
-
-    //     Session.set('allProducts', data);
-
-    // });
-
 });
 
 Template.products.events({

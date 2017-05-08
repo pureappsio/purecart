@@ -5,7 +5,7 @@ Template.admin.onRendered(function() {
         Session.set('view', 'brand');
     }
 
-    $('#datetimepicker').datetimepicker();
+    // $('#datetimepicker').datetimepicker();
 
     Tracker.autorun(function() {
 
@@ -184,6 +184,11 @@ Template.admin.events({
             discount.expiryDate = new Date($('#discount-expiry-date').val());
         }
 
+        // Restriction?
+        if ($('#discount-product').val() != "none") {
+            discount.productId = $('#discount-product').val();
+        }
+
         // Add
         Meteor.call('createDiscount', discount);
 
@@ -228,6 +233,9 @@ Template.admin.helpers({
     },
     users: function() {
         return Meteor.users.find();
+    },
+    allProducts: function() {
+        return Products.find({ userId: Meteor.user()._id });
     }
 
 });

@@ -1,5 +1,7 @@
 // Braintree
 Session.set('paymentFormStatus', null);
+Session.set('purchaseInProgress', false);
+
 var isBraintreeInitialized = false;
 var braintree = require('braintree-web');
 
@@ -173,6 +175,13 @@ Template.checkoutPayment.rendered = function() {
             session.medium = Session.get('medium');
         }
 
+        // Mobile or Desktop
+        if (/Mobi/.test(navigator.userAgent)) {
+            session.browser = 'mobile';
+        } else {
+            session.browser = 'desktop';
+        }
+
         Meteor.call('insertSession', session);
 
     }
@@ -273,43 +282,32 @@ Template.checkoutPayment.helpers({
     },
     subtotal: function() {
 
+        // Get cart
         var cart = Session.get('cart');
-        var basePrice = 0;
+        var tax = 0;
+        var total = 0;
 
-        // Calculate base price
-        if (Session.get('useTaxes') == false) {
-            for (i = 0; i < cart.length; i++) {
+        // Calculate total
+        for (i = 0; i < cart.length; i++) {
 
-                var price = computePrice(cart[i].price);
+            var price = computePrice(cart[i].price);
 
-                if (typeof cart[i].qty !== 'undefined') {
-                    basePrice = basePrice + price * cart[i].qty;
-                } else {
-                    basePrice = basePrice + price;
-                }
-
-            }
-        } else {
-
-            for (i = 0; i < cart.length; i++) {
-
-                var price = computePrice(cart[i].price);
-
-                if (typeof cart[i].qty !== 'undefined') {
-                    basePrice = basePrice + price / (1 + Session.get('tax') / 100) * cart[i].qty;
-
-                } else {
-                    basePrice = basePrice + price / (1 + Session.get('tax') / 100);
-
-                }
+            if (typeof cart[i].qty !== 'undefined') {
+                total = total + price * cart[i].qty;
+            } else {
+                total = total + price;
             }
 
         }
 
         // Apply discount
-        if (Session.get('usingDiscount')) {
-            basePrice = basePrice * (1 - Session.get('usingDiscount').amount / 100);
-        }
+        total = applyDiscount(total);
+
+        // Tax
+        tax = total * Session.get('tax') / 100;
+
+        // Base price
+        var basePrice = parseFloat(total.toFixed(2)) - parseFloat(tax.toFixed(2));
 
         return basePrice.toFixed(2);
     },
@@ -322,6 +320,7 @@ Template.checkoutPayment.helpers({
         // Get cart
         var cart = Session.get('cart');
         var tax = 0;
+        var total = 0;
 
         // Calculate total
         for (i = 0; i < cart.length; i++) {
@@ -329,17 +328,18 @@ Template.checkoutPayment.helpers({
             var price = computePrice(cart[i].price);
 
             if (typeof cart[i].qty !== 'undefined') {
-                tax = tax + price * cart[i].qty - (price / (1 + Session.get('tax') / 100) * cart[i].qty).toFixed(2);
+                total = total + price * cart[i].qty;
             } else {
-                tax = tax + price - (price / (1 + Session.get('tax') / 100)).toFixed(2);
-
+                total = total + price;
             }
+
         }
 
         // Apply discount
-        if (Session.get('usingDiscount')) {
-            tax = tax * (1 - Session.get('usingDiscount').amount / 100);
-        }
+        total = applyDiscount(total);
+
+        // Tax
+        tax = total * Session.get('tax') / 100;
 
         return tax.toFixed(2);
     },
@@ -363,9 +363,7 @@ Template.checkoutPayment.helpers({
         }
 
         // Apply discount
-        if (Session.get('usingDiscount')) {
-            total = total * (1 - Session.get('usingDiscount').amount / 100);
-        }
+        total = applyDiscount(total);
 
         return total.toFixed(2);
     },
@@ -571,54 +569,56 @@ function initializeBraintreeHosted(clientToken) {
 
             form.addEventListener('submit', function(event) {
 
+                // Prevent
                 event.preventDefault();
 
-                hostedFieldsInstance.tokenize(function(tokenizeErr, payload) {
+                // Check if all fields are ok & no current payment in progress
+                if (Session.get('purchaseInProgress') == false && $('#first-name').val() != "" && $('#last-name').val() != "" && $('#email').val() != "") {
 
-                    if (tokenizeErr) {
-                        console.error(tokenizeErr);
-                        return;
-                    }
+                    // No data issue & set disabled button
+                    Session.set('dataIssue', false);
+                    $('#purchase').addClass('disabled');
+                    Session.set('purchaseInProgress', true);
 
-                    // If this was a real integration, this is where you would
-                    // send the nonce to your server.
-                    // console.log('Got a nonce: ' + payload.nonce);
+                    hostedFieldsInstance.tokenize(function(tokenizeErr, payload) {
 
-                    // Payment status
-                    Session.set('paymentFormStatus', true);
-
-                    // Create sale data
-                    saleData = createSalesData('braintree');
-                    saleData.nonce = payload.nonce;
-
-                    // console.log(saleData);
-
-                    if (saleData.email != "" && saleData.lastName != "" && saleData.firstName != "") {
-
-                        Session.set('dataIssue', false);
-                        $('#purchase').addClass('disabled');
-
-                        if (Session.get('cart')[0].type == 'validation') {
-                            Meteor.call('validateProduct', saleData, function(err, data) {
-                                window.location = '/thank-you';
-                            });
-                        } else {
-                            Meteor.call('purchaseProduct', saleData, function(err, sale) {
-                                Session.set('paymentFormStatus', null);
-                                if (sale.success == true) {
-                                    Router.go("/purchase_confirmation?sale_id=" + sale._id);
-                                }
-                                if (sale.success == false) {
-                                    Router.go("/failed_payment?sale_id=" + sale._id);
-                                }
-
-                            });
+                        if (tokenizeErr) {
+                            console.error(tokenizeErr);
+                            return;
                         }
 
-                    }
+                        // Payment status
+                        Session.set('paymentFormStatus', true);
+
+                        // Create sale data
+                        saleData = createSalesData('braintree');
+                        saleData.nonce = payload.nonce;
+
+                        if (saleData.email != "" && saleData.lastName != "" && saleData.firstName != "") {
+
+                            if (Session.get('cart')[0].type == 'validation') {
+                                Meteor.call('validateProduct', saleData, function(err, data) {
+                                    window.location = '/thank-you';
+                                });
+                            } else {
+                                Meteor.call('purchaseProduct', saleData, function(err, sale) {
+                                    Session.set('paymentFormStatus', null);
+                                    if (sale.success == true) {
+                                        Router.go("/purchase_confirmation?sale_id=" + sale._id);
+                                    }
+                                    if (sale.success == false) {
+                                        Router.go("/failed_payment?sale_id=" + sale._id);
+                                    }
+
+                                });
+                            }
+
+                        }
 
 
-                });
+                    });
+
+                }
 
             }, false);
 
@@ -715,6 +715,9 @@ function createSalesData(paymentProcessor) {
     }
     if (Session.get('origin')) {
         saleData.origin = Session.get('origin');
+    }
+    if (Session.get('medium')) {
+        saleData.medium = Session.get('medium');
     }
 
     return saleData;
