@@ -19,6 +19,14 @@ Template.storeProductDetails.onRendered(function() {
     // Reset selection
     if (this.data) {
 
+        // Session
+        var session = getSessionData({
+            type: 'visit',
+            productId: this.data._id
+        });
+
+        Meteor.call('insertSession', session);
+
         productId = this.data._id;
         Session.set('selectedPicture_' + this.data._id, null);
 
@@ -101,6 +109,21 @@ Template.storeProductDetails.helpers({
             return true;
         }
 
+    },
+    reviewsEnabled: function() {
+        if (Metas.findOne({ type: 'reviewsEnable', userId: Session.get('sellerId') })) {
+
+            var value = Metas.findOne({ type: 'reviewsEnable', userId: Session.get('sellerId') }).value;
+
+            if (value == 'disable') {
+                return false;
+            } else {
+                return true;
+            }
+
+        } else {
+            return true;
+        }
     },
     averageRating: function() {
 
@@ -257,13 +280,19 @@ Template.storeProductDetails.events({
 
         // Add product to cart
         if (Session.get('cart')) {
+
             var products = Session.get('cart');
 
             // Check if product is already in cart
             var alreadyInCart = false;
             for (i = 0; i < products.length; i++) {
                 if (products[i]._id == this._id) {
-                    products[i].qty += 1;
+
+                    // If physical product, increase quantity
+                    if (products[i].type == 'physical') {
+                        products[i].qty += 1;
+                    }
+
                     alreadyInCart = true;
                     break;
                 }

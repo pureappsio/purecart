@@ -26,6 +26,17 @@ Template.reviews.events({
 
         Meteor.call('addReview', review);
 
+    },
+    'click #set-review': function() {
+
+         var meta = {
+            type: 'reviewsEnable',
+            value: $('#enable-reviews :selected').val(),
+            userId: Meteor.user()._id
+        };
+
+        Meteor.call('insertMeta', meta);
+
     }
 
 });

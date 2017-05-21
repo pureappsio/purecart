@@ -43,6 +43,70 @@ Template.stats.helpers({
         }
 
         return total.toFixed(2);
+    },
+    variation: function() {
+
+        // Current sales
+        var sales = Sales.find({
+            date: { $gte: new Date((new Date()).getTime() - 1000 * 60 * 60 * 24 * 30) },
+            success: true,
+            userId: Meteor.user()._id
+        }).fetch();
+
+        var pastSales = Sales.find({
+            date: { $lte: new Date((new Date()).getTime() - 1000 * 60 * 60 * 24 * 30), $gte: new Date((new Date()).getTime() - 1000 * 60 * 60 * 24 * 60) },
+            success: true,
+            userId: Meteor.user()._id
+        }).fetch();
+
+        // Rates
+        var rates = Metas.findOne({ type: 'rates' }).value;
+
+        // Current
+        var present = 0;
+        for (i in sales) {
+
+            if (sales[i].currency == 'EUR') {
+                present += parseFloat(sales[i].amount);
+            } else {
+                present += parseFloat(sales[i].amount) / rates[sales[i].currency];
+            }
+        }
+
+        // Current
+        var past = 0;
+        for (i in pastSales) {
+
+            if (pastSales[i].currency == 'EUR') {
+                past += parseFloat(pastSales[i].amount);
+            } else {
+                past += parseFloat(pastSales[i].amount) / rates[pastSales[i].currency];
+            }
+        }
+
+        if (past != 0) {
+            if (present - past > 0) {
+                Session.set('variation', 'up');
+                Session.set('variationColor', 'green');
+            }
+            else {
+                Session.set('variation', 'down');
+                Session.set('variationColor', 'red');
+            }
+            return ((present - past) / past * 100).toFixed(2) + '%';
+        }
+        else {
+            Session.set('variation', 'down');
+            Session.set('variationColor', 'red');
+            return '0%';
+        }
+        
+    },
+    variationDirection: function() {
+        return Session.get('variation');
+    },
+     variationColor: function() {
+        return Session.get('variationColor');
     }
 
 });
@@ -104,7 +168,7 @@ Template.stats.onRendered(function() {
     });
 
     // Best selling products
-    Meteor.call('getBestVisitsGraphData','sales', function(err, graphData) {
+    Meteor.call('getBestVisitsGraphData', 'sales', function(err, graphData) {
 
         var bestSalesGraph = document.getElementById("best-sales-graph");
 
@@ -115,6 +179,24 @@ Template.stats.onRendered(function() {
                 title: {
                     display: true,
                     text: 'Most Sold Products'
+                }
+            }
+        });
+
+    });
+
+    // Sales channels
+    Meteor.call('getBestConversionGraphData', function(err, graphData) {
+
+        var salesConversionGraph = document.getElementById("sales-conversion-graph");
+
+        var myPieChart = new Chart(salesConversionGraph, {
+            type: 'bar',
+            data: graphData,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Conversions by Channels'
                 }
             }
         });

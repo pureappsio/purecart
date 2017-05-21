@@ -53,11 +53,14 @@
                         </div>
                     </div>
                     <!-- Reviews -->
+                    {{#if reviewsEnabled}}
                     <div class="row voffset30">
                         <div class='col-md-12'>
                             <div class='reviews-title'>Customer Reviews</div>
                         </div>
                     </div>
+
+                    
                     <div class="row">
                         <div class='col-md-9'>
                             {{#if areReviews}} {{#each star in averageRating}} {{#if isFull star}}
@@ -70,6 +73,7 @@
                         </div>
                     </div>
                     {{#each reviews}} {{> storeProductReview}} {{/each}}
+                    {{/if}}
                 </div>
             </div>
             {{> storeFooter}}

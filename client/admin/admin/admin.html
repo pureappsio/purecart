@@ -39,6 +39,9 @@
                         <a class='section-selector page-link' href='#' id="sales">Sales</a>
                     </li>
                     <li class="page-item">
+                        <a class='section-selector page-link' href='#' id="customers">Customers</a>
+                    </li>
+                    <li class="page-item">
                         <a class='section-selector page-link' href='#' id="theme">Theme</a>
                     </li>
                     <li class="page-item">
@@ -66,6 +69,8 @@
         {{#if showSection 'reviews'}} {{> reviews}} {{/if}}
         <!-- Stats -->
         {{#if showSection 'stats'}} {{> stats}} {{/if}}
+        <!-- Customers -->
+        {{#if showSection 'customers'}} {{> customers}} {{/if}}
         <!-- Discounts -->
         {{#if showSection 'discounts'}}
         <div class='row'>

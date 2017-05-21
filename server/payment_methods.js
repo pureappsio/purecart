@@ -329,58 +329,89 @@ Meteor.methods({
             });
         }
 
-        // Verify card
-        console.log('Verify card');
-        gateway.customer.create({
-            firstName: saleData.firstName,
-            lastName: saleData.lastName,
-            creditCard: {
+        if (saleData.type == "PayPalAccount") {
+
+            console.log('Making transaction');
+
+            // Get merchant ID
+            if (braintreeGateway.merchantIds[saleData.currency]) {
+                console.log('Making transaction in native currency');
+                merchantId = braintreeGateway.merchantIds[saleData.currency];
+            }
+
+            // Make transaction
+            gateway.transaction.sale({
+                amount: saleData.amount,
                 paymentMethodNonce: saleData.nonce,
+                merchantAccountId: merchantId,
+                orderId: saleData.invoiceId,
                 options: {
-                    verifyCard: true
+                    submitForSettlement: true
                 }
-            }
-        }, function(err, result) {
-
-            console.log(result);
-
-            if (result.success == false) {
-
-                // Card declined
-                console.log('Card declined');
+            }, function(err, result) {
+                if (err) { console.log(err); }
+                console.log(result);
                 fut.return(result);
+            });
 
-            }
-            if (result.success == true) {
+            var answer = fut.wait();
 
-                console.log('Making transaction');
+        } else {
 
-                // Get merchant ID
-                if (braintreeGateway.merchantIds[saleData.currency]) {
-                    console.log('Making transaction in native currency');
-                    merchantId = braintreeGateway.merchantIds[saleData.currency];
-                    chargedAmount = saleData.amount;
+            // Verify card
+            console.log('Verify card');
+            gateway.customer.create({
+                firstName: saleData.firstName,
+                lastName: saleData.lastName,
+                creditCard: {
+                    paymentMethodNonce: saleData.nonce,
+                    options: {
+                        verifyCard: true
+                    }
+                }
+            }, function(err, result) {
+
+                console.log(result);
+
+                if (result.success == false) {
+
+                    // Card declined
+                    console.log('Card declined');
+                    fut.return(result);
+
+                }
+                if (result.success == true) {
+
+                    console.log('Making transaction');
+
+                    // Get merchant ID
+                    if (braintreeGateway.merchantIds[saleData.currency]) {
+                        console.log('Making transaction in native currency');
+                        merchantId = braintreeGateway.merchantIds[saleData.currency];
+                        chargedAmount = saleData.amount;
+                    }
+
+                    // Make transaction
+                    gateway.transaction.sale({
+                        amount: chargedAmount,
+                        merchantAccountId: merchantId,
+                        paymentMethodToken: result.customer.paymentMethods[0].token,
+                        options: {
+                            submitForSettlement: true
+                        }
+                    }, function(err, result) {
+                        if (err) { console.log(err); }
+                        console.log(result);
+                        fut.return(result);
+                    });
+
                 }
 
-                // Make transaction
-                gateway.transaction.sale({
-                    amount: chargedAmount,
-                    merchantAccountId: merchantId,
-                    paymentMethodToken: result.customer.paymentMethods[0].token,
-                    options: {
-                        submitForSettlement: true
-                    }
-                }, function(err, result) {
-                    if (err) { console.log(err); }
-                    console.log(result);
-                    fut.return(result);
-                });
+            });
 
-            }
+            var answer = fut.wait();
 
-        });
-
-        var answer = fut.wait();
+        }
 
         if (answer.success == true) {
 

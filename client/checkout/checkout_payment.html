@@ -285,14 +285,20 @@
         <div class='col-md-4'></div>
         <div class='col-md-4'>
             {{#if paypalBraintree}}
-            <img class='img-fluid' src='/payment_logos_small.png'> {{else}}
+            <img class='img-fluid' src='/payment_logos_small.png'> 
+            {{else if braintreeUi}} 
+            <img class='img-fluid' src='/payment_logos_small.png'> 
+            {{else}}
             <img class='img-fluid' src='/payment_logos.png'> {{/if}}
         </div>
         {{else}}
         <div class='col-md-2'></div>
         <div class='col-md-8'>
             {{#if paypalBraintree}}
-            <img class='img-fluid' src='/payment_logos_small.png'> {{else}}
+            <img class='img-fluid' src='/payment_logos_small.png'>
+            {{else if braintreeUi}} 
+            <img class='img-fluid' src='/payment_logos_small.png'> 
+             {{else}}
             <img class='img-fluid' src='/payment_logos.png'> {{/if}}
         </div>
         {{/if}}

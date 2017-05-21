@@ -7,6 +7,8 @@
         <div class='col-md-3 col-center'>
             <div>30 Days Earnings</div>
             <div class='stats-indicator'>{{sales}} €</div>
+            <div class='stats-variation {{variationColor}}'><i class="fa fa-arrow-circle-o-{{variationDirection}}" aria-hidden="true"></i> {{variation}}</div>
+
         </div>
         <div class='col-md-3 col-center'>
             <div>Abandon Rate</div>
@@ -49,6 +51,9 @@
         </div>
         <div class='col-md-3 col-center'>
             <canvas id='best-sales-graph' height="300"></canvas>
+        </div>
+        <div class='col-md-3 col-center'>
+            <canvas id='sales-conversion-graph' height="250"></canvas>
         </div>
     </div>
 </template>

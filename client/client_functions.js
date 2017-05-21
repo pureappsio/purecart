@@ -126,6 +126,10 @@ showExitIntent = function(event, location, type) {
 
         if (Metas.findOne({ type: location + 'ExitIntent', userId: Session.get('sellerId') }).value == true) {
 
+            if (location == 'cart') {
+                location = 'checkout';
+            }
+
             if (event.pageY < 10 && Session.get(location + 'ExitIntent') == 'armed') {
 
                 Session.set(location + 'ExitIntent', 'fired');
@@ -156,8 +160,12 @@ showMobileExitIntent = function(percent, location, type) {
                 Session.set('scrollTrigger', true);
             }
 
+            if (location == 'cart') {
+                location = 'checkout';
+            }
+
             if (Session.get('scrollTrigger') == true && percent < 45 && Session.get(location + 'ExitIntent') == 'armed') {
-            // if (Session.get('scrollTrigger') == true && percent < 45) {
+                // if (Session.get('scrollTrigger') == true && percent < 45) {
 
                 Session.set(location + 'ExitIntent', 'fired');
 

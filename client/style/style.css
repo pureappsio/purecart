@@ -1,5 +1,15 @@
 /* CSS declarations go here */
 
+.product-listing-picture {
+    max-height: 50px;
+    margin-right: 5px !important;
+}
+
+.paypal-button-content span {
+    display: none !important;
+    visibility: hidden !important; 
+}
+
 #questions-modal {
     display: none;
 }
@@ -47,6 +57,10 @@
 
 .stats-indicator {
     font-size: 40px;
+}
+
+.stats-variation {
+    font-size: 20px;
 }
 
 .navbar-brand {

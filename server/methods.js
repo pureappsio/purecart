@@ -291,8 +291,6 @@ Meteor.methods({
         }
 
     },
-
-
     getCustomer: function(email) {
 
         customer = {};
@@ -343,12 +341,24 @@ Meteor.methods({
                 var customer = customers[customerIndex];
                 customer.ltv += parseFloat(sales[i].amount);
 
+                if (sales[i].country) {
+                    customer.country = sales[i].country;
+                }
+
+                customer.lastPurchase = sales[i].date
+
                 if (customer.products) {
-                    for (p = 0; p < sales[i].products.length; p++) {
-                        if ((customer.products).indexOf(sales[i].products[p]) == -1) {
-                            customer.products.push(sales[i].products[p]);
+                    if (sales[i].products) {
+                        for (p = 0; p < sales[i].products.length; p++) {
+                            if ((customer.products).indexOf(sales[i].products[p]) == -1) {
+                                customer.products.push(sales[i].products[p]);
+                            }
                         }
                     }
+                    if (sales[i].productId) {
+                        customer.products.push(sales[i].productId);
+                    }
+
                 }
 
                 customers[customerIndex] = customer;
@@ -360,8 +370,20 @@ Meteor.methods({
                     firstName: sales[i].firstName,
                     lastName: sales[i].lastName,
                     email: sales[i].email,
-                    products: sales[i].products,
-                    ltv: parseFloat(sales[i].amount)
+                    ltv: parseFloat(sales[i].amount),
+                    lastPurchase: sales[i].date
+                }
+
+                // Products
+                if (sales[i].products) {
+                    customer.products = sales[i].products;
+                }
+                if (sales[i].productId) {
+                    customer.products = [sales[i].productId];
+                }
+
+                if (sales[i].country) {
+                    customer.country = sales[i].country;
                 }
 
                 customers.push(customer);
@@ -370,8 +392,29 @@ Meteor.methods({
 
         }
 
-        return customers;
+        // Sort
+        customers.sort(function(a, b) {
+            return parseFloat(b.ltv) - parseFloat(a.ltv);
+        });
 
+        // Filter for date
+        if (query.lastPurchase) {
+
+            var filteredCustomers = [];
+
+            for (c in customers) {
+                if ((customers[c].lastPurchase).getTime() < (query.lastPurchase).getTime()) {
+                    filteredCustomers.push(customers[c]);
+                }
+            }
+
+            customers = filteredCustomers;
+
+        }
+
+        console.log(customers);
+
+        return customers;
 
     },
     insertSession: function(session) {
@@ -737,7 +780,7 @@ Meteor.methods({
 
         // Send email if enrolled
         if (enrolling == true) {
-            
+
             if (userData.password) {
 
                 // Template

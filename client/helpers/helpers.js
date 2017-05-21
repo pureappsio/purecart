@@ -6,6 +6,15 @@ Template.registerHelper("truncateTwo", function(number) {
     return number.toFixed(2);
 });
 
+Template.registerHelper("formatDate", function(date) {
+    return moment(date).format('MMMM Do YYYY');
+});
+
+Template.registerHelper("fromNow", function(date) {
+    return moment(date).fromNow();
+});
+
+
 Template.registerHelper("langEN", function() {
     if (Session.get('language')) {
         if (Session.get('language') == 'en') {

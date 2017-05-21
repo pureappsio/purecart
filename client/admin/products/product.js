@@ -34,6 +34,18 @@ Template.product.events({
 
 Template.product.helpers({
 
+    productPicture: function() {
+
+        if (Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true })) {
+            var pictureId = Elements.findOne({ productId: this._id, type: 'productPictures', storePicture: true }).imageId;
+            return Images.findOne(pictureId).link();
+        } else if (Elements.findOne({ productId: this._id, type: 'productPictures' })) {
+            var pictureId = Elements.find({ productId: this._id, type: 'productPictures' }, { sort: { order: 1 } }).fetch()[0].imageId;
+            return Images.findOne(pictureId).link();
+        }
+
+    },
+
     storeLink: function() {
 
         if (Meteor.user().role == 'admin') {

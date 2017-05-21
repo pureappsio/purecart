@@ -1,0 +1,21 @@
+<template name="customers">
+    <div class='row voffset15'>
+        <div class='col-md-3'>
+            <h3>Customers</h3>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Country</th>
+                <th>Products Bought</th>
+                <th>LTV</th>
+                <th>Last Purchase</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each customers}} {{> customer}} {{/each}}
+        </tbody>
+    </table>
+</template>

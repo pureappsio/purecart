@@ -4,6 +4,7 @@ Session.set('purchaseInProgress', false);
 
 var isBraintreeInitialized = false;
 var braintree = require('braintree-web');
+var braintreeDrop = require('braintree-web-drop-in');
 
 Template.checkoutPayment.rendered = function() {
 
@@ -237,6 +238,17 @@ Template.checkoutPayment.helpers({
         }
 
     },
+    braintreeUi: function() {
+
+        if (Metas.findOne({ type: 'payment', userId: Session.get('sellerId') })) {
+
+            if (Metas.findOne({ type: 'payment', userId: Session.get('sellerId') }).value == 'braintree') {
+                return true;
+            }
+
+        }
+
+    },
     braintreeHosted: function() {
 
         if (Session.get('payment') == 'braintreehosted' || Session.get('payment') == 'paypalbraintree') {
@@ -449,44 +461,85 @@ Template.checkoutPayment.events({
 });
 
 function initializeBraintree(clientToken) {
+
     if (isBraintreeInitialized) return;
 
-    braintree.setup(clientToken, 'dropin', {
-        container: 'dropin',
-        onPaymentMethodReceived: function(response) {
-            Session.set('paymentFormStatus', true);
+    var button = document.querySelector('#purchase');
 
+    Meteor.call('getCartTitle', Session.get('sellerId'), function(err, title) {
+
+        braintreeDrop.create({
+            authorization: clientToken,
+            selector: '#dropin',
+            paypal: {
+                flow: 'checkout',
+                amount: parseFloat($('#total-price').text()),
+                currency: Session.get('currency'),
+                locale: 'en_US',
+                displayName: title
+            }
+        }, function(createErr, instance) {
+
+            Session.set('paymentFormStatus', true);
             $(window).scrollTop(0);
 
-            // Create sale data
-            saleData = createSalesData('braintree');
-            saleData.nonce = response.nonce;
+            button.addEventListener('click', function(event) {
 
-            saleData.currency = Session.get('currency');
+                // Prevent
+                event.preventDefault();
 
-            if (saleData.email != "" && saleData.lastName != "" && saleData.firstName != "") {
+                if (Session.get('purchaseInProgress') == false && $('#first-name').val() != "" && $('#last-name').val() != "" && $('#email').val() != "") {
 
-                Session.set('dataIssue', false);
+                    // Disable button
+                    $('#purchase').addClass('disabled');
+                    Session.set('purchaseInProgress', true);
 
-                if (Session.get('cart')[0].type == 'validation') {
-                    Meteor.call('validateProduct', saleData, function(err, data) {
-                        window.location = '/thank-you';
-                    });
-                } else {
-                    Meteor.call('purchaseProduct', saleData, function(err, sale) {
-                        Session.set('paymentFormStatus', null);
-                        if (sale.success == true) {
-                            Router.go("/purchase_confirmation?sale_id=" + sale._id);
-                        }
-                        if (sale.success == false) {
-                            Router.go("/failed_payment?sale_id=" + sale._id);
-                        }
+                    // Create sale data
+                    saleData = createSalesData('braintree');
+                    Session.set('dataIssue', false);
+                    saleData.currency = Session.get('currency');
 
-                    });
+                    console.log('Init payment ...');
+
+                    if (saleData.email != "" && saleData.lastName != "" && saleData.firstName != "") {
+
+                        Session.set('dataIssue', false);
+
+                        console.log('Validated inputs ');
+
+                        instance.requestPaymentMethod(function(requestPaymentMethodErr, payload) {
+
+                            saleData.nonce = payload.nonce;
+                            saleData.type = payload.type;
+
+                            console.log('Got nonce');
+
+                            if (Session.get('cart')[0].type == 'validation') {
+                                Meteor.call('validateProduct', saleData, function(err, data) {
+                                    window.location = '/thank-you';
+                                });
+                            } else {
+                                Meteor.call('purchaseProduct', saleData, function(err, sale) {
+                                    Session.set('paymentFormStatus', null);
+                                    if (sale.success == true) {
+                                        Router.go("/purchase_confirmation?sale_id=" + sale._id);
+                                    }
+                                    if (sale.success == false) {
+                                        Router.go("/failed_payment?sale_id=" + sale._id);
+                                    }
+
+                                });
+                            }
+
+                        });
+                    }
+
                 }
 
-            }
-        }
+            });
+
+        });
+
     });
 
     isBraintreeInitialized = true;
@@ -593,6 +646,7 @@ function initializeBraintreeHosted(clientToken) {
                         // Create sale data
                         saleData = createSalesData('braintree');
                         saleData.nonce = payload.nonce;
+                        saleData.type = 'CreditCard';
 
                         if (saleData.email != "" && saleData.lastName != "" && saleData.firstName != "") {
 
@@ -655,10 +709,13 @@ function createSalesData(paymentProcessor) {
 
     saleData.method = paymentProcessor;
 
-    if (saleData.email == "" || saleData.lastName == "" || saleData.firstName == "") {
+    if (paymentProcessor != 'braintree') {
 
-        Session.set('dataIssue', true);
+        if (saleData.email == "" || saleData.lastName == "" || saleData.firstName == "") {
 
+            Session.set('dataIssue', true);
+
+        }
     }
 
     // Product & sales info

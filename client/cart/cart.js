@@ -1,6 +1,21 @@
 Template.cart.rendered = function() {
 
-    Session.set('storeExitIntent', false);
+    if (Session.get('checkoutExitIntent') != 'fired') {
+        Session.set('checkoutExitIntent', 'armed');
+    }
+
+    if (/Mobi/.test(navigator.userAgent)) {
+
+        Session.set('scrollTrigger', false);
+
+        // Check scroll 
+        $(window).scroll(function() {
+            var percent = $(window).scrollTop() / $(document).height() * 2 * 100;
+            showMobileExitIntent(percent, 'cart', 'help');
+        });
+
+    }
+
     Session.set('pixelTrackingPage', 'cart');
 
     if (Session.get('cart')) {
@@ -31,18 +46,6 @@ Template.cart.rendered = function() {
             Meteor.call('insertSession', session);
 
         }
-    }
-
-    if (/Mobi/.test(navigator.userAgent)) {
-
-        Session.set('scrollTrigger', false);
-
-        // Check scroll 
-        $(window).scroll(function() {
-            var percent = $(window).scrollTop() / $(document).height() * 2 * 100;
-            showMobileExitIntent(percent, 'cart', 'help');
-        });
-
     }
 
 };

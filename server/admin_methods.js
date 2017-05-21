@@ -139,7 +139,7 @@ Meteor.methods({
         sessionsProduct = [];
 
         for (c in products) {
-            
+
             if (type == 'visits') {
                 sessionsProduct[c] = Sessions.find({ date: { $gte: limitDate }, productId: products[c]._id }).count();
             }
@@ -156,8 +156,7 @@ Meteor.methods({
 
         if (type == 'sales') {
             label = "Sales by Product";
-        }
-        else {
+        } else {
             label = "Visits by Product";
         }
 
@@ -274,7 +273,69 @@ Meteor.methods({
         return data;
 
     },
+    calculateConversion: function(result, base) {
 
+        if (base != 0) {
+            return (result / base * 100).toFixed(2);
+        } else {
+            return 0;
+        }
+
+    },
+    getBestConversionGraphData: function() {
+
+        // Date
+        var now = new Date();
+        var limitDate = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 30);
+
+        // Get sales
+        var youtubeSales = Sales.find({ date: { $gte: limitDate }, medium: 'youtube' }).count();
+        var messengerSales = Sales.find({ date: { $gte: limitDate }, medium: 'messenger' }).count();
+        var facebookSales = Sales.find({ date: { $gte: limitDate }, medium: 'facebook' }).count();
+        var organicSales = Sales.find({ date: { $gte: limitDate }, origin: 'organic' }).count();
+
+        // Get sessions
+        var youtubeSessions = Sessions.find({ date: { $gte: limitDate }, medium: 'youtube' }).count();
+        var messengerSessions = Sessions.find({ date: { $gte: limitDate }, medium: 'messenger' }).count();
+        var facebookSessions = Sessions.find({ date: { $gte: limitDate }, medium: 'facebook' }).count();
+        var organicSessions = Sessions.find({ date: { $gte: limitDate }, origin: 'organic' }).count();
+
+        // Get conversions
+        var youtube = Meteor.call('calculateConversion', youtubeSales, youtubeSessions);
+        var messenger = Meteor.call('calculateConversion', messengerSales, messengerSessions);
+        var facebook = Meteor.call('calculateConversion', facebookSales, facebookSessions);
+        var organic = Meteor.call('calculateConversion', organicSales, organicSessions);
+
+
+
+        var data = {
+            labels: [
+                "Organic",
+                "Youtube",
+                "Facebook",
+                "Messenger"
+            ],
+            datasets: [{
+                label: "Conversions by Channel",
+                data: [organic, youtube, facebook, messenger],
+                backgroundColor: [
+                    "#FF6384",
+                    "#e52d27",
+                    "#3b5998",
+                    "#3b5998"
+                ],
+                hoverBackgroundColor: [
+                    "#FF6384",
+                    "#e52d27",
+                    "#3b5998",
+                    "#3b5998"
+                ]
+            }]
+        };
+
+        return data;
+
+    },
     getOriginGraphData: function() {
 
         var now = new Date();

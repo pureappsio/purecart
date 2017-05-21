@@ -1,7 +1,7 @@
 <template name="product">
     <tr>
         <td><a href='{{storeLink}}checkout?product_id={{_id}}'>Link</a></td>
-        <td>{{name}} {{#if isBundle}}(Bundle){{/if}}</td>
+        <td>{{#if productPicture}}<img class='img-fluid product-listing-picture' src='{{productPicture}}'>{{/if}} {{name}} {{#if isBundle}}(Bundle){{/if}}</td>
         <td>
             <input id='product-usd-{{_id}}' class='price form-control' value={{price.USD}}>
         </td>
