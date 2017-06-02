@@ -1,3 +1,4 @@
+import Images from '../imports/api/files';
 Future = Npm.require('fibers/future');
 
 Meteor.methods({

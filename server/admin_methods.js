@@ -1,3 +1,5 @@
+import Images from '../imports/api/files';
+
 Meteor.methods({
 
     getMobileSessions: function() {

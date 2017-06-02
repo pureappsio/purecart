@@ -11,7 +11,6 @@ Tracker.autorun(function() {
     Meteor.subscribe('userDiscounts');
     Meteor.subscribe('userElements');
     Meteor.subscribe('userValidations');
-    // Meteor.subscribe('userSessions');
     Meteor.subscribe('userIntegrations');
     Meteor.subscribe('userGateways');
     Meteor.subscribe('userReviews');

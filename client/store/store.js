@@ -1,3 +1,5 @@
+// import Images from '/imports/api/files';
+
 Template.store.rendered = function() {
 
     // Find Store front

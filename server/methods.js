@@ -1,3 +1,5 @@
+import Images from '../imports/api/files';
+
 // Import SendGrid
 import sendgridModule from 'sendgrid';
 const sendgrid = require('sendgrid')(Meteor.settings.sendGridAPIKey);

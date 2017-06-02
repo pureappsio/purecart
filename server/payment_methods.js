@@ -1,3 +1,5 @@
+import Images from '../imports/api/files';
+
 // Braintree
 Future = Npm.require('fibers/future');
 import braintree from 'braintree';

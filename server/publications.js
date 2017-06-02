@@ -1,3 +1,5 @@
+import Images from '../imports/api/files';
+
 Meteor.publish("userSales", function() {
     return Sales.find({});
 });
