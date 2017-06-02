@@ -9,6 +9,7 @@ Template.cart.rendered = function() {
         Session.set('scrollTrigger', false);
 
         // Check scroll 
+        $(window).unbind('scroll');
         $(window).scroll(function() {
             var percent = $(window).scrollTop() / $(document).height() * 2 * 100;
             showMobileExitIntent(percent, 'cart', 'help');

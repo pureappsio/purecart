@@ -393,6 +393,24 @@ Template.checkoutPayment.helpers({
 
 Template.checkoutPayment.events({
 
+    'keydown #email': function() {
+
+        $('#email-group').removeClass('has-danger');
+        $('#email').removeClass('form-control-danger');
+
+    },
+    'keydown #first-name': function() {
+
+        $('#first-name-group').removeClass('has-danger');
+        $('#first-name').removeClass('form-control-danger');
+
+    },
+    'keydown #last-name': function() {
+
+        $('#last-name-group').removeClass('has-danger');
+        $('#last-name').removeClass('form-control-danger');
+
+    },
     'click #paypal-option': function() {
 
         Session.set('payment', 'paypal');
@@ -429,7 +447,7 @@ Template.checkoutPayment.events({
 
     },
     'click #purchase': function() {
-        Session.set('paymentStatus', true);
+        // Session.set('paymentStatus', true);
     },
     'click #purchase-paypal': function() {
 
@@ -488,7 +506,9 @@ function initializeBraintree(clientToken) {
                 // Prevent
                 event.preventDefault();
 
-                if (Session.get('purchaseInProgress') == false && $('#first-name').val() != "" && $('#last-name').val() != "" && $('#email').val() != "") {
+                // if (Session.get('purchaseInProgress') == false && $('#first-name').val() != "" && $('#last-name').val() != "" && $('#email').val() != "") {
+
+                if (Session.get('purchaseInProgress') == false) {
 
                     // Disable button
                     $('#purchase').addClass('disabled');
@@ -496,42 +516,74 @@ function initializeBraintree(clientToken) {
 
                     // Create sale data
                     saleData = createSalesData('braintree');
-                    Session.set('dataIssue', false);
                     saleData.currency = Session.get('currency');
 
                     console.log('Init payment ...');
 
                     if (saleData.email != "" && saleData.lastName != "" && saleData.firstName != "") {
 
-                        Session.set('dataIssue', false);
-
                         console.log('Validated inputs ');
+                        Session.set('paymentStatus', true);
 
                         instance.requestPaymentMethod(function(requestPaymentMethodErr, payload) {
 
-                            saleData.nonce = payload.nonce;
-                            saleData.type = payload.type;
+                            if (requestPaymentMethodErr) {
 
-                            console.log('Got nonce');
+                                // Enable button
+                                $('#purchase').removeClass('disabled');
+                                Session.set('purchaseInProgress', false);
+                                Session.set('paymentStatus', false);
 
-                            if (Session.get('cart')[0].type == 'validation') {
-                                Meteor.call('validateProduct', saleData, function(err, data) {
-                                    window.location = '/thank-you';
-                                });
-                            } else {
-                                Meteor.call('purchaseProduct', saleData, function(err, sale) {
-                                    Session.set('paymentFormStatus', null);
-                                    if (sale.success == true) {
-                                        Router.go("/purchase_confirmation?sale_id=" + sale._id);
-                                    }
-                                    if (sale.success == false) {
-                                        Router.go("/failed_payment?sale_id=" + sale._id);
-                                    }
+                            } else {                                
 
-                                });
+                                // Get nonce & type
+                                saleData.nonce = payload.nonce;
+                                saleData.type = payload.type;
+
+                                console.log('Got nonce');
+
+                                if (Session.get('cart')[0].type == 'validation') {
+                                    Meteor.call('validateProduct', saleData, function(err, data) {
+                                        window.location = '/thank-you';
+                                    });
+                                } else {
+                                    Meteor.call('purchaseProduct', saleData, function(err, sale) {
+                                        Session.set('paymentFormStatus', null);
+                                        if (sale.success == true) {
+                                            Router.go("/purchase_confirmation?sale_id=" + sale._id);
+                                        }
+                                        if (sale.success == false) {
+                                            Router.go("/failed_payment?sale_id=" + sale._id);
+                                        }
+
+                                    });
+                                }
                             }
 
                         });
+                    } else {
+
+                        // Disable current purchase
+                        $('#purchase').removeClass('disabled');
+                        Session.set('purchaseInProgress', false);
+
+                        console.log($('#first-name').val());
+
+                        if ($('#first-name').val() == "") {
+                            $('#first-name-group').addClass('has-danger');
+                            $('#first-name').addClass('form-control-danger');
+                        }
+
+                        if ($('#email').val() == "") {
+                            $('#email-group').addClass('has-danger');
+                            $('#email').addClass('form-control-danger');
+                        }
+
+                        if ($('#last-name').val() == "") {
+                            $('#last-name-group').addClass('has-danger');
+                            $('#last-name').addClass('form-control-danger');
+                        }
+
                     }
 
                 }

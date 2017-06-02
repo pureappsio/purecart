@@ -5,6 +5,7 @@
     "start": "meteor run"
   },
   "dependencies": {
+    "aws-sdk": "^2.61.0",
     "babel-runtime": "*",
     "bcrypt": "*",
     "bluebird": "*",

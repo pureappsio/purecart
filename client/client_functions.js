@@ -156,6 +156,11 @@ showMobileExitIntent = function(percent, location, type) {
 
         if (Metas.findOne({ type: location + 'ExitIntent', userId: Session.get('sellerId') }).value == true) {
 
+            console.log('Checking exit intent');
+            console.log('Percent: ' + percent);
+            console.log('Location: ' + location);
+            console.log('Type: ' + type);
+
             if (percent > 50) {
                 Session.set('scrollTrigger', true);
             }
@@ -173,7 +178,7 @@ showMobileExitIntent = function(percent, location, type) {
                     $('#offer-modal').modal('show');
                 }
 
-                if (type == 'help') {
+                else if (type == 'help') {
                     $('#help-modal').modal('show');
                 }
             }

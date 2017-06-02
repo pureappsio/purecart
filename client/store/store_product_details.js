@@ -1,5 +1,9 @@
 Template.storeProductDetails.onRendered(function() {
 
+    if (Session.get('storefrontExitIntent') != 'fired') {
+        Session.set('storefrontExitIntent', 'armed');
+    }
+
     // Exit intent
     if (!Session.get('usingDiscount')) {
 
@@ -8,6 +12,7 @@ Template.storeProductDetails.onRendered(function() {
             Session.set('scrollTrigger', false);
 
             // Check scroll 
+            $(window).unbind('scroll');
             $(window).scroll(function() {
                 var percent = $(window).scrollTop() / $(document).height() * 2 * 100;
                 showMobileExitIntent(percent, 'storefront', 'offer');

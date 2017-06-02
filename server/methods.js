@@ -326,6 +326,9 @@ Meteor.methods({
 
         for (i = 0; i < sales.length; i++) {
 
+            // Convert to lower case
+            sales[i].email = (sales[i].email).toLowerCase();
+
             // Check if customer doesn't exist
             var customerExist = false;
             for (j = 0; j < customers.length; j++) {
@@ -702,6 +705,10 @@ Meteor.methods({
 
         // Found courses?
         var enrolling = false;
+
+        // Convert email to lowercase
+        sale.email = (sale.email).toLowerCase();
+        console.log(sale.email);
 
         // Go through all products
         for (p in sale.products) {
