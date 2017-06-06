@@ -8,17 +8,10 @@
                     <div class='row voffset30'>
                         <div class='col-md-6'>
                             <div class='store-product-image-container'>
-                               <!--  {{#if isVideo}} -->
-                                <!--   <video class='store-product-image-details img-fluid' controls>
-                                    <source src="{{mainImageLink}}" type="video/mp4">
-                                </video> -->
+                            
                                 <video id='product-video-{{_id}}' class='video-js vjs-big-play-centered vjs-16-9' width="100%" preload="auto" controls>
-                                    <!-- <source src="{{mainImageLink}}" type="video/mp4"> -->
                                 </video>
-                              <!--   {{else}} -->
                                 <img id='product-image-{{_id}}' class='store-product-image-details img-fluid' src='{{mainImageLink}}'> 
-
-                             <!--    {{/if}}  -->
 
                                 {{#if areAdditionalImages}}
                                 <div class='row store-product-additional-container'>
