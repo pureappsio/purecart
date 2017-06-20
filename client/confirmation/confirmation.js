@@ -7,6 +7,15 @@ Template.confirmation.rendered = function() {
 
     Session.set('pixelTrackingPage', 'purchase');
 
+    // Redirect?
+    if (this.data) {
+
+        if (this.data.redirectUrl) {
+            window.location.href = this.data.redirectUrl;
+        }
+
+    }
+
 }
 
 Template.confirmation.helpers({
@@ -48,6 +57,14 @@ Template.confirmation.helpers({
     isApi: function() {
         var product = Products.findOne(this.products[0]);
         if (product.type == 'api') {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    isSaas: function() {
+        var product = Products.findOne(this.products[0]);
+        if (product.type == 'saas') {
             return true;
         } else {
             return false;

@@ -13,6 +13,7 @@
                 <label for="short-name">Short Name</label>
                 <input id='short-name' type='text' class='form-control' value="{{shortName}}">
             </div>
+            {{#if fixedPricing}}
             <div class='col-md-2'>
                 <label for="product-price-usd">Price USD</label>
                 <input id='product-price-usd' type='text' class='form-control' value="{{price.USD}}">
@@ -29,6 +30,13 @@
                 <label for="base-price-eur">Base price EUR</label>
                 <input id='base-price-eur' type='text' class='form-control' value="{{basePrice.EUR}}">
             </div>
+            {{else}}
+             <div class='col-md-3'>
+                <label>Payment Plan</label>
+                <select id='product-payment-plans' class='form-control'>
+                </select>
+            </div>
+            {{/if}}
         </div>
         <div class='row voffset30'>
             <h3>Delivery</h3></div>
@@ -41,6 +49,7 @@
                     <option value='service'>Service</option>
                     <option value='validation'>Validation</option>
                     <option value='physical'>Physical product</option>
+                    <option value='saas'>SaaS plan</option>
                 </select>
             </div>
             <div class='col-md-2' id='product-option'></div>

@@ -13,7 +13,14 @@ Template.checkoutMobileItem.helpers({
             var pictureId = Elements.find({ productId: this._id, type: 'productPictures' }, { sort: { order: 1 } }).fetch()[0].imageId;
             return Images.findOne(pictureId).link();
         }
-        
+
+    },
+    monthly: function() {
+
+        if (this.paymentPlan) {
+            return '/mo.';
+        }
+
     },
     isPhysical: function() {
 

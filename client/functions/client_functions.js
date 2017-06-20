@@ -62,6 +62,9 @@ getSessionData = function(parameters) {
 
 computePrice = function(price) {
 
+    console.log('Price: ');
+    console.log(price);
+
     if (price[Session.get('currency')]) {
         return price[Session.get('currency')];
     } else {
@@ -73,20 +76,49 @@ computePrice = function(price) {
 
 }
 
+getPlanPrice = function(planDetails) {
+
+    var planPrice = {};
+    planPrice[planDetails.currencyIsoCode] = planDetails.price;
+    planPrice['EUR'] = planDetails.price;
+
+    console.log('Plan price:');
+    console.log(planPrice);
+
+    return planPrice;
+
+}
+
 getBasePrice = function(item) {
 
-    var price = computePrice(item.price);
+    console.log('Item: ');
+    console.log(item);
+
+    if (item.price) {
+        var price = computePrice(item.price);
+    } else if (Session.get('planDetails')) {
+
+        var planPrice = getPlanPrice(Session.get('planDetails'));
+
+        var price = computePrice(planPrice);
+    }
 
     // Apply discount
     price = applyDiscount(price, item._id);
 
     // Calculate base price
-    if (Session.get('useTaxes') == true) {
-        price = price * (1 - Session.get('tax') / 100);
-    }
+    price = getPriceWithoutTax(price);
 
     return price.toFixed(2);
 
+}
+
+getPriceWithoutTax = function(price) {
+
+    if (Session.get('useTaxes') == true) {
+        price = price * (1 - Session.get('tax') / 100);
+    }
+    return price;
 }
 
 applyDiscount = function(price, productId) {
@@ -176,9 +208,7 @@ showMobileExitIntent = function(percent, location, type) {
 
                 if (type == 'offer') {
                     $('#offer-modal').modal('show');
-                }
-
-                else if (type == 'help') {
+                } else if (type == 'help') {
                     $('#help-modal').modal('show');
                 }
             }

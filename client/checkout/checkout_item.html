@@ -2,11 +2,12 @@
     <tr>
         <td>{{#if productPicture}}<img class='img-fluid cart-picture' src='{{productPicture}}'>{{/if}}{{name}} <span id='product-id'>{{_id}}</span></td>
         {{#if isPhysical}}
-         <td>
+        <td>
             {{qty}}
         </td>
         {{/if}}
-        <td class='col-right'>{{startCurrency}}<span id='subtotal'>{{basePrice}}</span> {{endCurrency}}</td>
-
+        <td class='col-right'>
+            {{startCurrency}}<span id='subtotal'>{{basePrice}}</span>{{endCurrency}}{{monthly}}
+        </td>
     </tr>
 </template>

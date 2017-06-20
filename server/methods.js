@@ -6,6 +6,21 @@ const sendgrid = require('sendgrid')(Meteor.settings.sendGridAPIKey);
 
 Meteor.methods({
 
+    addRedirect: function(sale) {
+
+        var firstProduct = Products.findOne(sale.products[0]);
+
+        if (firstProduct.type == 'saas') {
+
+            // Get integration
+            var integration = Integrations.findOne({ type: 'saas' });
+
+            // Save redirect
+            Sales.update(sale._id, { $set: { redirectUrl: 'https://' + integration.url } });
+
+        }
+
+    },
     getSortedProducts: function() {
 
         // Get products
@@ -696,6 +711,32 @@ Meteor.methods({
         }
 
     },
+    addCustomerPlan: function(sale) {
+
+        // Convert email to lowercase
+        sale.email = (sale.email).toLowerCase();
+        console.log(sale.email);
+
+        // Get first product
+        var product = Products.findOne(sale.products[0]);
+
+        if (product.type == 'saas') {
+
+            var enrollData = {
+                email: sale.email,
+                plan: product.plan
+            };
+
+            // Make request to create account
+            var integration = Integrations.findOne({ type: 'saas' });
+            var url = "https://" + integration.url + "/api/users?key=" + integration.key;
+            var answer = HTTP.post(url, { data: enrollData });
+
+            console.log(answer);
+
+        }
+
+    },
     enrollCustomer: function(sale) {
 
         // User
@@ -951,6 +992,16 @@ Meteor.methods({
 
             // Template
             SSR.compileTemplate('receiptEmail', Assets.getText('receipt_email_api.html'));
+
+            // Build data
+            emailData.product = products[0].name
+
+        }
+
+        if (products[0].type == 'saas') {
+
+            // Template
+            SSR.compileTemplate('receiptEmail', Assets.getText('receipt_email_saas.html'));
 
             // Build data
             emailData.product = products[0].name

@@ -7,7 +7,7 @@
 
 .paypal-button-content span {
     display: none !important;
-    visibility: hidden !important; 
+    visibility: hidden !important;
 }
 
 #questions-modal {
@@ -42,7 +42,6 @@
     color: red;
 }
 
-
 .fa-edit {
     padding-top: 3px;
     color: gray;
@@ -64,11 +63,11 @@
 }
 
 .navbar-brand {
-  padding: 0px;
+    padding: 0px;
 }
 
 .navbar-brand>img {
-  max-width: 225px;
+    max-width: 225px;
 }
 
 .navbar-toggler {
@@ -104,7 +103,7 @@ button {
 }
 
 .col-right-total {
-margin-right: 12px;
+    margin-right: 12px;
 }
 
 #spinner {
@@ -335,6 +334,10 @@ margin-right: 12px;
 
 .col-right {
     text-align: right;
+}
+
+.float-right {
+    float: right;
 }
 
 .column-bold {

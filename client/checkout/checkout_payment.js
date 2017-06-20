@@ -13,6 +13,9 @@ Template.checkoutPayment.rendered = function() {
     // Reset status of payment
     Session.set('paymentStatus', false);
 
+    // Reset status of plan
+    Session.set('planDetails', null);
+
     // Check payment type
     Meteor.call('getPayment', Session.get('sellerId'), function(err, paymentType) {
 
@@ -158,6 +161,17 @@ Template.checkoutPayment.rendered = function() {
             Session.set('physicalProduct', true);
         }
 
+        if (products[i].paymentPlan) {
+
+            // Load plan data
+            Meteor.call('getBraintreePlan', products[i].paymentPlan, Session.get('sellerId'), function(err, data) {
+
+                Session.set('planDetails', data);
+
+            });
+
+        }
+
         session = {
             date: new Date(),
             productId: products[i]._id,
@@ -299,34 +313,47 @@ Template.checkoutPayment.helpers({
         var tax = 0;
         var total = 0;
 
-        // Calculate total
-        for (i = 0; i < cart.length; i++) {
+        if (Session.get('planDetails')) {
 
-            var price = computePrice(cart[i].price);
+            total = computePrice(getPlanPrice(Session.get('planDetails')));
 
-            if (typeof cart[i].qty !== 'undefined') {
-                total = total + price * cart[i].qty;
-            } else {
-                total = total + price;
+        } else {
+            // Calculate total
+            for (i = 0; i < cart.length; i++) {
+
+                var price = computePrice(cart[i].price);
+
+                if (typeof cart[i].qty !== 'undefined') {
+                    total = total + price * cart[i].qty;
+                } else {
+                    total = total + price;
+                }
+
             }
-
         }
 
         // Apply discount
         total = applyDiscount(total);
 
         // Tax
-        tax = total * Session.get('tax') / 100;
+        tax = parseFloat(total * Session.get('tax') / 100);
+        total = parseFloat(total);
 
         // Base price
         var basePrice = parseFloat(total.toFixed(2)) - parseFloat(tax.toFixed(2));
 
-        return basePrice.toFixed(2);
+        return parseFloat(basePrice).toFixed(2);
     },
     useTaxes: function() {
         return Session.get('useTaxes');
     },
+    monthly: function() {
 
+        if (Session.get('planDetails')) {
+            return '/mo.';
+        }
+
+    },
     taxes: function() {
 
         // Get cart
@@ -334,17 +361,23 @@ Template.checkoutPayment.helpers({
         var tax = 0;
         var total = 0;
 
-        // Calculate total
-        for (i = 0; i < cart.length; i++) {
+        if (Session.get('planDetails')) {
 
-            var price = computePrice(cart[i].price);
+            total = computePrice(getPlanPrice(Session.get('planDetails')));
 
-            if (typeof cart[i].qty !== 'undefined') {
-                total = total + price * cart[i].qty;
-            } else {
-                total = total + price;
+        } else {
+            // Calculate total
+            for (i = 0; i < cart.length; i++) {
+
+                var price = computePrice(cart[i].price);
+
+                if (typeof cart[i].qty !== 'undefined') {
+                    total = total + price * cart[i].qty;
+                } else {
+                    total = total + price;
+                }
+
             }
-
         }
 
         // Apply discount
@@ -352,8 +385,8 @@ Template.checkoutPayment.helpers({
 
         // Tax
         tax = total * Session.get('tax') / 100;
+        return parseFloat(tax).toFixed(2);
 
-        return tax.toFixed(2);
     },
     total: function() {
 
@@ -362,22 +395,29 @@ Template.checkoutPayment.helpers({
         var total = 0;
 
         // Calculate total
-        for (i = 0; i < cart.length; i++) {
+        if (Session.get('planDetails')) {
 
-            var price = computePrice(cart[i].price);
+            total = computePrice(getPlanPrice(Session.get('planDetails')));
 
-            if (typeof cart[i].qty !== 'undefined') {
-                total = total + price * cart[i].qty;
-            } else {
-                total = total + price;
+        } else {
+            for (i = 0; i < cart.length; i++) {
+
+                var price = computePrice(cart[i].price);
+
+                if (typeof cart[i].qty !== 'undefined') {
+                    total = total + price * cart[i].qty;
+                } else {
+                    total = total + price;
+                }
+
             }
-
         }
 
         // Apply discount
         total = applyDiscount(total);
 
-        return total.toFixed(2);
+        return parseFloat(total).toFixed(2)
+
     },
     dataIssue: function() {
         return Session.get('dataIssue');
@@ -486,17 +526,24 @@ function initializeBraintree(clientToken) {
 
     Meteor.call('getCartTitle', Session.get('sellerId'), function(err, title) {
 
-        braintreeDrop.create({
+        // Dropin
+        var dropinParameters = {
             authorization: clientToken,
-            selector: '#dropin',
-            paypal: {
+            selector: '#dropin'
+        }
+
+        // Paypal (not with recurring)
+        if (!Session.get('planDetails')) {
+            dropinParameters.paypal = {
                 flow: 'checkout',
                 amount: parseFloat($('#total-price').text()),
                 currency: Session.get('currency'),
                 locale: 'en_US',
                 displayName: title
             }
-        }, function(createErr, instance) {
+        }
+
+        braintreeDrop.create(dropinParameters, function(createErr, instance) {
 
             Session.set('paymentFormStatus', true);
             $(window).scrollTop(0);
@@ -534,7 +581,7 @@ function initializeBraintree(clientToken) {
                                 Session.set('purchaseInProgress', false);
                                 Session.set('paymentStatus', false);
 
-                            } else {                                
+                            } else {
 
                                 // Get nonce & type
                                 saleData.nonce = payload.nonce;
@@ -827,6 +874,9 @@ function createSalesData(paymentProcessor) {
     }
     if (Session.get('medium')) {
         saleData.medium = Session.get('medium');
+    }
+    if (Session.get('planDetails')) {
+        saleData.paymentPlanId = Session.get('planDetails').id;
     }
 
     return saleData;

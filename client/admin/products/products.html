@@ -8,10 +8,13 @@
             <input id='product-name' type='text' class='form-control' placeholder="Name ...">
         </div>
         <div class='col-md-2'>
-            <input id='product-price-usd' type='text' class='form-control' placeholder="Price USD ...">
+            <select id='pricing-type' class='form-control'>
+                <option value='fixed'>Fixed amount</option>
+                <option value='recurring'>Recurring monthly</option>
+            </select>
         </div>
-        <div class='col-md-2'>
-            <input id='product-price-eur' type='text' class='form-control' placeholder="Price EUR ...">
+        <div class='col-md-2' id='product-price'>
+            <input id='product-price-usd' type='text' class='form-control' placeholder="Price (USD) ...">
         </div>
         <div class='col-md-2'>
             <select id='product-type' class='form-control'>
@@ -20,6 +23,7 @@
                 <option value='service'>Service</option>
                 <option value='validation'>Validation</option>
                 <option value='physical'>Physical product</option>
+                <option value='saas'>SaaS plan</option>
             </select>
         </div>
         <div class='col-md-2' id='product-option'>

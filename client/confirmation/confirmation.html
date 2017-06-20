@@ -19,6 +19,11 @@
             <div class='row voffset50'>
                 <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! You will soon receive an email with the instructions to access your purchase on our learning space.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email pour accéder à votre achat sur notre espace d'apprentissage.{{/if}}</div>
             </div>
+            {{/if}}
+            {{#if isSaas}}
+            <div class='row voffset50'>
+                <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! You will soon receive an email with the instructions to access your subscription.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email pour accéder à votre achat.{{/if}}</div>
+            </div>
             {{/if}} {{#if isPhysical}}
             <div class='row voffset50'>
                 <div class='col-md-12 purchase-confirmed'>{{#if langEN}}Thanks for your purchase! You will soon receive an email with your receipt & information about the shipping of your order.{{else}}Merci pour votre achat! Vous recevrez très bientôt un email pour accéder à votre achat sur notre espace d'apprentissage.{{/if}}</div>

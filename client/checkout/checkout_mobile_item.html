@@ -1,7 +1,9 @@
 <template name="checkoutMobileItem">
     <div class="row cart-row">
-        <div class='col-3'><img class='checkout-item-img img-fluid' src='{{productPicture}}'></div>
-        <div class='col-6'>{{name}}</div>
-        <div class='col-3 col-right'>{{startCurrency}}<span id='product-total'>{{basePrice}}</span>{{endCurrency}}</div>
+        {{#if productPicture}}<div class='col-3'><img class='checkout-item-img img-fluid' src='{{productPicture}}'></div>{{/if}}
+        <div class='col-{{#if productPicture}}5{{else}}8{{/if}}'>{{name}}</div>
+        <div class='col-4 col-right'>
+            {{startCurrency}}{{basePrice}}{{endCurrency}}{{monthly}}
+        </div>
     </div>
 </template>

@@ -13,9 +13,8 @@ Template.checkoutItem.helpers({
             var pictureId = Elements.find({ productId: this._id, type: 'productPictures' }, { sort: { order: 1 } }).fetch()[0].imageId;
             return Images.findOne(pictureId).link();
         }
-        
-    },
 
+    },
     isPhysical: function() {
 
         isPhysical = false;
@@ -33,10 +32,15 @@ Template.checkoutItem.helpers({
         return isPhysical;
 
     },
-    basePrice: function() {
+    monthly: function() {
 
+        if (this.paymentPlan) {
+            return '/mo.';
+        }
+
+    },
+    basePrice: function() {
         return getBasePrice(this);
-        
     },
     taxes: function() {
 

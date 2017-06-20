@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Sales Receipt</title>
+    <link href="styles.css" media="all" rel="stylesheet" type="text/css" />
+</head>
+
+<body itemscope itemtype="http://schema.org/EmailMessage">
+    <p>Sales Receipt #{{payment_id}}</p>
+    <p>{{fullname}}
+        <br> {{user_email}}
+    </p>
+    <p>Your purchase:</p>
+    <p>{{product}}</p>
+    <p>Subtotal: {{subtotal}}
+        <br> Tax (VAT): {{tax}}
+        <br> Total: {{price}}</p>
+    <p>Thank you for your purchase! You will receive soon another email with all the instructions to access your subscription.</p>
+</body>
+
+</html>

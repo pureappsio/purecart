@@ -6,6 +6,55 @@ import braintree from 'braintree';
 
 Meteor.methods({
 
+    getBraintreePlan(planId, userId) {
+
+        // Get plans
+        var plans = Meteor.call('getBraintreePlans', userId);
+
+        // Find plan
+        var plan = {};
+        for (i in plans) {
+            if (plans[i].id == planId) {
+                plan = plans[i];
+            }
+        }
+
+        return plan;
+
+    },
+    getBraintreePlans: function(userId) {
+
+        // Braintree gateway
+        var braintreeGateway = Gateways.findOne({ type: 'braintree', userId: userId });
+
+        if (braintreeGateway.mode == 'sandbox') {
+            var gateway = braintree.connect({
+                environment: braintree.Environment.Sandbox,
+                publicKey: braintreeGateway.publicKey,
+                privateKey: braintreeGateway.privateKey,
+                merchantId: braintreeGateway.merchantId
+            });
+        }
+        if (braintreeGateway.mode == 'production') {
+            var gateway = braintree.connect({
+                environment: braintree.Environment.Production,
+                publicKey: braintreeGateway.publicKey,
+                privateKey: braintreeGateway.privateKey,
+                merchantId: braintreeGateway.merchantId
+            });
+        }
+
+        var fut = new Future();
+
+        gateway.plan.all(function(err, plans) {
+            fut.return(plans);
+        });
+
+        var plans = fut.wait();
+        console.log(plans.plans);
+        return plans.plans;
+
+    },
     computePrice(price, currency) {
 
         if (price[currency]) {
@@ -331,87 +380,134 @@ Meteor.methods({
             });
         }
 
-        if (saleData.type == "PayPalAccount") {
+        if (saleData.paymentPlanId) {
 
-            console.log('Making transaction');
+            console.log('Creating subscription');
 
-            // Get merchant ID
-            if (braintreeGateway.merchantIds[saleData.currency]) {
-                console.log('Making transaction in native currency');
-                merchantId = braintreeGateway.merchantIds[saleData.currency];
-            }
+            // Create customer
+            var fut = new Future();
 
-            // Make transaction
-            gateway.transaction.sale({
-                amount: saleData.amount,
-                paymentMethodNonce: saleData.nonce,
-                merchantAccountId: merchantId,
-                orderId: saleData.invoiceId,
-                options: {
-                    submitForSettlement: true
-                }
-            }, function(err, result) {
-                if (err) { console.log(err); }
-                console.log(result);
-                fut.return(result);
-            });
-
-            var answer = fut.wait();
-
-        } else {
-
-            // Verify card
-            console.log('Verify card');
             gateway.customer.create({
                 firstName: saleData.firstName,
                 lastName: saleData.lastName,
-                creditCard: {
-                    paymentMethodNonce: saleData.nonce,
-                    options: {
-                        verifyCard: true
-                    }
-                }
+                email: saleData.email,
+                paymentMethodNonce: saleData.nonce
             }, function(err, result) {
 
-                console.log(result);
+                if (err) { console.log('Customer creation error'); console.log(err); } else {
 
-                if (result.success == false) {
+                    console.log('Customer: ');
+                    console.log(result);
 
-                    // Card declined
-                    console.log('Card declined');
-                    fut.return(result);
-
-                }
-                if (result.success == true) {
-
-                    console.log('Making transaction');
-
-                    // Get merchant ID
-                    if (braintreeGateway.merchantIds[saleData.currency]) {
-                        console.log('Making transaction in native currency');
-                        merchantId = braintreeGateway.merchantIds[saleData.currency];
-                        chargedAmount = saleData.amount;
+                    parameters = {
+                        paymentMethodToken: result.customer.paymentMethods[0].token,
+                        planId: saleData.paymentPlanId
                     }
 
-                    // Make transaction
-                    gateway.transaction.sale({
-                        amount: chargedAmount,
-                        merchantAccountId: merchantId,
-                        paymentMethodToken: result.customer.paymentMethods[0].token,
-                        options: {
-                            submitForSettlement: true
-                        }
-                    }, function(err, result) {
-                        if (err) { console.log(err); }
-                        console.log(result);
+                    // Get merchant ID
+                    // if (braintreeGateway.merchantIds[saleData.currency]) {
+                    //     console.log('Making subscription in native currency');
+                    //     parameters.merchantId = braintreeGateway.merchantIds[saleData.currency];
+                    // }
+
+                    // Create subscription
+                    gateway.subscription.create(parameters, function(err, result) {
+
+                        if (err) { console.log('Subscription error'); console.log(err); }
                         fut.return(result);
                     });
 
                 }
-
             });
 
             var answer = fut.wait();
+            console.log(answer);
+
+        } else {
+
+            if (saleData.type == "PayPalAccount") {
+
+                console.log('Making transaction');
+
+                // Get merchant ID
+                if (braintreeGateway.merchantIds[saleData.currency]) {
+                    console.log('Making transaction in native currency');
+                    merchantId = braintreeGateway.merchantIds[saleData.currency];
+                }
+
+                // Make transaction
+                gateway.transaction.sale({
+                    amount: saleData.amount,
+                    paymentMethodNonce: saleData.nonce,
+                    merchantAccountId: merchantId,
+                    orderId: saleData.invoiceId,
+                    options: {
+                        submitForSettlement: true
+                    }
+                }, function(err, result) {
+                    if (err) { console.log(err); }
+                    console.log(result);
+                    fut.return(result);
+                });
+
+                var answer = fut.wait();
+
+            } else {
+
+                // Verify card
+                console.log('Verify card');
+                gateway.customer.create({
+                    firstName: saleData.firstName,
+                    lastName: saleData.lastName,
+                    creditCard: {
+                        paymentMethodNonce: saleData.nonce,
+                        options: {
+                            verifyCard: true
+                        }
+                    }
+                }, function(err, result) {
+
+                    console.log(result);
+
+                    if (result.success == false) {
+
+                        // Card declined
+                        console.log('Card declined');
+                        fut.return(result);
+
+                    }
+                    if (result.success == true) {
+
+                        console.log('Making transaction');
+
+                        // Get merchant ID
+                        if (braintreeGateway.merchantIds[saleData.currency]) {
+                            console.log('Making transaction in native currency');
+                            merchantId = braintreeGateway.merchantIds[saleData.currency];
+                            chargedAmount = saleData.amount;
+                        }
+
+                        // Make transaction
+                        gateway.transaction.sale({
+                            amount: chargedAmount,
+                            merchantAccountId: merchantId,
+                            paymentMethodToken: result.customer.paymentMethods[0].token,
+                            options: {
+                                submitForSettlement: true
+                            }
+                        }, function(err, result) {
+                            if (err) { console.log(err); }
+                            console.log(result);
+                            fut.return(result);
+                        });
+
+                    }
+
+                });
+
+                var answer = fut.wait();
+
+            }
 
         }
 
@@ -464,8 +560,14 @@ Meteor.methods({
         // Enroll customer
         Meteor.call('enrollCustomer', sale);
 
+        // Add to plan
+        Meteor.call('addCustomerPlan', sale);
+
         // Add to list
         Meteor.call('addToList', sale);
+
+        // Add redirect
+        Meteor.call('addRedirect', sale);
 
     },
 

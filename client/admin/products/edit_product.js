@@ -11,6 +11,29 @@ Template.editProduct.onRendered(function() {
     Session.set('productMedia', false);
 
     if (this.data) {
+
+        // Payment plan or price
+        if (this.data.paymentPlan) {
+
+            var paymentPlan = this.data.paymentPlan;
+            
+            Meteor.call('getBraintreePlans', Meteor.user()._id, function(err, data) {
+
+                // Integrations
+                for (i = 0; i < data.length; i++) {
+                    $('#product-payment-plans').append($('<option>', {
+                        value: data[i].id,
+                        text: data[i].name
+                    }));
+                }
+
+                // Refresh picker
+                $('#product-payment-plans').val(paymentPlan);
+
+            });
+
+        }
+
         if (this.data.description) {
             $('#summernote').val(this.data.description);
         }
@@ -50,9 +73,6 @@ Template.editProduct.onRendered(function() {
                 // Select
                 $('#product-option').append("<select id='product-courses' class='form-control'></select>")
 
-                // Init picker
-                // $('#product-courses').selectpicker();
-
                 // Integrations
                 for (i = 0; i < data.length; i++) {
                     $('#product-courses').append($('<option>', {
@@ -63,7 +83,29 @@ Template.editProduct.onRendered(function() {
 
                 // Refresh picker
                 $('#product-courses').val(courses);
-                // $('#product-courses').selectpicker('refresh');
+
+            });
+
+        }
+        if (selection == 'saas') {
+
+            plan = this.data.plan;
+
+            Meteor.call('getPlans', function(err, data) {
+
+                // Select
+                $('#product-option').append("<select id='product-plans' class='form-control'></select>")
+
+                // Integrations
+                for (i = 0; i < data.length; i++) {
+                    $('#product-plans').append($('<option>', {
+                        value: data[i]._id,
+                        text: data[i].name
+                    }));
+                }
+
+                // Refresh picker
+                $('#product-plans').val(plan);
 
             });
 
@@ -85,6 +127,13 @@ Template.editProduct.onRendered(function() {
 
 Template.editProduct.helpers({
 
+    fixedPricing: function() {
+
+        if (this.price) {
+            return true;
+        }
+
+    },
     isPhysicalProduct: function() {
 
         if (this.type == 'physical') {
@@ -107,7 +156,7 @@ Template.editProduct.helpers({
 
     },
     mediaElements: function() {
-        return Elements.find({ type: 'productPictures', productId: this._id }, {sort: {order: 1}})
+        return Elements.find({ type: 'productPictures', productId: this._id }, { sort: { order: 1 } })
     },
     salesElements: function() {
         return Elements.find({ type: 'salesElement', productId: this._id })
@@ -208,19 +257,29 @@ Template.editProduct.events({
         product = {
             name: $('#product-name').val(),
             shortName: $('#short-name').val(),
-            price: {
-                EUR: parseFloat($('#product-price-eur').val()),
-                USD: parseFloat($('#product-price-usd').val())
-            },
             _id: this._id,
             userId: Meteor.user()._id
         };
 
-        // Base price
-        if ($('#base-price-usd').val() != "") {
-            product.basePrice = {};
-            product.basePrice.USD = parseFloat($('#base-price-usd').val());
-            product.basePrice.EUR = parseFloat($('#base-price-eur').val());
+        // Pricing
+        if ($('#product-payment-plans :selected')) {
+
+            product.paymentPlan = $('#product-payment-plans :selected').val();
+
+        } else {
+
+            product.price = {
+                EUR: parseFloat($('#product-price-eur').val()),
+                USD: parseFloat($('#product-price-usd').val())
+            }
+
+            // Base price
+            if ($('#base-price-usd').val() != "") {
+                product.basePrice = {};
+                product.basePrice.USD = parseFloat($('#base-price-usd').val());
+                product.basePrice.EUR = parseFloat($('#base-price-eur').val());
+            }
+
         }
 
         // Bundled
@@ -254,6 +313,9 @@ Template.editProduct.events({
                 }
                 product.sku = $('#product-sku').val();
                 product.cost = parseFloat($('#product-cost').val());
+            }
+            if (type == 'saas') {
+                product.plan = $('#product-plans :selected').val();
             }
 
         }
@@ -316,8 +378,6 @@ Template.editProduct.events({
                 // Select
                 $('#product-option').append("<select id='product-courses' class='form-control'></select>")
 
-                // // Init picker
-                // $('#product-courses').selectpicker();
 
                 // Integrations
                 for (i = 0; i < data.length; i++) {
@@ -327,8 +387,7 @@ Template.editProduct.events({
                     }));
                 }
 
-                // // Refresh picker
-                // $('#product-courses').selectpicker('refresh');
+
 
             });
 

@@ -843,6 +843,23 @@ Meteor.methods({
         Integrations.update({ type: 'puremail' }, { $set: { list: list } });
 
     },
+    getPlans: function() {
+
+        // Get integration
+        if (Integrations.findOne({ type: 'saas' })) {
+
+            var integration = Integrations.findOne({ type: 'saas' });
+
+            // Get plans
+            var url = "https://" + integration.url + "/api/plans?key=" + integration.key;
+
+            var answer = HTTP.get(url);
+            return answer.data.plans;
+
+        } else {
+            return [];
+        }
+    },
     getCourses: function() {
 
         // Get integration

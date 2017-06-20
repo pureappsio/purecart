@@ -1,37 +1,38 @@
 <template name="checkoutPayment">
     <div class='row checkout-mobile'>
-        <div class='col-8'>
-            <a id='show-summary' data-toggle="collapse" href="#ordersummary">Show order summary</a>
-        </div>
-        <div class='col-4 mobile-checkout-price'><span>{{startCurrency}}{{total}} {{endCurrency}}</span></div>
-        <div class="collapse" id="ordersummary">
-            <div class='checkout-collapse'>
-                <div class='checkout-collapse-items'>
-                    {{#each products}} {{> checkoutMobileItem}} {{/each}}
+        <div class='col-12'>
+            <div class='row'>
+                <div class='col-7'>
+                    <a id='show-summary' data-toggle="collapse" href="#ordersummary">Show order summary</a>
                 </div>
-                {{#if useTaxes}}
-                <div class='row'>
-                    <div class='col-md-7'></div>
-                    <div class='col-md-5 col-right'>
-                        <div class='col-right-total'>
-                            {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span> {{endCurrency}}
-                        </div>
-                    </div>
-                </div>
-                <div class='row'>
-                    <div class='col-md-7'></div>
-                    <div class='col-md-5 col-right'>
-                        <div class='col-right-total'>
-                            {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}
-                        </div>
-                    </div>
-                </div>
-                {{/if}}
-                <div class='row'>
-                    <div class='col-md-7'></div>
-                    <div class='col-md-5 col-right'>
-                        <div class='col-right-total'>
-                            Total: {{startCurrency}}{{total}} {{endCurrency}}
+                <div class='col-5 mobile-checkout-price'><span>{{startCurrency}}{{total}} {{endCurrency}}{{monthly}}</span></div>
+            </div>
+            <div class='row'>
+                <div class='col-12'>
+                    <div class="collapse" id="ordersummary">
+                        <div class='checkout-collapse'>
+                            <!-- <div class='checkout-collapse-items'> -->
+                            {{#each products}} {{> checkoutMobileItem}} {{/each}} {{#if useTaxes}}
+                            <div class='row'>
+                                <div class='col-5'></div>
+                                <div class='col-7 col-right'>
+                                    {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span>{{endCurrency}}{{monthly}}
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-5'></div>
+                                <div class='col-7 col-right'>
+                                    {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span>{{endCurrency}}{{monthly}}
+                                </div>
+                            </div>
+                            {{/if}}
+                            <div class='row'>
+                                <div class='col-5'></div>
+                                <div class='col-7 col-right'>
+                                    Total: {{startCurrency}}{{total}}{{endCurrency}}{{monthly}}
+                                </div>
+                            </div>
+                            <!--  </div> -->
                         </div>
                     </div>
                 </div>
@@ -61,7 +62,7 @@
             <div class='col-md-7'></div>
             <div class='col-md-5 col-right'>
                 <div class='col-right-total'>
-                    {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span> {{endCurrency}}
+                    {{#if langEN}}Subtotal{{else}}Sous-total{{/if}}: {{startCurrency}}<span id='subtotal'>{{subtotal}}</span>{{endCurrency}}{{monthly}}
                 </div>
             </div>
         </div>
@@ -69,7 +70,7 @@
             <div class='col-md-7'></div>
             <div class='col-md-5 col-right'>
                 <div class='col-right-total'>
-                    {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span> {{endCurrency}}
+                    {{#if langEN}}VAT{{else}}TVA{{/if}}: {{startCurrency}}<span id='tax'>{{taxes}}</span>{{endCurrency}}{{monthly}}
                 </div>
             </div>
         </div>
@@ -78,7 +79,7 @@
             <div class='col-md-7'></div>
             <div class='col-md-5 col-right'>
                 <div class='col-right-total'>
-                    Total: {{startCurrency}}{{total}} {{endCurrency}}
+                    Total: {{startCurrency}}{{total}}{{endCurrency}}{{monthly}}
                 </div>
             </div>
         </div>
@@ -245,11 +246,11 @@
             {{#if isSimpleTheme}}
             <div class='col-md-3'></div>
             <div class='col-md-3 col-6 total-name'>Total:</div>
-            <div class='col-md-3 col-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
+            <div class='col-md-3 col-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span>{{endCurrency}}{{monthly}}</div>
             {{else}}
             <div class='col-md-1'></div>
             <div class='col-md-5 col-6 total-name'>Total:</div>
-            <div class='col-md-5 col-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span> {{endCurrency}}</div>
+            <div class='col-md-5 col-6 total-amount'>{{startCurrency}}<span id='total-price'>{{total}}</span>{{endCurrency}}{{monthly}}</div>
             {{/if}}
         </div>
         <div class='row'>
@@ -285,20 +286,16 @@
         <div class='col-md-4'></div>
         <div class='col-md-4'>
             {{#if paypalBraintree}}
-            <img class='img-fluid' src='/payment_logos_small.png'> 
-            {{else if braintreeUi}} 
-            <img class='img-fluid' src='/payment_logos_small.png'> 
-            {{else}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else if braintreeUi}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else}}
             <img class='img-fluid' src='/payment_logos.png'> {{/if}}
         </div>
         {{else}}
         <div class='col-md-2'></div>
         <div class='col-md-8'>
             {{#if paypalBraintree}}
-            <img class='img-fluid' src='/payment_logos_small.png'>
-            {{else if braintreeUi}} 
-            <img class='img-fluid' src='/payment_logos_small.png'> 
-             {{else}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else if braintreeUi}}
+            <img class='img-fluid' src='/payment_logos_small.png'> {{else}}
             <img class='img-fluid' src='/payment_logos.png'> {{/if}}
         </div>
         {{/if}}
