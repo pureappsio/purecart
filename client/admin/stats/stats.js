@@ -1,5 +1,10 @@
 Template.stats.helpers({
 
+    ltv: function() {
+
+        return Session.get('ltv');
+
+    },
     abandon: function() {
 
         var sales = Sales.find({ success: true, userId: Meteor.user()._id }).count();
@@ -112,6 +117,13 @@ Template.stats.helpers({
 });
 
 Template.stats.onRendered(function() {
+
+    // LTV
+    Meteor.call('getCustomersLtv', {}, function(err, ltv) {
+
+        Session.set('ltv', ltv.toFixed(2));
+
+    });
 
     // Origin
     Meteor.call('getOriginGraphData', function(err, graphData) {

@@ -325,6 +325,19 @@ Meteor.methods({
         return customer;
 
     },
+    getCustomersLtv: function(query) {
+
+        var ltv = 0;
+
+        var customers = Meteor.call('getCustomers', query);
+
+        for (i in customers) {
+            ltv += customers[i].ltv;
+        }
+
+        return ltv/customers.length;
+
+    },
     getCustomers: function(query) {
 
         // Get all sales

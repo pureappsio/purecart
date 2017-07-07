@@ -262,7 +262,7 @@ Template.editProduct.events({
         };
 
         // Pricing
-        if ($('#product-payment-plans :selected')) {
+        if (this.paymentPlan) {
 
             product.paymentPlan = $('#product-payment-plans :selected').val();
 
